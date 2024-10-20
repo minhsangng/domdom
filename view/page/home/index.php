@@ -14,7 +14,7 @@
       <div class="grid grid-cols-6 gap-x-5 gap-y-2">
         <?php
         $ctrl = new cCategories();
-        $ctrl->showCategoriesHome("SELECT * FROM categories AS C JOIN dishes AS D ON C.categoryID = D.categoryID GROUP BY C.categoryName");
+        $ctrl->showCategoriesHome("SELECT * FROM dish GROUP BY dishCategory");
         ?>
       </div>
     </div>
@@ -25,7 +25,7 @@
     <div class="grid grid-cols-3 gap-5-10 gap-x-24 my-28 w-full">
         <?php
         $ctrl = new cPromotions();
-        $ctrl->showPromotionsHome("SELECT * FROM promotions");
+        $ctrl->showPromotionsHome();
         ?>
     </div>
   </section>

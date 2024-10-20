@@ -135,19 +135,29 @@
 
 <?php
 if (isset($_POST["btnlogin"])) {
-    $name = $_POST["name"];
+    $email = $_POST["email"];
     $psw = $_POST["psw"];
-    $sql = "SELECT * FROM users";
+    $sql = "SELECT * FROM user";
     $result = $conn->query($sql);
 
     while ($row = $result->fetch_assoc()) {
 
-        if ($name == $row["userName"] && $psw == $row["password"]) {
-            $_SESSION["name"] = $name;
-            if ($row["roleID"] == 1 || $row["roleID"] == 2)
-                echo "<script>window.location.href = 'view/page/manager/index.php'</script>";
-            else if ($row["roleID"] == 3 || $row["roleID"] == 4)
-                echo "<script>window.location.href = 'view/page/employee/index.php'</script>";
+        if ($email == $row["email"] && $psw == $row["password"]) {
+            $_SESSION["userName"] = $row["userName"];
+            switch ($row["roleID"]) {
+                case 1:
+                    echo "<script>window.location.href = 'view/page/admin/index.php'</script>";
+                    break;
+                case 2:
+                    echo "<script>window.location.href = 'view/page/manager/index.php'</script>";
+                    break;
+                case 3:
+                    echo "Nhân viên nhận đơn";
+                    break;
+                case 4:
+                    echo "Nhân viên bếp";
+                    break;
+            }
         }
     }
 }
@@ -167,7 +177,7 @@ if (isset($_POST["btnlogin"])) {
                         <div class="dropdown-menu">
                             <?php
                             $ctrl = new cCategories();
-                            $ctrl->showCategoriesHeader("SELECT * FROM categories");
+                            $ctrl->showCategoriesHeader("SELECT * FROM dish GROUP BY dishCategory");
                             ?>
                         </div>
                     </li>
@@ -239,8 +249,8 @@ if (isset($_POST["btnlogin"])) {
                     </div>
                     <div class="modal-body">
                         <div>
-                            <label for="name" class="w-full py-2"><b>Tên đăng nhập</b></label>
-                            <input type="text" class="w-full form-control" placeholder="Tên đăng nhập" name="name" id="name" required>
+                            <label for="email" class="w-full py-2"><b>Email</b></label>
+                            <input type="email" class="w-full form-control" placeholder="Địa chỉ email" name="email" id="email" required>
                         </div>
 
                         <div>

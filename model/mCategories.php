@@ -2,16 +2,23 @@
 
 class mCategories
 {
-    public function showCategories($sql)
+    public function mGetAllCategory()
     {
         $db = new Database;
         $conn = $db->connect();
-        if ($conn == null) return 0;
-
-        $result = $conn->query($sql);
-
-        if ($result && $result->num_rows > 0)
-            return 1;
+        $sql = "SELECT * FROM dish GROUP BY dishCategory";
+        if ($conn != null) 
+            return $conn->query($sql);
+        return 0;
+    }
+    
+    public function mGetCategoryNotId($category)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT * FROM dish WHERE dishCategory != '$category' GROUP BY dishCategory";
+        if ($conn != null)
+            return $conn->query($sql);
         return 0;
     }
 }

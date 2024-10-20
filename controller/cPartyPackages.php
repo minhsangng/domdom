@@ -1,14 +1,19 @@
 <?php
-include("./model/mPartyPackages.php");
+$currentPath = $_SERVER["REQUEST_URI"];
+$path = "";
+if (strpos($currentPath, "admin") == true || strpos($currentPath, "manager") == true)
+    $path = "../../../model/mPartyPackages.php";
+else $path = "./model/mPartyPackages.php";
+
+if (!class_exists("mPartyPackages"))
+    require_once($path);
 
 class cPartyPackages extends mPartyPackages
 {
-    public function showPartyPackagesHome($sql)
+    public function showPartyPackagesHome()
     {
-        if ($this->showPartyPackages($sql)) {
-            $db = new Database;
-            $conn = $db->connect();
-            $result = $conn->query($sql);
+        if ($this->mGetAllPartyPackage() != 0) {
+            $result = $this->mGetAllPartyPackage();
             $count = 0;
 
             while ($row = $result->fetch_assoc()) {
@@ -36,6 +41,6 @@ class cPartyPackages extends mPartyPackages
                         </div>
                     </div>";
             }
-        } else echo "Không có dữ liệu.";
+        } else echo "<p class='text-center col-span-3'>Chưa có dữ liệu!</p>";
     }
 }

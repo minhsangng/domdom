@@ -6,7 +6,7 @@
         <div class="grid grid-cols-6 gap-4">
             <?php
             $ctrl = new cCategories;
-            $ctrl->showCategoriesMenu("SELECT * FROM categories AS C JOIN dishes AS D ON C.categoryID = D.categoryID GROUP BY categoryName");
+            $ctrl->showCategoriesMenu("SELECT * FROM dish GROUP BY dishCategory");
             ?>
         </div>
     </div>
@@ -27,8 +27,9 @@
             $ctrl = new cDishes;
             if (isset($_GET["c"])) {
                 $category = str_replace("%20", " ", $_GET["c"]);
-                $ctrl->showDishesHome("SELECT * FROM dishes AS D JOIN categories AS C ON C.categoryID = D.categoryID WHERE C.categoryName = '$category'");
-            } else $ctrl->showDishesHome("SELECT * FROM dishes");
+                $ctrl->showDishesHome($category);
+            } else $ctrl->showDishMenu();
+            
             ?>
         </div>
     </div>

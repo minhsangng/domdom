@@ -90,6 +90,10 @@
 error_reporting(1);
 session_start();
 include("../../../model/connect.php");
+include("../../../controller/cCategories.php");
+include("../../../controller/cPromotions.php");
+include("../../../controller/cDishes.php");
+include("../../../controller/cIngredients.php");
 
 $db = new Database();
 $conn = $db->connect();
@@ -111,10 +115,10 @@ $startW = date("Y-m-d", strtotime("monday this week"));
 $endW = date("Y-m-d", strtotime("sunday this week"));
 ?>
 
-<body class="bg-gray-100" style="scroll-behavior: smooth; font-family: 'Playwrite DE Grund', cursive;">
+<body class="bg-gray-900" style="scroll-behavior: smooth; font-family: 'Playwrite DE Grund', cursive;">
     <div class="flex flex-col md:flex-row h-full" id="container">
-        <div class="bg-gray-900 w-full md:w-64">
-            <div class="flex items-center justify-center h-20 w-full bg-gray-800">
+        <div class=" w-full md:w-64">
+            <div class="flex items-center justify-center h-20 w-full bg-gray-500 py-5">
                 <a href="index.php">
                     <img src="../../../images/logo-nobg.png" alt="Logo" class="size-20">
                 </a>
@@ -124,23 +128,26 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                     <i class="fas fa-tachometer-alt mr-3"></i>Tổng quan
                 </a>
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="employee" href="index.php?i=employee">
-                    <i class="fa-solid fa-users-gear mr-3"></i></i>Quản lý nhân viên
+                    <i class="fa-solid fa-users-gear mr-3"></i></i>Xem thông tin NV
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="menu" href="index.php?i=menu">
-                    <i class="fa-solid fa-utensils mr-3"></i>Quản lý món ăn
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="ingredient" href="index.php?i=ingredient">
+                    <i class="fa-solid fa-cubes mr-3"></i>Tính toán ng.liệu
                 </a>
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="revenue" href="index.php?i=revenue">
-                    <i class="fa-solid fa-file-invoice-dollar mr-3"></i>Thống kê doanh thu
+                    <i class="fa-solid fa-file-invoice-dollar mr-3"></i>Xem thống kê
                 </a>
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="shift" href="index.php?i=shift">
-                    <i class="fa-regular fa-calendar-days mr-3"></i>Lịch làm việc
+                    <i class="fa-regular fa-calendar-days mr-3"></i>Phân ca
                 </a>
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="attendance" href="index.php?i=attendance">
                     <i class="fa-solid fa-clock mr-3"></i>Bảng chấm công
                 </a>
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="proposal" href="index.php?i=proposal">
+                    <i class="fa-solid fa-paper-plane mr-3"></i>Tạo đề xuất
+                </a>
             </nav>
         </div>
-        <div class="flex-1 p-6 pb-2 md:p-10">
+        <div class="bg-gray-100 flex-1 p-6 h-fit pb-2 md:p-10">
             <div class="flex justify-between items-center mb-6 hover:cursor-pointer">
                 <div class="relative w-1/2 flex">
                     <input class="w-full py-2 px-4 mr-2 rounded-lg border border-gray-300" placeholder="Tìm kiếm..." type="text" />
@@ -157,13 +164,12 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                         <img alt="User Avatar" class="rounded-full mr-1 border-solid border-2" height="40" width="40" src="../../../images/user.png" />
                         <span class="text-xs font-bold ml-1">
                             <?php
-                            $name = $_SESSION["name"];
-                            echo $name;
+                            echo $_SESSION["userName"];
                             ?>
                         </span>
 
                         <div class="subnav absolute top-11 right-0 bg-white rounded-lg bg-gray-500 h-fit p-2 text-center border-2">
-                            <a href="../../../index.php" onclick="logout()">Đăng xuất <i class="fa-solid fa-right-from-bracket"></i></a>
+                            <a href="index.php?m=logout">Đăng xuất <i class="fa-solid fa-right-from-bracket"></i></a>
                         </div>
                     </div>
                 </div>
@@ -182,6 +188,11 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 require("" . $_REQUEST["i"] . "/index.php");
             } else {
                 require("home/index.php");
+            }
+            
+            if (isset($_GET["m"])) {
+                unset($_SESSION["userName"]);
+                echo "<script>window.location.href = '../../../index.php'</script>";
             }
             ?>
         </div>
@@ -207,11 +218,6 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 else item.classList.remove("activeAd");
             });
         });
-        
-        function logout() {
-            <?php unset($_SESSION["loginadmin"]); 
-            unset($_SESSION["name"]); ?>
-        }
     </script>
 </body>
 

@@ -2,16 +2,14 @@
 
 class mPartyPackages
 {
-    public function showPartyPackages($sql)
+    public function mGetAllPartyPackage()
     {
         $db = new Database;
         $conn = $db->connect();
-        if ($conn == null) return 0;
-
-        $result = $conn->query($sql);
-
-        if ($result && $result->num_rows > 0)
-            return 1;
+        $sql = "SELECT * FROM partyPackage";
+        
+        if ($conn != null) 
+            return $conn->query($sql);
         return 0;
     }
 }

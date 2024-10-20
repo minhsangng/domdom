@@ -1,13 +1,12 @@
 <?php
 error_reporting(1);
-/* ini_set('display_errors', 1); */
 session_start();
 
-include("model/connect.php");
-include("controller/cCategories.php");
-include("controller/cPromotions.php");
-include("controller/cPartyPackages.php");
-include("controller/cDishes.php");
+require_once("model/connect.php");
+require_once("controller/cCategories.php");
+require_once("controller/cPromotions.php");
+require_once("controller/cPartyPackages.php");
+require_once("controller/cDishes.php");
 
 $db = new Database();
 $conn = $db->connect();
@@ -21,9 +20,9 @@ if ($_REQUEST["p"] != "")
 else
   $p = "home";
   
-if ($p != "home") {
+if ($p != "home")
   include_once("view/page/" . $p . "/index.php");
-} else
+else
   include_once("view/page/home/index.php");
 
 echo "<script src='view/main.js'></script>";
