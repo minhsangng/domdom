@@ -1,7 +1,7 @@
 <?php
 $currentPath = $_SERVER["REQUEST_URI"];
 $path = "";
-if (strpos($currentPath, "admin") == true || strpos($currentPath, "manager") !== false)
+if (strpos($currentPath, "admin") == true || strpos($currentPath, "manager") == true || strpos($currentPath, "orderstaff") == true || strpos($currentPath, "kitchenstaff") == true)
     $path = "../../../model/mPromotions.php";
 else $path = "./model/mPromotions.php";
 
@@ -77,15 +77,15 @@ class cPromotions extends mPromotions
                 while ($row = $result->fetch_assoc()) {
                     echo "
                         <tr>
-                            <td class='py-2 border-2'>#010" . $row["promotionID"] . "</td>
+                            <td class='py-2 border-2'>#KM0" . ($row["promotionID"] < 10 ? "0".$row["promotionID"] : $row["promotionID"]) . "</td>
                             <td class='py-2 border-2'>" . $row["promotionName"] . "</td>
-                            <td class='py-2 border-2'>" . $row["description"] . "</td>
-                            <td class='py-2 border-2'>" . $row["discountPercentage"]. "</td>
+                            <td class='py-2 border-2 w-40'>" . $row["description"] . "</td>
+                            <td class='py-2 border-2'>" . str_replace(".00", "%", $row["discountPercentage"]). "</td>
                             <td class='py-2 border-2'>" . $row["startDate"] . "</td>
                             <td class='py-2 border-2'>" . $row["endDate"] . "</td>
                             <td class='py-2 border-2'><img src='../../../images/promotion/" . $row["image"] . "' alt='".$row["promotionName"]."' class='size-24' /></td>
-                            <td class='py-2 border-2'>" . ($row["status"] == 1 ? "Đang áp dụng" : "Ngưng áp dụng") . "</td>
-                            <td class='py-2 border-2 flex justify-center'>
+                            <td class='py-2 border-2 text-" . ($row["status"] == 1 ? "green" : "red") . "-500'>" . ($row["status"] == 1 ? "Đang áp dụng" : "Ngưng áp dụng") . "</td>
+                            <td class='py-2 border-2 flex justify-center items-center h-28'>
                                 <button class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["promotionID"] . "'>Cập nhật</button>
                                 <button class='btn btn-danger ml-1' name='btnkhoa'>Khóa</button>
                             </td>
@@ -125,7 +125,11 @@ class cPromotions extends mPromotions
     
     public function cLockPromotion($proID) {  
         if ($this->mLockPromotion($proID) != 0) {
-            echo "<script>alert('Khóa khuyến mãi thành công');</script>";
+            echo "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+                confirm('Bạn có chắc chắn khóa tài khoản này?');
+            });
+          </script>";
         }
     }
 }

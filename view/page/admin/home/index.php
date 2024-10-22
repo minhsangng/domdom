@@ -82,14 +82,14 @@
         <div class="h-fit bg-gray-100 rounded-lg p-6">
             <canvas id="revenueChart" class="w-full" height="350"></canvas>
             <?php
-            $sql = "SELECT DAY(orderDate) as date, total FROM `order` WHERE orderDate >= '$startM' AND orderDate <= '$endM' ";
+            $sql = "SELECT DAY(orderDate) as date, SUM(total) as totalOrder FROM `order` WHERE orderDate >= '$startM' AND orderDate <= '$endM' GROUP BY orderDate";
             $result = $conn->query($sql);
             $revenue = 0;
             $data = [];
             
             while ($row = $result->fetch_assoc()) {
-                $data[] = [$row["date"], (float)$row["total"]];
-                $revenue += $row["total"];
+                $data[] = [$row["date"], (float)$row["totalOrder"]];
+                $revenue += $row["totalOrder"];
             }
 
             $jsonData = json_encode($data);
@@ -137,7 +137,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
         <div class="bg-white p-6 rounded-lg shadow-lg">
             <h2 class="text-xl font-semibold mb-4">Khách hàng trong tuần</h2>
             <ul>
@@ -177,19 +177,19 @@
 
             if ($result->num_rows != 0) {
                 echo "
-                        <table class='w-full text-sm'>
+                        <table class='w-full text-sm text-center'>
                         <thead>
                             <tr>
-                                <th class='text-left text-gray-600'>
+                                <th class='text-gray-600 py-2 border-2'>
                                     Mã đơn
                                 </th>
-                                <th class='text-left text-gray-600'>
+                                <th class='text-gray-600 py-2 border-2'>
                                     Ngày đặt
                                 </th>
-                                <th class='text-left text-gray-600'>
-                                    Tổng giá trị
+                                <th class='text-gray-600 py-2 border-2'>
+                                    Tổng đơn
                                 </th>
-                                <th class='text-left text-gray-600'>
+                                <th class='text-gray-600 py-2 border-2'>
                                     Trạng thái
                                 </th>
                             </tr>
@@ -200,16 +200,16 @@
                     $amount = str_replace(".00", "", number_format($row["total"], "2", ".", ","));
                     echo "
                         <tr>
-                            <td class='py-2'>
-                                #101" . $row['orderID'] . "
+                            <td class='py-2 border-2'>
+                                #HD0" . ($row['orderID'] < 10 ? "0".$row['orderID'] : $row['orderID']) . "
                             </td>
-                            <td class='py-2'>
+                            <td class='py-2 border-2'>
                                 " . $row['orderDate'] . "
                             </td>
-                            <td class='py-2'>
-                                " . $amount . "
+                            <td class='py-2 border-2'>
+                                " . $amount . " đ
                             </td>
-                            <td class='py-2'>
+                            <td class='py-2 border-2'>
                                 <span class='bg-" . ($row["status"] == 'Hoàn thành' ? 'green' : 'blue') . "-100 text-" . ($row["status"] == 'Hoàn thành' ? 'green' : 'blue') . "-500 py-1 px-2 rounded-lg'>
                                     " . $row['status'] . "
                                 </span>

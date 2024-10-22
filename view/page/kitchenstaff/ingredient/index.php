@@ -56,11 +56,7 @@ if (isset($_POST["btnkhoa"])) {
                 Danh sách nguyên liệu
             </h2>
             <div class="flex items-center">
-                <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#insertModal">Thêm nguyên liệu</button>
-            </div>
-            <div class="flex items-center">
-                <button class="btn bg-green-100 text-green-500 py-2 px-4 rounded-lg mr-1 hover:bg-green-500 hover:text-white">Xuất <i class="fa-solid fa-table"></i></button>
-                <button class="btn bg-blue-100 text-blue-500 py-2 px-4 rounded-lg ml-1 hover:bg-blue-500 hover:text-white">In <i class="fa-solid fa-print"></i></button>
+                <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#insertModal">Nhập nguyên liệu</button>
             </div>
         </div>
         <div class="h-fit bg-gray-100 rounded-lg p-6">
@@ -73,14 +69,27 @@ if (isset($_POST["btnkhoa"])) {
                             <th class="text-gray-600 border-2 py-2">Đơn vị tính</th>
                             <th class="text-gray-600 border-2 py-2">Giá mua (đồng)</th>
                             <th class="text-gray-600 border-2 py-2">Loại NL</th>
-                            <th class="text-gray-600 border-2 py-2">Trạng thái</th>
-                            <th class="text-gray-600 border-2 py-2">Chức năng</th>
+                            <th class="text-gray-600 border-2 py-2">Số lượng</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        $ctrl = new cIngredients;
-                        $ctrl->cGetAllIngredient();
+                        $sql = "SELECT * FROM ingredient";
+                        $result = $conn->query($sql);
+            
+                        if ($result->num_rows > 0)
+                            while ($row = $result->fetch_assoc()) {
+                                echo "
+                                    <tr>
+                                        <td class='py-2 border-2'>#NL0" . ($row["ingredientID"] < 10 ? "0".$row["ingredientID"] : $row["ingredientID"]) . "</td>
+                                        <td class='py-2 border-2'>" . $row["ingredientName"] . "</td>
+                                        <td class='py-2 border-2'>" . $row["unitOfcalculaton"] . "</td>
+                                        <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
+                                        <td class='py-2 border-2'>" . $row["typeIngredient"] . "</td>
+                                        <td class='py-2 border-2'><input type='number' class='w-14 rounded-lg px-2 py-1'></td>
+                                    </tr>";
+                            }
+                        else echo "<tr><td colspan='7' class='text-center pt-2'>Chưa có dữ liệu!</td></tr>";
                         ?>
                     </tbody>
                 </table>

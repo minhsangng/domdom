@@ -4,7 +4,13 @@
     }
 </style>
 
-<div class="grid grid-cols-1 h-full md:grid-cols-1 gap-6 mt-8">
+<?php
+    echo "<script>document.addEventListener('re-load', () => {
+        document.getElementById('create').classList.add('activeAd');
+    });</script>";
+?>
+
+<div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
     <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
         <div class="w-full p-8 flex">
             <div class="w-3/5 pr-4">
@@ -15,7 +21,7 @@
                     <div class="grid grid-cols-6 gap-2">
                         <?php
                         /* session_destroy(); */
-                        $sql = "SELECT * FROM categories AS C JOIN dishes AS D ON C.categoryID = D.categoryID GROUP BY C.categoryName";
+                        $sql = "SELECT * FROM dish GROUP BY dishCategory";
                         $result = $conn->query($sql);
                         
                         $img_dish = "";
@@ -25,9 +31,9 @@
                             if (!file_exists($img_dish))
                                 $img_dish = "../../../images/nodish.png";
                             echo "<div class='card px-auto py-3 rounded'>
-                                <a href='?i=home&c=" . $row["categoryName"] . "' class='flex flex-col items-center'>
+                                <a href='?i=create&c=" . $row["dishCategory"] . "' class='flex flex-col items-center'>
                                     <img alt='" . $row["dishCategory"] . "' class='mb-2 size-20 rounded-md' src='".$img_dish."'/>
-                                    <h2 class='text-sm font-bold text-center'>" . $row["categoryName"] . "</h2>
+                                    <h2 class='text-sm font-bold text-center'>" . $row["dishCategory"] . "</h2>
                                 </a>
                             </div>";
                         }
@@ -36,7 +42,7 @@
                     <div class="flex mt-3 pt-3 border-t">
                         <?php
                         $cate = str_replace("%20", " ", $_GET["c"]);
-                        $sql = "SELECT * FROM categories AS C JOIN dishes AS D ON C.categoryID = D.categoryID WHERE C.categoryName = '$cate'";
+                        $sql = "SELECT * FROM dish WHERE dishCategory = '$cate'";
                         $result = $conn->query($sql);
                         
                         $img_dish = "";
@@ -47,7 +53,7 @@
                             if (!file_exists($img_dish))
                                 $img_dish = "../../../images/nodish.png";
                             echo "<div class='card px-auto py-3 rounded'>
-                                <a href='?i=home&c=" . $row["dishCategory"] . "&p=" . $row["dishID"] . "' class='text-center flex flex-col items-center'>
+                                <a href='?i=create&c=" . $row["dishCategory"] . "&p=" . $row["dishID"] . "' class='text-center flex flex-col items-center'>
                                     <img alt='" . $row["dishName"] . "' class='mb-2 rounded-md size-28' src='".$img_dish."'/>
                                     <h2 class='text-base font-bold my-1'>" . $row["dishName"] . "</h2>
                                     <p class='text-sm text-red-400'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . " đ</p>
@@ -64,12 +70,12 @@
                     </div>
                     <div class="grid grid-cols-4 gap-4">
                         <?php
-                        $sql = "SELECT * FROM dishes LIMIT 4";
+                        $sql = "SELECT * FROM dish LIMIT 4";
                         $result = $conn->query($sql);
 
                         while ($row = $result->fetch_assoc()) {
                             echo "<div class='card px-auto py-3 rounded'>
-                                <a href='?i=home&p=" . $row["dishID"] . "' class='text-center flex flex-col items-center'>
+                                <a href='?i=create&p=" . $row["dishID"] . "' class='text-center flex flex-col items-center'>
                                     <img alt='" . $row["dishName"] . "' class='mb-2 rounded-md size-28' src='../../../images/dish/" . $row["image"] . "'/>
                                     <h2 class='text-base font-bold my-1'>" . $row["dishName"] . "</h2>
                                     <p class='text-sm text-red-400'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . " đ</p>
@@ -111,7 +117,7 @@
                         $total = 0;
                         if (isset($_SESSION["products"])) {
                             foreach ($_SESSION["products"] as $p) {
-                                $sql = "SELECT * FROM dishes WHERE dishID = $p";
+                                $sql = "SELECT * FROM dish WHERE dishID = $p";
                                 $result = $conn->query($sql);
 
                                 if ($row = $result->fetch_assoc()) {

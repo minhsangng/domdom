@@ -14,7 +14,7 @@
       <div class="grid grid-cols-6 gap-x-5 gap-y-2">
         <?php
         $ctrl = new cCategories();
-        $ctrl->showCategoriesHome("SELECT * FROM dish GROUP BY dishCategory");
+        $ctrl->showCategoriesHome();
         ?>
       </div>
     </div>

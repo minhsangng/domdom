@@ -11,58 +11,59 @@
         $id = $_POST["btnsua"];
         $status = $_POST["status"];
         if (isset($_POST["btnsua"])) {
-            $sql = "UPDATE orders SET status = '$status' WHERE orderID = $id";
+            $sql = "UPDATE ordee SET status = '$status' WHERE orderID = $id";
             $result = $conn->query($sql);
         }
         
-        $sql = "SELECT * FROM orders AS O JOIN customers AS C ON O.customerID = C.customerID JOIN order_dishes AS OD ON OD.orderID = O.orderID JOIN dishes AS D ON D.dishID = OD.dishID ORDER BY O.orderID ASC";
+        $sql = "SELECT * FROM `order` AS O JOIN `customer` AS C ON O.customerID = C.customerID JOIN `order_dish` AS OD ON OD.orderID = O.orderID JOIN `dish` AS D ON D.dishID = OD.dishID";
         $result = $conn->query($sql);
 
-        if ($result->num_rows != 0) {
+        if ($result->num_rows > 0) {
             echo "
-            <table class='w-full text-sm'>
+            <table class='w-full text-base text-center'>
                 <thead>
                     <tr>
-                        <th class='text-left text-gray-600'>
-                            <p class='mb-3'>Mã đơn</p>
-                        </th>
-                        <th class='text-left text-gray-600'>
-                            <p class='mb-3'>Ngày &amp; giờ</p>
-                        </th>
-                        <th class='text-left text-gray-600'>
-                            <p class='mb-3'>Tổng giá trị</p>
-                        </th>
-                        <th class='text-left text-gray-600'>
-                            <p class='mb-3'>Trạng thái</p>
-                        </th>
+                        <th class='text-gray-600 border-2 py-2'>Mã đơn</th>
+                        <th class='text-gray-600 border-2 py-2'>Ngày &amp; giờ</th>
+                        <th class='text-gray-600 border-2 py-2'>Tổng giá trị</th>
+                        <th class='text-gray-600 border-2 py-2'>Trạng thái</th>
+                        <th class='text-gray-600 border-2 py-2'>Chức năng</th>
                     </tr>
                 </thead>
             <tbody>
             ";
             while ($row = $result->fetch_assoc()) {
-                $amount = number_format($row["totalAmount"], 2, '.', ',');
+                $amount = number_format($row["total"], 2, '.', ',');
                 $orderID = $row["orderID"];
-                $cusName = $row["customerName"];
+                $cusName = $row["fulName"];
                 $orderName = $row["dishName"];
                 $orderQuantity = $row["quantity"];
                 $orderDate = $row["orderDate"];
-                $status = $row["status"];
+                $status = "";
+                
+                switch ($row["status"]) {
+                    case 0: $status = "Chờ nhận đơn";
+                    break;
+                    case 1: $status = "Đang chế biến";
+                    break;
+                    case 2: $status = "Chế biến xong";
+                    break;
+                    case 3: $status = "Hoàn thành";
+                    break;
+                    case 4: $status = "Đã hủy";
+                    break;
+                }
 
                 echo "
                 <tr data-id='$orderID' data-cus='$cusName' data-name='$orderName' data-quan='$orderQuantity' data-date='$orderDate' data-amount='$amount' data-status='$status' class='cursor-pointer'>
-                    <td>
-                        <p class='mb-3'>#101" . $row["orderID"] . "</p>
+                    <td class='border-2 py-2'>#101" . $row["orderID"] . "</td>
+                    <td class='border-2 py-2'>" . $row["orderDate"] . "</td>
+                    <td class='border-2 py-2'>" . $amount . "</td>
+                    <td class='border-2 py-2'>
+                        <span class='bg-" . ($row["status"] == 4 ? "red" : "green") . "-100 text-" . ($row["status"] == 4 ? "red" : "green") . "-500 py-1 px-2 rounded-lg w-fit'>" . $status . "</span>
                     </td>
-                    <td>
-                        <p class='mb-3'>" . $row["orderDate"] . "</p>
-                    </td>
-                    <td>
-                        <p class='mb-3'>" . $amount . "</p>
-                    </td>
-                    <td>
-                        <p class='bg-" . ($row["status"] == 'Hoàn thành' ? 'green' : 'blue') . "-100 text-" . ($row["status"] == 'Hoàn thành' ? 'green' : 'blue') . "-500 py-1 px-2 rounded-lg w-fit'>
-                            " . $row["status"] . "
-                        </p>
+                    <td class='border-2 py-2'>
+                        <button class='btn btn-danger'>Chuyển</button>
                     </td>
                 </tr>
             ";
@@ -107,7 +108,7 @@
                     const status = this.getAttribute("data-status");
                     let modalBody = document.querySelector("#orderModal .modal-body");
                     let modalFooter = document.querySelector("#orderModal .modal-footer");
-                    const arrStatus = ["Hoàn thành", "Sẵn sàng giao", "Đang chế biến", "Đã chế biến xong"];
+                    const arrStatus = ["Hoàn thành", "Đang chế biến", "Đã chế biến xong"];
                     const arrNew = [];
 
                     const index = arrStatus.indexOf(status);

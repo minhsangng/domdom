@@ -50,10 +50,10 @@ if (isset($_POST["btnthemmon"])) {
 if (isset($_POST["btncapnhat"])) {
 
     echo "<script>
-        window.onload = function openModal() {
+        document.addEventListener('DOMContentLoaded', function() {
             var modalUpdate = new bootstrap.Modal(document.getElementById('updateModal')); 
             modalUpdate.show();
-        };
+        });
     </script>";
     
     $dishID = $_POST["btncapnhat"];
@@ -123,7 +123,7 @@ if (isset($_POST["btnkhoa"])) {
                             <th class="text-gray-600 border-2 py-2">Mã món</th>
                             <th class="text-gray-600 border-2 py-2">Tên món</th>
                             <th class="text-gray-600 border-2 py-2">Phân loại</th>
-                            <th class="text-gray-600 border-2 py-2">Giá bán</th>
+                            <th class="text-gray-600 border-2 py-2">Giá bán (đ</th>
                             <th class="text-gray-600 border-2 py-2">Trạng thái</th>
                             <th class="text-gray-600 border-2 py-2">Chức năng</th>
                         </tr>
@@ -150,13 +150,13 @@ if (isset($_POST["btnkhoa"])) {
                         <table>
                             <tr>
                                 <td>
-                                    <label for="name" class="w-full py-2"><b>Tên món ăn <span class="text-red-500">*</span></b></label>
+                                    <label for="name" class="w-full py-2"><b>Tên món ăn</b></label>
                                     <input type="text" class="w-full form-control" name="name" value="<?php echo $_SESSION["dishName"]; ?>">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="cate" class="w-full py-2"><b>Loại món ăn <span class="text-red-500">*</span></b></label>
+                                    <label for="cate" class="w-full py-2"><b>Loại món ăn</b></label>
                                     <select name="cate" id="cate" class="w-full form-control">
                                         <?php
                                             $category = $_SESSION["category"];
@@ -173,43 +173,43 @@ if (isset($_POST["btnkhoa"])) {
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="price" class="w-full py-2"><b>Giá bán <span class="text-red-500">*</span></b></label>
+                                    <label for="price" class="w-full py-2"><b>Giá bán</b></label>
                                     <input type="number" class="w-full form-control" name="price" value="<?php echo $_SESSION["price"]; ?>">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="ingredient" class="w-full py-2"><b>Nguyên liệu <span class="text-red-500">*</span></b></label>
+                                    <label for="ingredient" class="w-full py-2"><b>Nguyên liệu</b></label>
                                     <input type="text" class="w-full form-control" name="ingredient">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="unit" class="w-full py-2"><b>Đơn vị tính <span class="text-red-500">*</span></b></label>
+                                    <label for="unit" class="w-full py-2"><b>Đơn vị tính</b></label>
                                     <input type="text" class="w-full form-control" name="unit">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="quantity" class="w-full py-2"><b>Số lượng NL <span class="text-red-500">*</span></b></label>
+                                    <label for="quantity" class="w-full py-2"><b>Số lượng NL</b></label>
                                     <input type="number" class="w-full form-control" name="quantity">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="prepare" class="w-full py-2"><b>Quy trình chế biến <span class="text-red-500">*</span></b></label>
+                                    <label for="prepare" class="w-full py-2"><b>Quy trình chế biến</b></label>
                                     <input type="text" class="w-full form-control" name="prepare" value="<?php echo $_SESSION["prepare"]; ?>">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="image" class="w-full py-2"><b>Hình ảnh <span class="text-red-500">*</span></b></label>
+                                    <label for="image" class="w-full py-2"><b>Hình ảnh</b></label>
                                     <input type="file" class="w-full form-control" name="image">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="status" class="w-full py-2"><b>Trạng thái kinh doanh <span class="text-red-500">*</span></b></label>
+                                    <label for="status" class="w-full py-2"><b>Trạng thái kinh doanh</b></label>
                                     <select type="text" class="w-full form-control" name="status">
                                         <option value="1">Đang kinh doanh</option>
                                         <option value="0">Ngừng kinh doanh</option>

@@ -133,36 +133,6 @@
     </style>
 </head>
 
-<?php
-if (isset($_POST["btnlogin"])) {
-    $email = $_POST["email"];
-    $psw = $_POST["psw"];
-    $sql = "SELECT * FROM user";
-    $result = $conn->query($sql);
-
-    while ($row = $result->fetch_assoc()) {
-
-        if ($email == $row["email"] && $psw == $row["password"]) {
-            $_SESSION["userName"] = $row["userName"];
-            switch ($row["roleID"]) {
-                case 1:
-                    echo "<script>window.location.href = 'view/page/admin/index.php'</script>";
-                    break;
-                case 2:
-                    echo "<script>window.location.href = 'view/page/manager/index.php'</script>";
-                    break;
-                case 3:
-                    echo "Nhân viên nhận đơn";
-                    break;
-                case 4:
-                    echo "Nhân viên bếp";
-                    break;
-            }
-        }
-    }
-}
-?>
-
 <body style="scroll-behavior: smooth; font-family: 'Playwrite DE Grund', cursive; background-color: var(--third-color);">
     <header class="fixed w-full top-0 z-10">
         <div class="container mx-auto px-6">
@@ -182,18 +152,18 @@ if (isset($_POST["btnlogin"])) {
                         </div>
                     </li>
                     <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4">
-                        <a class="nav-link" href="index.php?p=partyorder" id="partyorder">Dịch vụ</a>
+                        <a class="nav-link" href="index.php?p=partypackage" id="partypackage">Dịch vụ</a>
                     </li>
                     <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4">
                         <a class="nav-link" href="index.php?p=discount" id="discount">Khuyến mãi</a>
                     </li>
                 </ul>
                 <ul class="nav ml-auto py-4 py-md-0">
-                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4" data-bs-toggle="modal" data-bs-target="#cartModal">
+                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4" data-bs-toggle="modal" data-bs-target="#cartModal" title="Giỏ hàng">
                         <a class="nav-link" href="#" id="cart"><i class="fas fa-shopping-cart text-xl"> </i></a>
                     </li>
-                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4" data-bs-toggle="modal" data-bs-target="#userModal">
-                        <a class="nav-link" href="#" id="user"><i class="fas fa-user text-xl"> </i></a>
+                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4" data-bs-toggle="modal" data-bs-target="#followModal" title="Theo dõi đơn hàng">
+                        <a class="nav-link" href="#" id="flCart"><i class="fa-solid fa-eye text-lg"></i></a>
                     </li>
                 </ul>
             </nav>
@@ -216,13 +186,13 @@ if (isset($_POST["btnlogin"])) {
                                     <span class="text-gray-500"></span>
                                     <div class="flex items-center border rounded">
                                         <button type="button" class="px-2 py-1" onclick="increase()">-</button>
-                                        <span class="px-2" id="quantityCart"></span>
+                                        <span class="px-2" id="quantityCart">2</span>
                                         <button type="button" class="px-2 py-1" onclick="decrease()">+</button>
                                     </div>
                                 </div>
                             </div>
                             <div class="text-right">
-                                <p class="text-lg font-semibold">30,000 đ</p>
+                                <p class="text-lg font-semibold">60,000 đ</p>
                                 <div class="mt-2">
                                     <button class="btn btn-secondary w-full">
                                         <i class="far fa-trash-alt"></i>Xóa
@@ -233,48 +203,298 @@ if (isset($_POST["btnlogin"])) {
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-danger" name="btntt">Thanh toán</button>
+                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal" data-bs-target="#payModal">Đặt món</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
-    <div class="modal modalUser" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+    
+    <div class="modal modalPay" id="payModal" tabindex="-1" aria-labelledby="payModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="" method="POST" class="form-container w-full">
+                <form action="" method="POST">
                     <div class="modal-header flex justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="cartModalLabel" style="color: #E67E22;">Đăng nhập</h2>
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="payModalLabel" style="color: #E67E22;">Thông tin đơn hàng</h2>
                     </div>
-                    <div class="modal-body">
-                        <div>
-                            <label for="email" class="w-full py-2"><b>Email</b></label>
-                            <input type="email" class="w-full form-control" placeholder="Địa chỉ email" name="email" id="email" required>
+                    <div class=" modal-body">
+                        <div class="flex items-center border-b pb-4 mb-4">
+                            <form action="" method="POST">
+                                <table class="w-full">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-1">Tên khách hàng</label>
+                                                <input type="text" name="" id="" class="form-control mb-2">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-1">Số điện thoại</label>
+                                                <input type="text" name="" id="" class="form-control mb-2">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-1">Địa chỉ</label>
+                                                <input type="text" name="" id="" class="form-control mb-2">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-1">Email</label>
+                                                <input type="email" name="" id="" class="form-control mb-2">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
                         </div>
-
-                        <div>
-                            <label for="psw" class="w-full py-2"><b>Password</b></label>
-                            <input type="password" class="w-full form-control" placeholder="Mật khẩu" name="psw" id="psw" required>
+                        <div class="flex items-center border-b pb-4 mb-4">
+                            <img alt="Blue T-shirt" class="w-20 h-20 object-cover rounded" height="100" src="images/dish/burgerbo.png" width="100" />
+                            <div class="ml-4 flex-1">
+                                <h3 class="text-lg font-semibold">Burger bò</h3>
+                                <div class="flex items-center mt-2">
+                                    <span class="text-gray-500"></span>
+                                    <div class="flex items-center border rounded">
+                                        <button type="button" class="px-2 py-1" onclick="increase()">-</button>
+                                        <span class="px-2" id="quantityCart">2</span>
+                                        <button type="button" class="px-2 py-1" onclick="decrease()">+</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-lg font-semibold">60,000 đ</p>
+                                <div class="mt-2">
+                                    <button class="btn btn-secondary w-full">
+                                        <i class="far fa-trash-alt"></i>Xóa
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-
-                        <div class="text-right text-sm text-red-400 my-2">
-                            <a href="">Quên mật khẩu?</a>
-                        </div>
-
-                        <div class="flex justify-center items-center text-sm mt-4">
-                            <p>Chưa có tài khoản? <a href="" class="text-blue-600">Đăng ký</a></p>
+                        <div class="border-b pb-4 mb-4">
+                            <div class="w-full">
+                                <label for="" class="font-bold mt-2">Nhập mã khuyến mãi</label>
+                                <input type="text" name="" id="" class="form-control mt-2">
+                            </div>
+                            <div class="w-full">
+                                <label for="" class="font-bold mt-2">Ghi chú</label>
+                                <input type="text" name="" id="" class="form-control mt-2">
+                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="submit" class="btn btn-primary" name="btnlogin">Đăng nhập</button>
+                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal" data-bs-target="#checkoutModal">Xác nhận</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal modalCheckout" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="" method="POST">
+                    <div class="modal-header flex justify-center">
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="checkoutModalLabel" style="color: #E67E22;">Thông tin thanh toán</h2>
+                    </div>
+                    <div class=" modal-body">
+                        <div class="flex items-center border-b pb-4 mb-4">
+                            <img alt="" class="w-20 h-20 object-cover rounded" height="100" src="images/dish/burgerbo.png" width="100" />
+                            <div class="ml-4 flex justify-between items-center w-full">
+                                <h3 class="text-lg font-semibold">Burger bò</h3>
+                                <p class="px-2" id="quantityCart">x2</p>
+                                <p class="text-lg font-semibold">60,000 đ</p>
+                            </div>
+                        </div>
+                        <div class="border-b pb-4 mb-4">
+                            <label for="" class="font-bold w-full mb-2">Phương thức thanh toán</label>
+                            <ul class="w-full">
+                                <li><input type="radio" name="" id="" class="mr-2">Ví điện tử</li>
+                                <li><input type="radio" name="" id="" class="mr-2">Thẻ ngân hàng</li>
+                            </ul>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <p class="font-bold text-xl">Tổng đơn</p>
+                            </div>
+                            <div>
+                                <p class="text-lg font-semibold">60,000 đồng</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal" data-bs-target="#payModal">Thanh toán</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal modalFollow" id="followModal" tabindex="-1" aria-labelledby="followModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="" method="POST">
+                    <div class="modal-header flex justify-center">
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="followModalLabel" style="color: #E67E22;">Theo dõi đơn hàng</h2>
+                    </div>
+                    <div class=" modal-body">
+                        <div class="w-full border-b pb-4 mb-4">
+                            <label for="" class="font-bold text-lg mb-2">Nhập mã đơn hàng</label>
+                            <input type="text" name="" id="" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal" data-bs-target="#followDetailModal">Xác nhận</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal modalFollowDetail" id="followDetailModal" tabindex="-1" aria-labelledby="followDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="" method="POST">
+                    <div class="modal-header flex justify-center">
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="followDetailModalLabel" style="color: #E67E22;">Thông tin đơn hàng</h2>
+                    </div>
+                    <div class=" modal-body">
+                        <div class="w-full border-b pb-4 mb-4">
+                            <form action="" method="POST">
+                                <table class="w-full">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Mã đơn hàng</label>
+                                                <input type="text" name="" id="" class="form-control mb-2" value="#DH012">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Ngày đặt</label>
+                                                <input type="text" name="" id="" class="form-control mb-2" value="23-10-2024">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Tên món (gói tiệc)</label>
+                                                <input type="text" name="" id="" class="form-control mb-2" value="Burger bò">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Số lượng</label>
+                                                <input type="text" name="" id="" class="form-control mb-2" value="2">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Tổng tiền</label>
+                                                <input type="text" name="" id="" class="form-control mb-2" value="60,000">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Ghi chú</label>
+                                                <input type="text" name="" id="" class="form-control mb-2">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Trạng thái</label>
+                                                <select type="text" name="" id="" class="form-control mb-2">
+                                                    <option value="">Chờ chế biến</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal" data-bs-target="#payModal">Lưu</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
+    <div class="modal modalParty z-50" id="partyModal" tabindex="-1" aria-labelledby="partyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="" method="POST">
+                    <div class="modal-header flex justify-center">
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="partyModalLabel" style="color: #E67E22;">Thông tin đặt tiệc</h2>
+                    </div>
+                    <div class=" modal-body">
+                        <div class="w-full border-b pb-4 mb-4">
+                            <form action="" method="POST">
+                                <table class="w-full">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Họ tên</label>
+                                                <input type="text" name="" id="" class="form-control mb-2" value="Nguyễn Minh Sang">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Số điện thoại</label>
+                                                <input type="text" name="" id="" class="form-control mb-2" value="0926458232">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Email</label>
+                                                <input type="text" name="" id="" class="form-control mb-2" value="sang@gmail.com">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Ngày diễn ra</label>
+                                                <input type="text" name="" id="" class="form-control mb-2" value="26-10-2024">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Giờ diễn ra</label>
+                                                <input type="text" name="" id="" class="form-control mb-2" value="14:00">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Yêu cầu khác</label>
+                                                <input type="text" name="" id="" class="form-control mb-2">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                        <div class="border-b pb-4 mb-4">
+                            <label for="" class="font-bold w-full mb-2">Phương thức thanh toán</label>
+                            <ul class="w-full">
+                                <li><input type="radio" name="" id="" class="mr-2">Ví điện tử</li>
+                                <li><input type="radio" name="" id="" class="mr-2">Thẻ ngân hàng</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal" data-bs-target="#payModal">Xác nhận</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
     <div class="banner w-full flex items-center relative">
         <div id="carousel" class="carousel slide w-full" data-bs-ride="carousel">
             <div class="carousel-indicators" id="ci">

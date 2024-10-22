@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Quản trị hệ thống | QLCH</title>
+    <title>Quản trị hệ thống | Nhân viên bếp</title>
     <link rel="shortcut icon" href="../../../images/logo-nobg.png" type="image/x-icon" />
 
     <!-- Font Awesome CSS -->
@@ -31,7 +31,7 @@
     <!-- Font Awesome JS -->
     <script src="../../js/all.js"></script>
 
-    <!-- Bootstrap Bundle JS  -->
+    <!-- Bootstrap JS (bundle includes Popper.js) -->
     <script src="../../js/bootstrap.bundle.min.js"></script>
 
     <style>
@@ -48,8 +48,7 @@
             display: inline-block;
             width: 150px;
         }
-
-
+        
         #calendar {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -79,7 +78,7 @@
             display: none;
         }
 
-        #info {
+        #workshift {
             border: 1px solid #ccc;
             padding: 20px;
             margin-top: 20px;
@@ -95,71 +94,43 @@ include("../../../controller/cPromotions.php");
 include("../../../controller/cDishes.php");
 include("../../../controller/cIngredients.php");
 
-if ($_SESSION["login"] != 1)
-    echo "<script>window.location.href = '../login/';</script>";
-
 $db = new Database();
 $conn = $db->connect();
-
-if (isset($_POST["btnxem"])) {
-    $_SESSION["startM"] = $_POST["startM"];
-    $_SESSION["endM"] = $_POST["endM"];
-
-    $daystart = explode("-", $_SESSION["startM"]);
-    $startM = implode("-", array($daystart[0], $daystart[1], $daystart[2]));
-    $dayend = explode("-", $_SESSION["endM"]);
-    $endM = implode("-", array($dayend[0], $dayend[1], $dayend[2]));
-} else {
-    $startM = date("Y-m-01");
-    $endM = date("Y-m-t");
-}
-
-$startW = date("Y-m-d", strtotime("monday this week"));
-$endW = date("Y-m-d", strtotime("sunday this week"));
 ?>
 
 <body class="bg-gray-900" style="scroll-behavior: smooth; font-family: 'Playwrite DE Grund', cursive;">
-    <div class="flex flex-col md:flex-row h-full" id="container">
-        <div class=" w-full md:w-64">
+    <div class="flex flex-col md:flex-row">
+        <div class="w-fit md:w-64">
             <div class="flex items-center justify-center h-20 w-full bg-gray-500 py-5">
                 <a href="index.php">
                     <img src="../../../images/logo-nobg.png" alt="Logo" class="size-20">
                 </a>
             </div>
             <nav class="mt-10">
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="admin" href="index.php">
-                    <i class="fas fa-tachometer-alt mr-3"></i>Tổng quan
-                </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="employee" href="index.php?i=employee">
-                    <i class="fa-solid fa-users-gear mr-3"></i></i>Xem thông tin NV
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="home" href="index.php?i=home">
+                    <i class="fa-solid fa-home mr-3"></i>Trang chủ
                 </a>
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="ingredient" href="index.php?i=ingredient">
-                    <i class="fa-solid fa-cubes mr-3"></i>Tính toán ng.liệu
+                    <i class="fa-solid fa-folder-plus mr-3"></i>Nhập nguyên liệu
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="revenue" href="index.php?i=revenue">
-                    <i class="fa-solid fa-file-invoice-dollar mr-3"></i>Xem thống kê
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="update" href="index.php?i=update">
+                    <i class="fa-solid fa-pen-to-square mr-3"></i>Cập nhật đơn hàng
                 </a>
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="shift" href="index.php?i=shift">
-                    <i class="fa-regular fa-calendar-days mr-3"></i>Phân ca
+                    <i class="fa-regular fa-calendar-days mr-3"></i>Đăng ký ca làm
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="attendance" href="index.php?i=attendance">
-                    <i class="fa-solid fa-clock mr-3"></i>Chấm công
-                </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="proposal" href="index.php?i=proposal">
-                    <i class="fa-solid fa-paper-plane mr-3"></i>Đề xuất
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="info" href="index.php?i=info">
+                    <i class="fa-solid fa-lightbulb mr-3"></i>Xem TT công việc
                 </a>
             </nav>
         </div>
-        <div class="bg-gray-100 flex-1 p-6 h-fit pb-2 md:p-10" id="right">
+        <div class="bg-gray-100 flex-1 p-6 pb-2 md:p-10" id="right">
             <div class="flex justify-between items-center mb-6 hover:cursor-pointer">
                 <div class="relative w-1/2 flex">
                     <input class="w-full py-2 px-4 mr-2 rounded-lg border border-gray-300" placeholder="Tìm kiếm..." type="text" />
                     <button type="submit" class="btn btn-primary ml-2 px-3">Tìm</button>
                 </div>
                 <div class="flex items-center hover:cursor-pointer">
-                    <div class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
-                        <i class="fa-regular fa-envelope"></i>
-                    </div>
                     <div class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
                         <i class="fa-regular fa-bell"></i>
                     </div>
@@ -168,11 +139,19 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                         <span class="text-xs font-bold ml-1">
                             <?php
                             echo $_SESSION["userName"];
+                            
+                            $userName = $_SESSION["userName"];
+                            
+                            $sql = "SELECT userID FROM user WHERE userName = '$userName'";
+                            $result = $conn->query($sql);
+                            $row = $result->fetch_assoc();
+                            
+                            $_SESSION["userID"] = $row["userID"];
                             ?>
                         </span>
 
                         <div class="subnav absolute top-11 right-0 bg-white rounded-lg bg-gray-500 h-fit p-2 text-center border-2">
-                            <a href="index.php?m=logout">Đăng xuất <i class="fa-solid fa-right-from-bracket"></i></a>
+                            <a href="index.php?m=lgout">Đăng xuất <i class="fa-solid fa-right-from-bracket"></i></a>
                         </div>
                     </div>
                 </div>
@@ -181,18 +160,16 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
 
             <?php
             $i = "";
-            if (isset($_REQUEST["i"])) {
+            if (isset($_REQUEST["i"]))
                 $i = $_REQUEST["i"];
-            } else {
+            else
                 $i = "home";
-            }
 
-            if ($i != "home") {
+            if ($i != "home")
                 require("" . $_REQUEST["i"] . "/index.php");
-            } else {
+            else if ($i == "home")
                 require("home/index.php");
-            }
-            
+
             if (isset($_GET["m"])) {
                 unset($_SESSION["userName"]);
                 unset($_SESSION["login"]);
@@ -213,13 +190,13 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 rightSession.style.height = "100vh";
             }
         }
-        
+
         window.onload = adjustContentHeight;
 
         window.onresize = adjustContentHeight;
-        
+    
         const navAd = document.querySelectorAll(".adnav");
-        let idActiveAd = "admin";
+        let idActiveAd = "home";
 
         navAd.forEach(function(item) {
             item.addEventListener("click", () => {
@@ -228,7 +205,10 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
         });
 
         if (window.location.search != "")
-            idActiveAd = window.location.search.slice(3);
+            if (window.location.search.slice(3).includes("home"))
+                idActiveAd = "home";
+            else idActiveAd = window.location.search.slice(3);
+
 
         window.addEventListener("load", () => {
             navAd.forEach(function(item) {
@@ -236,6 +216,13 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 else item.classList.remove("activeAd");
             });
         });
+
+        function logout() {
+            <?php
+            unset($_SESSION["loginstaff"]);
+            unset($_SESSION["name"]);
+            ?>
+        }
     </script>
 </body>
 

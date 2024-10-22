@@ -1,7 +1,7 @@
 <?php
 $currentPath = $_SERVER["REQUEST_URI"];
 $path = "";
-if (strpos($currentPath, "admin") == true || strpos($currentPath, "manager") !== false)
+if (strpos($currentPath, "admin") == true || strpos($currentPath, "manager") == true || strpos($currentPath, "orderstaff") == true || strpos($currentPath, "kitchenstaff") == true)
     $path = "../../../model/mDishes.php";
 else $path = "./model/mDishes.php";
 
@@ -68,7 +68,7 @@ class cDishes extends mDishes
                         <td class='py-2 border-2'><span class='bg-" . ($row["businessStatus"] == 1 ? "green" : "red") . "-100 text-" . ($row["businessStatus"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["businessStatus"] == 1 ? "Đang kinh doanh" : "Ngưng kinh doanh") . "</span></td>
                         <td class='py-2 border-2 flex justify-center'>
                             <button type='submit' class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["dishID"] . "'>Cập nhật</button>
-                            <button type='submit' class='btn btn-danger ml-1' name='btnkhoa' value='".$row["dishID"]."'>" . ($row["businessStatus"] == 1 ? "Khóa" : "Mở khóa")."</button>
+                            <button type='submit' class='btn btn-danger ml-1' name='btnkhoa' value='".$row["dishID"]."'>" . ($row["businessStatus"] == 1 ? "Khóa" : "Mở")."</button>
                         </td>
                     </tr>";
             }

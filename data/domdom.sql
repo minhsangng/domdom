@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 20, 2024 at 05:47 PM
+-- Generation Time: Oct 22, 2024 at 10:48 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `domdomv1`
+-- Database: `domdom`
 --
 
 -- --------------------------------------------------------
@@ -139,12 +139,14 @@ INSERT INTO `employee_shift` (`employeeshiftID`, `shiftID`, `userID`, `date`, `s
 (12, 2, 11, '2024-10-20', 0),
 (13, 1, 7, '2024-10-21', 0),
 (14, 2, 12, '2024-10-21', 0),
-(15, 1, 8, '2024-10-22', 0),
+(15, 1, 8, '2024-10-22', 1),
 (16, 2, 13, '2024-10-22', 0),
 (17, 1, 9, '2024-10-23', 0),
 (18, 2, 14, '2024-10-23', 0),
 (19, 1, 10, '2024-10-24', 0),
-(20, 2, 15, '2024-10-24', 0);
+(20, 2, 15, '2024-10-24', 0),
+(24, 1, 11, '2024-10-23', 0),
+(25, 2, 16, '2024-10-23', 0);
 
 -- --------------------------------------------------------
 
@@ -169,17 +171,26 @@ CREATE TABLE `ingredient` (
   `ingredientName` varchar(100) NOT NULL,
   `unitOfcalculaton` varchar(100) NOT NULL,
   `price` decimal(11,2) NOT NULL,
-  `typeIngredient` varchar(50) NOT NULL
+  `typeIngredient` varchar(50) NOT NULL,
+  `status` int(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
 
 --
 -- Dumping data for table `ingredient`
 --
 
-INSERT INTO `ingredient` (`ingredientID`, `ingredientName`, `unitOfcalculaton`, `price`, `typeIngredient`) VALUES
-(1, 'Thịt gà', 'kg', 80000.00, 'NL tươi'),
-(2, 'Thịt heo', 'kg', 120000.00, 'Đông lạnh'),
-(3, 'Thịt bò', 'kg', 200000.00, 'Đông lạnh');
+INSERT INTO `ingredient` (`ingredientID`, `ingredientName`, `unitOfcalculaton`, `price`, `typeIngredient`, `status`) VALUES
+(6, 'Thịt gà', 'kg', 80000.00, 'Thịt', 1),
+(7, 'Bột chiên', 'gram', 15000.00, 'Gia vị', 1),
+(8, 'Dầu ăn', 'chai', 40000.00, 'Gia vị', 1),
+(9, 'Sốt cay', 'ml', 15000.00, 'Gia vị', 1),
+(10, 'Phô mai', 'gram', 30000.00, 'Gia vị', 1),
+(11, 'Bánh burger', 'cái', 5000.00, 'Bánh mì', 1),
+(12, 'Rau xà lách', 'gram', 2000.00, 'Rau củ', 1),
+(13, 'Sốt mayonnaise', 'chai', 20000.00, 'Gia vị', 1),
+(14, 'Thịt bò', 'kg', 12000.00, 'Thịt', 1),
+(15, 'Khoai tây', 'gram', 10000.00, 'Rau củ', 1),
+(16, 'Muối', 'gram', 20000.00, 'Gia vị', 1);
 
 -- --------------------------------------------------------
 
@@ -207,7 +218,7 @@ CREATE TABLE `order` (
   `sumOfQuantity` int(10) NOT NULL,
   `paymentMethod` varchar(50) NOT NULL,
   `note` varchar(100) DEFAULT NULL,
-  `status` varchar(50) NOT NULL,
+  `status` int(1) DEFAULT 0,
   `customerID` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
 
@@ -216,8 +227,9 @@ CREATE TABLE `order` (
 --
 
 INSERT INTO `order` (`orderID`, `orderDate`, `subTotal`, `total`, `sumOfQuantity`, `paymentMethod`, `note`, `status`, `customerID`) VALUES
-(1, '2024-10-15', 0.00, 95000.00, 3, 'Tiền mặt', 'Không có', 'Hoàn thành', 1),
-(2, '2024-10-16', 0.00, 135000.00, 4, 'Thẻ', 'Không có', 'Hoàn thành', 2);
+(1, '2024-10-22', 0.00, 150000.00, 6, 'Tiền mặt', NULL, 1, 1),
+(2, '2024-10-22', 0.00, 120000.00, 4, 'Thẻ', NULL, 0, 2),
+(3, '2024-10-23', 0.00, 30000.00, 2, 'Thẻ', NULL, 0, 3);
 
 -- --------------------------------------------------------
 
@@ -231,6 +243,16 @@ CREATE TABLE `order_dish` (
   `quantity` int(10) NOT NULL,
   `totalPrice` decimal(11,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
+
+--
+-- Dumping data for table `order_dish`
+--
+
+INSERT INTO `order_dish` (`orderID`, `dishID`, `quantity`, `totalPrice`) VALUES
+(1, 1, 4, 120000.00),
+(1, 16, 2, 30000.00),
+(2, 2, 4, 120000.00),
+(3, 8, 2, 30000.00);
 
 -- --------------------------------------------------------
 
@@ -298,10 +320,18 @@ INSERT INTO `promotion` (`promotionID`, `promotionName`, `discountPercentage`, `
 
 CREATE TABLE `proposal` (
   `proposalID` int(5) NOT NULL,
+  `userID` int(5) NOT NULL,
   `typeOfProposal` varchar(50) NOT NULL,
   `content` varchar(255) NOT NULL,
-  `status` varchar(50) NOT NULL
+  `status` int(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
+
+--
+-- Dumping data for table `proposal`
+--
+
+INSERT INTO `proposal` (`proposalID`, `userID`, `typeOfProposal`, `content`, `status`) VALUES
+(1, 2, 'Đề xuất khác', 'Đổi quản lý', 0);
 
 -- --------------------------------------------------------
 
@@ -353,21 +383,22 @@ INSERT INTO `shift` (`shiftID`, `shiftName`, `startTime`, `endTime`) VALUES
 
 CREATE TABLE `store` (
   `storeID` int(5) NOT NULL,
-  `storeName` varchar(100) DEFAULT NULL,
-  `address` varchar(150) DEFAULT NULL,
-  `status` varchar(50) DEFAULT NULL
+  `storeName` varchar(100) NOT NULL,
+  `address` varchar(150) NOT NULL,
+  `contact` varchar(15) NOT NULL,
+  `status` int(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_vietnamese_ci;
 
 --
 -- Dumping data for table `store`
 --
 
-INSERT INTO `store` (`storeID`, `storeName`, `address`, `status`) VALUES
-(1, 'Cửa hàng Đom Đóm 1', 'Gò Vấp - Đường 1', 'Hoạt động'),
-(2, 'Cửa hàng Đom Đóm 2', 'Gò Vấp - Đường 2', 'Hoạt động'),
-(3, 'Cửa hàng Đom Đóm 3', 'Gò Vấp - Đường 3', 'Hoạt động'),
-(4, 'Cửa hàng Đom Đóm 4', 'Gò Vấp - Đường 4', 'Hoạt động'),
-(5, 'Cửa hàng Đom Đóm 5', 'Gò Vấp - Đường 5', 'Hoạt động');
+INSERT INTO `store` (`storeID`, `storeName`, `address`, `contact`, `status`) VALUES
+(1, 'Cửa hàng Đom Đóm 1', 'Gò Vấp - Đường 1', '0935624892', 1),
+(2, 'Cửa hàng Đom Đóm 2', 'Gò Vấp - Đường 2', '0935625462', 1),
+(3, 'Cửa hàng Đom Đóm 3', 'Gò Vấp - Đường 3', '0965232245', 1),
+(4, 'Cửa hàng Đom Đóm 4', 'Gò Vấp - Đường 4', '0965254656', 1),
+(5, 'Cửa hàng Đom Đóm 5', 'Gò Vấp - Đường 5', '0955848886', 1);
 
 -- --------------------------------------------------------
 
@@ -397,29 +428,31 @@ CREATE TABLE `user` (
   `dateBirth` date NOT NULL DEFAULT current_timestamp(),
   `sex` int(1) NOT NULL,
   `phoneNumber` varchar(15) NOT NULL,
-  `image` varchar(50) NOT NULL
+  `image` varchar(50) NOT NULL,
+  `status` int(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`userID`, `roleID`, `userName`, `email`, `password`, `dateBirth`, `sex`, `phoneNumber`, `image`) VALUES
-(1, 1, 'Nguyễn Văn An', 'admin@domdom.com', 'pass', '1985-01-01', 1, '0901234567', 'admin.jpg'),
-(2, 2, 'Trần Thị Bình', 'manager1@domdom.com', 'pass', '1990-05-10', 0, '0902234567', 'manager1.jpg'),
-(3, 2, 'Lê Văn Cường', 'manager2@domdom.com', 'pass', '1991-08-12', 1, '0903234567', 'manager2.jpg'),
-(4, 2, 'Phạm Thị Duyên', 'manager3@domdom.com', 'pass', '1992-09-22', 0, '0904234567', 'manager3.jpg'),
-(5, 2, 'Hoàng Văn En', 'manager4@domdom.com', 'pass', '1993-07-15', 1, '0905234567', 'manager4.jpg'),
-(6, 3, 'Nguyễn Văn Phát', 'seller1@domdom.com', 'pass', '1995-04-05', 1, '0906234567', 'seller1.jpg'),
-(7, 3, 'Trần Thị Giang', 'seller2@domdom.com', 'pass', '1996-11-11', 0, '0907234567', 'seller2.jpg'),
-(8, 3, 'Lê Minh Hùng', 'seller3@domdom.com', 'pass', '1995-12-05', 1, '0902654927', 'seller3.jpg'),
-(9, 3, 'Trần Cao Cương', 'seller4@domdom.com', 'pass', '1997-07-01', 1, '0952564925', 'seller4.jpg'),
-(10, 3, 'Trần Thanh Thy', 'seller5@domdom.com', 'pass', '1999-10-23', 0, '0902645641', 'seller5.jpg'),
-(11, 4, 'Lê Văn Hưng', 'cook1@domdom.com', 'pass', '1994-01-31', 1, '0908234567', 'cook1.jpg'),
-(12, 4, 'Nguyễn Mạnh Hưng', 'cook2@domdom.com', 'pass', '1994-02-20', 1, '0926548527', 'cook2.jpg'),
-(13, 4, 'Lê Minh Ân', 'cook3@domdom.com', 'pass', '1994-11-08', 1, '0902654232', 'cook3.jpg'),
-(14, 4, 'Châu Khả Ái', 'cook4@domdom.com', 'pass', '1995-02-26', 0, '0926549527', 'cook4.jpg'),
-(15, 4, 'Phạm Thị Yến', 'cook5@domdom.com', 'pass', '1998-04-29', 0, '0995642367', 'cook5.jpg');
+INSERT INTO `user` (`userID`, `roleID`, `userName`, `email`, `password`, `dateBirth`, `sex`, `phoneNumber`, `image`, `status`) VALUES
+(1, 1, 'Nguyễn Văn An', 'admin@domdom.com', 'pass', '1985-01-01', 1, '0901234567', 'admin.jpg', 1),
+(2, 2, 'Trần Thị Bình', 'manager1@domdom.com', 'pass', '1990-05-10', 0, '0902234567', 'manager1.jpg', 1),
+(3, 2, 'Lê Văn Cường', 'manager2@domdom.com', 'pass', '1991-08-12', 1, '0903234567', 'manager2.jpg', 1),
+(4, 2, 'Phạm Thị Duyên', 'manager3@domdom.com', 'pass', '1992-09-22', 0, '0904234567', 'manager3.jpg', 1),
+(5, 2, 'Hoàng Văn En', 'manager4@domdom.com', 'pass', '1993-07-15', 1, '0905234567', 'manager4.jpg', 1),
+(6, 2, 'Nguyễn Tấn Phát', 'manager5@domdom.com', 'pass', '1993-07-15', 1, '0936594213', 'manager5.jpg', 1),
+(7, 3, 'Trần Thị Giang', 'seller2@domdom.com', 'pass', '1996-11-11', 0, '0907234567', 'seller2.jpg', 1),
+(8, 3, 'Lê Minh Hùng', 'seller3@domdom.com', 'pass', '1995-12-05', 1, '0902654927', 'seller3.jpg', 1),
+(9, 3, 'Trần Cao Cương', 'seller4@domdom.com', 'pass', '1997-07-01', 1, '0952564925', 'seller4.jpg', 1),
+(10, 3, 'Trần Thanh Thy', 'seller5@domdom.com', 'pass', '1999-10-23', 0, '0902645641', 'seller5.jpg', 1),
+(11, 3, 'Nguyễn Văn Phát', 'seller1@domdom.com', 'pass', '1995-04-05', 1, '0906234567', 'seller1.jpg', 1),
+(12, 4, 'Nguyễn Mạnh Hưng', 'cook2@domdom.com', 'pass', '1994-02-20', 1, '0926548527', 'cook2.jpg', 1),
+(13, 4, 'Lê Minh Ân', 'cook3@domdom.com', 'pass', '1994-11-08', 1, '0902654232', 'cook3.jpg', 1),
+(14, 4, 'Châu Khả Ái', 'cook4@domdom.com', 'pass', '1995-02-26', 0, '0926549527', 'cook4.jpg', 1),
+(15, 4, 'Phạm Thị Yến', 'cook5@domdom.com', 'pass', '1998-04-29', 0, '0995642367', 'cook5.jpg', 0),
+(16, 4, 'Lê Văn Hưng', 'cook1@domdom.com', 'pass', '1994-01-31', 1, '0908234567', 'cook1.jpg', 1);
 
 --
 -- Indexes for dumped tables
@@ -481,9 +514,9 @@ ALTER TABLE `order`
 -- Indexes for table `order_dish`
 --
 ALTER TABLE `order_dish`
-  ADD PRIMARY KEY (`orderID`),
   ADD KEY `dishID` (`dishID`),
-  ADD KEY `orderID` (`orderID`);
+  ADD KEY `orderID` (`orderID`),
+  ADD KEY `orderID_2` (`orderID`) USING BTREE;
 
 --
 -- Indexes for table `partypackage`
@@ -565,7 +598,7 @@ ALTER TABLE `dish`
 -- AUTO_INCREMENT for table `employee_shift`
 --
 ALTER TABLE `employee_shift`
-  MODIFY `employeeshiftID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `employeeshiftID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `importorder`
@@ -577,13 +610,13 @@ ALTER TABLE `importorder`
 -- AUTO_INCREMENT for table `ingredient`
 --
 ALTER TABLE `ingredient`
-  MODIFY `ingredientID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `ingredientID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `order`
 --
 ALTER TABLE `order`
-  MODIFY `orderID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `orderID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `partypackage`
@@ -601,7 +634,7 @@ ALTER TABLE `promotion`
 -- AUTO_INCREMENT for table `proposal`
 --
 ALTER TABLE `proposal`
-  MODIFY `proposalID` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `proposalID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `role`
@@ -625,7 +658,7 @@ ALTER TABLE `store`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `userID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=212;
+  MODIFY `userID` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=213;
 
 --
 -- Constraints for dumped tables

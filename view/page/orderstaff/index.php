@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Quản trị hệ thống | Nhân viên</title>
+    <title>Quản trị hệ thống | Nhân viên nhận đơn</title>
     <link rel="shortcut icon" href="../../../images/logo-nobg.png" type="image/x-icon" />
 
     <!-- Font Awesome CSS -->
@@ -48,8 +48,7 @@
             display: inline-block;
             width: 150px;
         }
-
-
+        
         #calendar {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -79,7 +78,7 @@
             display: none;
         }
 
-        #info {
+        #workshift {
             border: 1px solid #ccc;
             padding: 20px;
             margin-top: 20px;
@@ -93,9 +92,6 @@ include("../../../model/connect.php");
 
 $db = new Database();
 $conn = $db->connect();
-
-$startW = date("Y-m-d", strtotime("monday this week"));
-$endW = date("Y-m-d", strtotime("sunday this week"));
 ?>
 
 <body class="bg-gray-900" style="scroll-behavior: smooth; font-family: 'Playwrite DE Grund', cursive;">
@@ -107,21 +103,24 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 </a>
             </div>
             <nav class="mt-10">
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="home" href="index.php?i=home">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="home" href="index.php">
+                    <i class="fa-solid fa-home mr-3"></i>Trang chủ
+                </a>
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="create" href="index.php?i=create">
                     <i class="fa-solid fa-folder-plus mr-3"></i>Tạo đơn hàng
                 </a>
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="update" href="index.php?i=update">
                     <i class="fa-solid fa-pen-to-square mr-3"></i>Cập nhật đơn hàng
                 </a>
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="shift" href="index.php?i=shift">
-                    <i class="fa-regular fa-calendar-days mr-3"></i>Lịch làm việc
+                    <i class="fa-regular fa-calendar-days mr-3"></i>Đăng ký ca làm
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="proposal" href="index.php?i=proposal">
-                    <i class="fa-solid fa-lightbulb mr-3"></i>Đề xuất
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="info" href="index.php?i=info">
+                    <i class="fa-solid fa-lightbulb mr-3"></i>Xem TT công việc
                 </a>
             </nav>
         </div>
-        <div class="bg-gray-100 flex-1 h-screen p-6 pb-2 md:p-10" id="content">
+        <div class="bg-gray-100 flex-1 p-6 pb-2 md:p-10" id="right">
             <div class="flex justify-between items-center mb-6 hover:cursor-pointer">
                 <div class="relative w-1/2 flex">
                     <input class="w-full py-2 px-4 mr-2 rounded-lg border border-gray-300" placeholder="Tìm kiếm..." type="text" />
@@ -129,22 +128,26 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 </div>
                 <div class="flex items-center hover:cursor-pointer">
                     <div class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
-                        <i class="fa-regular fa-envelope"></i>
-                    </div>
-                    <div class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
                         <i class="fa-regular fa-bell"></i>
                     </div>
                     <div class="ml-4 flex items-center relative user-container">
                         <img alt="User Avatar" class="rounded-full mr-1 border-solid border-2" height="40" width="40" src="../../../images/user.png" />
                         <span class="text-xs font-bold ml-1">
                             <?php
-                                $nam = $_SESSION["name"];
-                                echo $name;
+                            echo $_SESSION["userName"];
+                            
+                            $userName = $_SESSION["userName"];
+                            
+                            $sql = "SELECT userID FROM user WHERE userName = '$userName'";
+                            $result = $conn->query($sql);
+                            $row = $result->fetch_assoc();
+                            
+                            $_SESSION["userID"] = $row["userID"];
                             ?>
                         </span>
 
                         <div class="subnav absolute top-11 right-0 bg-white rounded-lg bg-gray-500 h-fit p-2 text-center border-2">
-                            <a href="../../../index.php">Đăng xuất <i class="fa-solid fa-right-from-bracket"></i></a>
+                            <a href="index.php?m=lgout">Đăng xuất <i class="fa-solid fa-right-from-bracket"></i></a>
                         </div>
                     </div>
                 </div>
@@ -162,12 +165,32 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 require("" . $_REQUEST["i"] . "/index.php");
             else if ($i == "home")
                 require("home/index.php");
+
+            if (isset($_GET["m"])) {
+                unset($_SESSION["userName"]);
+                unset($_SESSION["login"]);
+                echo "<script>window.location.href = '../login/'</script>";
+            }
             ?>
         </div>
     </div>
     </div>
 
     <script>
+        function adjustContentHeight() {
+            var rightSession = document.getElementById("right");
+
+            if (document.body.scrollHeight > window.innerHeight) {
+                rightSession.style.height = "";
+            } else {
+                rightSession.style.height = "100vh";
+            }
+        }
+
+        window.onload = adjustContentHeight;
+
+        window.onresize = adjustContentHeight;
+    
         const navAd = document.querySelectorAll(".adnav");
         let idActiveAd = "home";
 
@@ -192,8 +215,8 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
 
         function logout() {
             <?php
-                unset($_SESSION["loginstaff"]);
-                unset($_SESSION["name"]);
+            unset($_SESSION["loginstaff"]);
+            unset($_SESSION["name"]);
             ?>
         }
     </script>

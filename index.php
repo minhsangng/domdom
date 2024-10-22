@@ -28,3 +28,4 @@ else
 echo "<script src='view/main.js'></script>";
 
 include_once("view/layout/footer.php");
+?>

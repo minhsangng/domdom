@@ -29,6 +29,14 @@ function removeVietnameseAccents($str)
     return strtolower($str);
 }
 
+/* Css dè cho nav-link focus - lỗi từ php chưa thể fix */
+
+echo "<script>
+        window.addEventListener('load', () => {
+            document.getElementById('promotion').classList.add('activeAd'); 
+        });
+    </script>";
+
 if (isset($_POST["btnthemkm"])) {
     $proName = $_POST["proName"];
     $des = $_POST["description"];
@@ -52,14 +60,14 @@ if (isset($_POST["btnthemkm"])) {
 if (isset($_POST["btncapnhat"])) {
 
     echo "<script>
-            window.onload = function openModal() {
-                var modalUpdate = new bootstrap.Modal(document.getElementById('updateModal')); 
+            window.addEventListener('load', () =>  {
+                var modalUpdate = new bootstrap.Modal(document.getElementById('updateModal'));
                 modalUpdate.show();
-            };
+            });
         </script>";
 
     $proID = $_POST["btncapnhat"];
-    
+
     $row = $ctrl->cGetPromotionById($proID);
 
     $_SESSION["proID"] = $row["promotionID"];
@@ -80,9 +88,9 @@ if (isset($_POST["btnsuanl"])) {
     $end = $_POST["endDate"];
     $image = $_FILES["image"];
     $status = $_POST["status"];
-    
-    $imgName = removeVietnameseAccents($proName).".png";
-    
+
+    $imgName = removeVietnameseAccents($proName) . ".png";
+
     if ($image["size"] > 0 && $image["error"] == 0)
         if ($image["type"] == "image/png" || $image["type"] == "image/jpg")
             move_uploaded_file($image["tmp_name"], "../../../images/promotion/" . $imgName);
@@ -118,7 +126,7 @@ if (isset($_POST["btnkhoa"])) {
                             <th class="text-gray-600 border-2 py-2">Mã KM</th>
                             <th class="text-gray-600 border-2 py-2">Tên KM</th>
                             <th class="text-gray-600 border-2 py-2">Mô tả</th>
-                            <th class="text-gray-600 border-2 py-2">Phần trăm KM</th>
+                            <th class="text-gray-600 border-2 py-2">Phần trăm</th>
                             <th class="text-gray-600 border-2 py-2">Ngày bắt đầu</th>
                             <th class="text-gray-600 border-2 py-2">Ngày kết thúc</th>
                             <th class="text-gray-600 border-2 py-2">Hình ảnh</th>
@@ -200,7 +208,7 @@ if (isset($_POST["btnkhoa"])) {
             </div>
         </div>
     </div>
-    
+
     <div class="modal modalUpdate fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -250,14 +258,14 @@ if (isset($_POST["btnkhoa"])) {
                                 <td>
                                     <label for="status" class="w-full py-2"><b>Trạng thái </b></label>
                                     <select type="text" class="w-full form-control" name="status">
-                                    <?php
+                                        <?php
                                         $status = $_SESSION["status"];
-                                        
-                                        echo "<option value='".$status."' selected>".($_SESSION["status"] == 1 ? "Đang áp dụng" : "Ngưng áp dụng")."</option>";
+
+                                        echo "<option value='" . $status . "' selected>" . ($_SESSION["status"] == 1 ? "Đang áp dụng" : "Ngưng áp dụng") . "</option>";
                                         $result = $ctrl->cGetPromotionNotStatus($status);
                                         while ($row = $result->fetch_assoc())
-                                            echo "<option value='".$row["status"]."'>".($row["status"] == 1 ? "Đang áp dụng" : "Ngưng áp dụng")."</option>";
-                                    ?>
+                                            echo "<option value='" . $row["status"] . "'>" . ($row["status"] == 1 ? "Đang áp dụng" : "Ngưng áp dụng") . "</option>";
+                                        ?>
                                     </select>
                                 </td>
                             </tr>

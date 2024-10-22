@@ -1,7 +1,7 @@
 <?php
 $currentPath = $_SERVER["REQUEST_URI"];
 $path = "";
-if (strpos($currentPath, "admin") == true || strpos($currentPath, "manager") == true)
+if (strpos($currentPath, "admin") == true || strpos($currentPath, "manager") == true || strpos($currentPath, "orderstaff") == true || strpos($currentPath, "kitchenstaff") == true)
     $path = "../../../model/mPartyPackages.php";
 else $path = "./model/mPartyPackages.php";
 
@@ -37,7 +37,7 @@ class cPartyPackages extends mPartyPackages
                         <div class='w-3/5 text-right'>
                             <p class='font-bold text-3xl uppercase'>" . $row["partyPackageName"] . "</p>
                             <p class='text-gray-300 text-xl mt-2'>" . $row["price"] . "</p>
-                            <button class='btn btn-danger mt-4 text-xl px-4 py-2 rounded-lg'>Xem thêm</button>
+                            <button class='btn btn-danger mt-4 text-xl px-4 py-2 rounded-lg' data-bs-toggle='modal' data-bs-target='#partyModal'>Đặt ngay</button>
                         </div>
                     </div>";
             }

@@ -13,7 +13,7 @@
                 <table class="text-base w-full text-center">
                     <thead>
                         <tr>
-                            <th class="text-gray-600 border-2 py-2">Tên NV</th>
+                            <th class="text-gray-600 border-2 py-2">Người đề xuất</th>
                             <th class="text-gray-600 border-2 py-2">Loại đề xuất</th>
                             <th class="text-gray-600 border-2 py-2">Nội dung</th>
                             <th class="text-gray-600 border-2 py-2">Trạng thái</th>
@@ -22,16 +22,16 @@
                     </thead>
                     <tbody>
                         <?php
-                        $sql = "SELECT * FROM proposal";
+                        $sql = "SELECT * FROM proposal AS P JOIN user AS U ON P.userID = U.userID";
                         $result = $conn->query($sql);
 
                         while ($row = $result->fetch_assoc()) {
                             echo "
                                 <tr>
-                                    <td class='py-2 border-2'>" . $row[""] . "</td>
+                                    <td class='py-2 border-2'>" . $row["userName"] . "</td>
                                     <td class='py-2 border-2'>" . $row["typeOfProposal"] . "</td>
                                     <td class='py-2 border-2'>" . $row["content"] . "</td>
-                                    <td class='py-2 border-2'><span class='bg-".($row["status"] == "Đã duyệt" ? "green" : "red")."-100 text-".($row["status"] == "Đdã duyệt" ? "green" : "red")."-500 py-1 px-2 rounded-lg'>".$row["status"]."</span></td>
+                                    <td class='py-2 border-2'><span class='bg-".($row["status"] == 1 ? "green" : "red")."-100 text-".($row["status"] == 1 ? "green" : "red")."-500 py-1 px-2 rounded-lg'>".($row["status"] == 1 ? "Đã duyệt" : "Chờ duyệt")."</span></td>
                                     <td class='py-2 border-2 flex justify-center'>
                                         <button class='btn btn-secondary mr-1'>Từ chối</button>
                                         <button class='btn btn-danger ml-1'>Duyệt</button>

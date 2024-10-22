@@ -95,6 +95,9 @@ include("../../../controller/cPromotions.php");
 include("../../../controller/cDishes.php");
 include("../../../controller/cIngredients.php");
 
+if ($_SESSION["login"] != 1)
+    echo "<script>window.location.href = '../login/';</script>";
+
 $db = new Database();
 $conn = $db->connect();
 
@@ -116,8 +119,8 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
 ?>
 
 <body class="bg-gray-900" style="scroll-behavior: smooth; font-family: 'Playwrite DE Grund', cursive;">
-    <div class="flex flex-col md:flex-row h-full" id="container">
-        <div class=" w-full md:w-64">
+    <div class="flex flex-col md:flex-row" id="container">
+        <div class=" w-full md:w-64" id="left">
             <div class="flex items-center justify-center h-20 w-full bg-gray-500 py-5">
                 <a href="index.php">
                     <img src="../../../images/logo-nobg.png" alt="Logo" class="size-20">
@@ -145,28 +148,19 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="revenue" href="index.php?i=revenue">
                     <i class="fa-solid fa-file-invoice-dollar mr-3"></i>Xem thống kê
                 </a>
-                <!-- <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="shift" href="index.php?i=shift">
-                    <i class="fa-regular fa-calendar-days mr-3"></i>Lịch làm việc
-                </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="attendance" href="index.php?i=attendance">
-                    <i class="fa-solid fa-clock mr-3"></i>Bảng chấm công
-                </a> -->
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="proposal" href="index.php?i=proposal">
                     <i class="fa-solid fa-paper-plane mr-3"></i>Đề xuất
                 </a>
             </nav>
         </div>
-        <div class="bg-gray-100 flex-1 p-6 h-fit pb-2 md:p-10">
+        <div class="bg-gray-100 flex-1 p-6 pb-2 md:p-10" id="right">
             <div class="flex justify-between items-center mb-6 hover:cursor-pointer">
                 <div class="relative w-1/2 flex">
                     <input class="w-full py-2 px-4 mr-2 rounded-lg border border-gray-300" placeholder="Tìm kiếm..." type="text" />
                     <button type="submit" class="btn btn-primary ml-2 px-3">Tìm</button>
                 </div>
                 <div class="flex items-center hover:cursor-pointer">
-                    <div class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
-                        <i class="fa-regular fa-envelope"></i>
-                    </div>
-                    <div class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
+                    <div class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-red-500 hover:text-white">
                         <i class="fa-regular fa-bell"></i>
                     </div>
                     <div class="ml-4 flex items-center relative user-container">
@@ -198,10 +192,11 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
             } else {
                 require("home/index.php");
             }
-            
+
             if (isset($_GET["m"])) {
                 unset($_SESSION["userName"]);
-                echo "<script>window.location.href = '../../../index.php'</script>";
+                unset($_SESSION["login"]);
+                echo "<script>window.location.href = '../login/'</script>";
             }
             ?>
         </div>
@@ -209,6 +204,20 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
     </div>
 
     <script>
+        function adjustContentHeight() {
+            var rightSession = document.getElementById("right");
+
+            if (document.body.scrollHeight > window.innerHeight) {
+                rightSession.style.height = "";
+            } else {
+                rightSession.style.height = "100vh";
+            }
+        }
+
+        window.onload = adjustContentHeight;
+
+        window.onresize = adjustContentHeight;
+
         const navAd = document.querySelectorAll(".adnav");
         let idActiveAd = "admin";
 
