@@ -130,10 +130,50 @@
             color: #fff;
             background-color: rgba(129, 103, 169, .6);
         }
+
+        #progress-6 {
+  width:120px;
+  height:22px;
+  border-radius: 20px;
+  top: 300px;
+  margin: 0 auto;
+  color:#514b82;
+  border:2px solid;
+  position: relative;
+}
+#progress-6::before {
+  content:"";
+  position: absolute;
+  margin:2px;
+  inset:0 100% 0 0;
+  border-radius: inherit;
+  background:currentColor;
+  animation:p6 2s infinite;
+}
+@keyframes p6 {
+    100% {inset:0}
+}
     </style>
 </head>
+<script>
+    window.onload = function() {
+        document.getElementById('progress-6').style.display = 'block';
+        document.getElementById('loadd').style.display = 'none';
+        // document.body.style.backgroundColor = '#00FFCC';
+    // Ẩn loader và hiển thị nội dung sau 2 giây
+    setTimeout(function() {
+        document.getElementById('progress-6').style.display = 'none';
+        document.getElementById('loadd').style.display = 'block';
+        // document.body.style.backgroundColor = '#fff8c4';
+    }, 1000); // Thay đổi thời gian này nếu cần
+};
+
+</script>
+<!-- loader -->
 
 <body style="scroll-behavior: smooth; font-family: 'Playwrite DE Grund', cursive; background-color: var(--third-color);">
+<div id="progress-6"></div>
+    <div id="loadd">
     <header class="fixed w-full top-0 z-10">
         <div class="container mx-auto px-6">
             <nav class="navbar navbar-expand-md">

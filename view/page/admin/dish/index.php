@@ -123,7 +123,7 @@ if (isset($_POST["btnkhoa"])) {
                             <th class="text-gray-600 border-2 py-2">Mã món</th>
                             <th class="text-gray-600 border-2 py-2">Tên món</th>
                             <th class="text-gray-600 border-2 py-2">Phân loại</th>
-                            <th class="text-gray-600 border-2 py-2">Giá bán (đ</th>
+                            <th class="text-gray-600 border-2 py-2">Giá bán (đ)</th>
                             <th class="text-gray-600 border-2 py-2">Trạng thái</th>
                             <th class="text-gray-600 border-2 py-2">Chức năng</th>
                         </tr>
@@ -264,7 +264,11 @@ if (isset($_POST["btnkhoa"])) {
                             <tr>
                                 <td>
                                     <label for="ingredient" class="w-full py-2"><b>Nguyên liệu <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="ingredient" required>
+                                    <select name="ingredient" id="" class="w-full form-control" required>
+                                        <option value="">Thịt gà</option>
+                                        <option value="">Bột chiên</option>
+                                        <option value="">Dầu ăn</option>
+                                    </select>
                                 </td>
                             </tr>
                             <tr>
@@ -276,7 +280,7 @@ if (isset($_POST["btnkhoa"])) {
                             <tr>
                                 <td>
                                     <label for="quantity" class="w-full py-2"><b>Số lượng NL <span class="text-red-500">*</span></b></label>
-                                    <input type="number" class="w-full form-control" name="quantity" required>
+                                    <input type="number" class="w-full form-control" name="quantity" value="0" required>
                                 </td>
                             </tr>
                             <tr>
