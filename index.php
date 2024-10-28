@@ -3,7 +3,6 @@ error_reporting(1);
 session_start();
 
 require_once("model/connect.php");
-require_once("controller/cCategories.php");
 require_once("controller/cPromotions.php");
 require_once("controller/cPartyPackages.php");
 require_once("controller/cDishes.php");

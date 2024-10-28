@@ -136,7 +136,26 @@ if (isset($_POST["btnkhoa"])) {
                     </thead>
                     <tbody>
                         <?php
-                        $ctrl->cGetAllPromotion();
+                        if ($ctrl->cGetAllPromotion() != 0) {
+                            $result = $ctrl->cGetAllPromotion();
+                            while ($row = $result->fetch_assoc()) {
+                                echo "
+                        <tr>
+                            <td class='py-2 border-2'>#KM0" . ($row["promotionID"] < 10 ? "0" . $row["promotionID"] : $row["promotionID"]) . "</td>
+                            <td class='py-2 border-2'>" . $row["promotionName"] . "</td>
+                            <td class='py-2 border-2 w-40'>" . $row["description"] . "</td>
+                            <td class='py-2 border-2'>" . str_replace(".00", "%", $row["discountPercentage"]) . "</td>
+                            <td class='py-2 border-2'>" . $row["startDate"] . "</td>
+                            <td class='py-2 border-2'>" . $row["endDate"] . "</td>
+                            <td class='py-2 border-2'><img src='../../../images/promotion/" . $row["image"] . "' alt='" . $row["promotionName"] . "' class='size-24' /></td>
+                            <td class='py-2 border-2 text-" . ($row["status"] == 1 ? "green" : "red") . "-500'>" . ($row["status"] == 1 ? "Đang áp dụng" : "Ngưng áp dụng") . "</td>
+                            <td class='py-2 border-2 flex justify-center items-center h-28'>
+                                <button class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["promotionID"] . "'>Cập nhật</button>
+                                <button class='btn btn-danger ml-1' name='btnkhoa'>Khóa</button>
+                            </td>
+                        </tr>";
+                            }
+                        } else echo "<tr><td colspan='9' class='text-center pt-2'>Chưa có dữ liệu!</td></tr>";
                         ?>
                     </tbody>
                 </table>

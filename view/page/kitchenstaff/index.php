@@ -89,7 +89,6 @@
 error_reporting(1);
 session_start();
 include("../../../model/connect.php");
-include("../../../controller/cCategories.php");
 include("../../../controller/cPromotions.php");
 include("../../../controller/cDishes.php");
 include("../../../controller/cIngredients.php");

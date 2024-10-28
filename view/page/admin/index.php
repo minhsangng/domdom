@@ -33,6 +33,9 @@
 
     <!-- Bootstrap Bundle JS  -->
     <script src="../../js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Xuất Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
 
     <style>
         .activeAd {
@@ -90,7 +93,6 @@
 error_reporting(1);
 session_start();
 include("../../../model/connect.php");
-include("../../../controller/cCategories.php");
 include("../../../controller/cPromotions.php");
 include("../../../controller/cDishes.php");
 include("../../../controller/cIngredients.php");
@@ -196,7 +198,7 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
             if (isset($_GET["m"])) {
                 unset($_SESSION["userName"]);
                 unset($_SESSION["login"]);
-                echo "<script>window.location.href = '../login/'</script>";
+                echo "<script> if(confirm('Chắc chắn đăng xuất?') == true) window.location.href = '../login/'</script>";
             }
             ?>
         </div>

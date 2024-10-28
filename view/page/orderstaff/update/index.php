@@ -1,3 +1,23 @@
+<?php
+    if (isset($_POST["btnsua"])) {
+        $id = $_POST["btnsua"];
+        $status = $_POST["status"];
+        switch ($status) {
+            case "Chờ nhận đơn": $st = 0;
+            break;
+            case "Đang chế biến": $st = 1;
+            break;
+            case "Chế biến xong": $st = 2;
+            break;
+            case "Hoàn thành": $st = 3;
+            break;
+        }
+        $sql = "UPDATE `order` SET status = $st WHERE orderID = $id";
+        $result = $conn->query($sql);
+    }
+
+?>
+
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
     <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
         <div class="flex justify-center items-center mb-4">
@@ -8,14 +28,7 @@
 
         <div class="h-fit bg-gray-100 rounded-lg p-6">
         <?php
-        $id = $_POST["btnsua"];
-        $status = $_POST["status"];
-        if (isset($_POST["btnsua"])) {
-            $sql = "UPDATE ordee SET status = '$status' WHERE orderID = $id";
-            $result = $conn->query($sql);
-        }
-        
-        $sql = "SELECT * FROM `order` AS O JOIN `customer` AS C ON O.customerID = C.customerID JOIN `order_dish` AS OD ON OD.orderID = O.orderID JOIN `dish` AS D ON D.dishID = OD.dishID";
+        $sql = "SELECT * FROM `order` AS O JOIN `customer` AS C ON O.customerID = C.customerID JOIN `order_dish` AS OD ON OD.orderID = O.orderID JOIN `dish` AS D ON D.dishID = OD.dishID GROUP BY O.orderID";
         $result = $conn->query($sql);
 
         if ($result->num_rows > 0) {
@@ -39,7 +52,7 @@
                 $orderName = $row["dishName"];
                 $orderQuantity = $row["quantity"];
                 $orderDate = $row["orderDate"];
-                $status = "";
+                $status = 0;
                 
                 switch ($row["status"]) {
                     case 0: $status = "Chờ nhận đơn";
@@ -108,7 +121,7 @@
                     const status = this.getAttribute("data-status");
                     let modalBody = document.querySelector("#orderModal .modal-body");
                     let modalFooter = document.querySelector("#orderModal .modal-footer");
-                    const arrStatus = ["Hoàn thành", "Đang chế biến", "Đã chế biến xong"];
+                    const arrStatus = ["Chờ nhận đơn", "Đang chế biến", "Chế biến xong", "Hoàn thành"];
                     const arrNew = [];
 
                     const index = arrStatus.indexOf(status);
@@ -138,7 +151,6 @@
                                         <option value="${status}">${status}</option>
                                         <option value="${arrNew[0]}">${arrNew[0]}</option>
                                         <option value="${arrNew[1]}">${arrNew[1]}</option>
-                                        <option value="${arrNew[2]}">${arrNew[2]}</option>
                                     </select>
                                 </td>
                             </tr>

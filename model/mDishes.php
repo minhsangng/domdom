@@ -2,6 +2,25 @@
 
 class mDishes
 {
+    public function mGetAllCategory()
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT * FROM dish GROUP BY dishCategory";
+        if ($conn != null) 
+            return $conn->query($sql);
+        return 0;
+    }
+    
+    public function mGetCategoryNotId($category)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT * FROM dish WHERE dishCategory != '$category' GROUP BY dishCategory";
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
     public function mGetAllDish()
     {
         $db = new Database;
@@ -17,6 +36,16 @@ class mDishes
         $db = new Database;
         $conn = $db->connect();
         $sql = "SELECT * FROM dish WHERE dishID = $dishID";
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+    
+    public function mGetDishByName($name)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT * FROM dish WHERE dishName LIKE '%".$name."%'";
         if ($conn != null)
             return $conn->query($sql);
         return 0;

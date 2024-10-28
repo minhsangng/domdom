@@ -89,6 +89,9 @@
 error_reporting(1);
 session_start();
 include("../../../model/connect.php");
+include("../../../controller/cPromotions.php");
+include("../../../controller/cDishes.php");
+include("../../../controller/cIngredients.php");
 
 $db = new Database();
 $conn = $db->connect();
@@ -201,8 +204,8 @@ $conn = $db->connect();
         });
 
         if (window.location.search != "")
-            if (window.location.search.slice(3).includes("home"))
-                idActiveAd = "home";
+            if (window.location.search.slice(3).includes("create"))
+                idActiveAd = "create";
             else idActiveAd = window.location.search.slice(3);
 
 
@@ -217,6 +220,7 @@ $conn = $db->connect();
             <?php
             unset($_SESSION["loginstaff"]);
             unset($_SESSION["name"]);
+            unset($_SESSION["products"]);
             ?>
         }
     </script>

@@ -40,5 +40,4 @@
 
 .product-category:hover .title-product {
     opacity: 1;
-    transform: translateY(-100px);
 }

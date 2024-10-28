@@ -10,16 +10,17 @@
     <link href="view/css/all.css" rel="stylesheet" />
 
     <!-- Preconnect for Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playwrite+DE+Grund:wght@100..400&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Baloo+2:400,800&display=swap">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="view/css/bootstrap.min.css">
 
     <!-- Style CSS -->
     <link rel="stylesheet" href="view/css/style.css">
-
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    
     <!-- Tailwind CSS -->
     <script src="view/js/tailwindcss.js"></script>
 
@@ -34,6 +35,8 @@
 
     <!-- Bootstrap JS (bundle includes Popper.js) -->
     <script src="view/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
 
     <style>
         header {
@@ -134,7 +137,7 @@
 </head>
 
 <body style="scroll-behavior: smooth; font-family: 'Playwrite DE Grund', cursive; background-color: var(--third-color);">
-    <header class="fixed w-full top-0 z-10">
+    <header class="fixed w-full top-0 z-50">
         <div class="container mx-auto px-6">
             <nav class="navbar navbar-expand-md">
                 <a class="" href="index.php"><img src="images/logo-nobg.png" alt="" class="h-16 rounded-full"></a>
@@ -146,8 +149,15 @@
                         <a class="nav-link dropdown-toggle" href="index.php?p=dish" id="dish">Thực đơn</a>
                         <div class="dropdown-menu">
                             <?php
-                            $ctrl = new cCategories();
-                            $ctrl->showCategoriesHeader("SELECT * FROM dish GROUP BY dishCategory");
+                            $ctrl = new cDishes;
+                            
+                            if ($ctrl->cGetAllCategory() != 0) {
+                                $result = $ctrl->cGetAllCategory();
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<a class='dropdown-item' href='index.php?p=dish&c=".$row["dishCategory"]."&#ci'>" . $row["dishCategory"] . "</a>";
+                                }
+                            }
+                            else echo "Không có dữ liệu!";
                             ?>
                         </div>
                     </li>
@@ -515,55 +525,3 @@
             </div>
         </div>
     </div>
-
-    <div class="search absolute top-52 left-16">
-        <form action="" method="post" class="form-search">
-            <section class="content-home">
-                <h1 class="text-center my-4 leading-relaxed text-5xl">THÈM MÓN GÌ, <br> <span id="text">NGẠI CHI MÀ KHÔNG NÓI?</span></h1>
-                <div class="content w-full flex justify-center text-xl">
-                    <div class="flex justify-center items-center input-group w-full h-14 mr-3">
-                        <input type="search" name="search" id="" class="form-control h-14 pl-8 text-xl" autocomplete="false" value="<?php echo $_POST['search']; ?>">
-                        <button type="submit" class="btn btn-danger btn-search h-full px-8 text-xl font-bold" name="btn">Tìm</button>
-                    </div>
-            </section>
-        </form>
-    </div>
-
-    <?php
-    $input = "";
-    if (isset($_REQUEST["btn"])) {
-        $input = $_POST["search"];
-
-        if ($input != "") {
-            $sql = "SELECT * FROM dishes WHERE dishName LIKE '%" . $input . "%'";
-            $result = $conn->query($sql);
-            $n = $result->num_rows;
-
-            echo "<section class='output-search border-t border-gray-500 my-16' id='search-output'>
-            <h2 class='border-b border-gray-500 text-2xl font-bold px-2 py-4'>KẾT QUẢ DÀNH CHO: " . $input . "</h2>";
-
-            if ($n > 0) {
-                echo "<div class='grid grid-cols-3 gap-x-14 gap-y-10 my-4'>";
-                while ($row = $result->fetch_assoc()) {
-                    echo "
-                <div class='card w-full'>
-                  <a href='?i=" . $row["dishID"] . "'>
-                    <img src='images/dish/" . $row["image"] . "' class='card-img-top h-64' alt=''>
-                    <div class='card-body flex justify-between items-center'>
-                      <h5 class='card-title font-bold'>" . $row["dishName"] . "</h5>
-                      <a href='#' class='btn btn-outline-info'>Xem thêm</a>
-                    </div>
-                  </a>
-              </div>
-              ";
-                }
-                echo "</div>";
-            } else {
-                echo "<div class='grid w-full my-4'><h5 class='font-bold'>Xin lỗi! Chúng tôi không tìm thấy kết quả bạn cần!</h5></div>";
-                $_POST["search"] = "";
-            }
-            echo "</section>";
-        }
-    } else
-        $_POST["search"] = "";
-    ?>

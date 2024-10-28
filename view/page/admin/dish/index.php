@@ -55,11 +55,11 @@ if (isset($_POST["btncapnhat"])) {
             modalUpdate.show();
         });
     </script>";
-    
+
     $dishID = $_POST["btncapnhat"];
 
     $row = $ctrl->cGetDishById($dishID);
-    
+
     $_SESSION["dishID"] = $row["dishID"];
     $_SESSION["dishName"] = $row["dishName"];
     $_SESSION["category"] = $row["dishCategory"];
@@ -79,14 +79,14 @@ if (isset($_POST["btnsuamon"])) {
     $prepare = $_POST["prepare"];
     $status = $_POST["status"];
     $image = $_FILES["image"];
-    
-    $imgName = removeVietnameseAccents($dishName).".png";
-    
+
+    $imgName = removeVietnameseAccents($dishName) . ".png";
+
     if ($image["size"] > 0 && $image["error"] == 0)
         if ($image["type"] == "image/png" || $image["type"] == "image/jpg")
             move_uploaded_file($image["tmp_name"], "../../../images/dish/" . $imgName);
         else echo "<script>alert('Không phải ảnh. Vui lòng chọn lại ảnh khác!')</script>";
-        
+
     $ctrl->cUpdateDish($dishName, $category, $price, $prepare, $imgName, $dishID);
 }
 
@@ -95,9 +95,9 @@ if (isset($_POST["btnkhoa"])) {
     $sql = "SELECT businessStatus FROM dish WHERE dishID = $dishID";
     $result = $conn->query($sql);
     $status = $result->fetch_assoc()["businessStatus"];
-    
+
     $newStatus = ($status == 1) ? 0 : 1;
-    
+
     $ctrl->cLockDish($newStatus, $dishID);
 }
 ?>
@@ -111,19 +111,19 @@ if (isset($_POST["btnkhoa"])) {
                 <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#insertModal">Thêm món ăn</button>
             </div>
             <div class="flex items-center">
-                <button class="btn bg-green-100 text-green-500 py-2 px-4 rounded-lg mr-1 hover:bg-green-500 hover:text-white">Xuất <i class="fa-solid fa-table"></i></button>
-                <button class="btn bg-blue-100 text-blue-500 py-2 px-4 rounded-lg ml-1 hover:bg-blue-500 hover:text-white">In <i class="fa-solid fa-print"></i></button>
+                <button class="btn bg-green-100 text-green-500 py-2 px-4 rounded-lg mr-1 hover:bg-green-500 hover:text-white" id="export">Xuất <i class="fa-solid fa-table"></i></button>
+                <button class="btn bg-blue-100 text-blue-500 py-2 px-4 rounded-lg ml-1 hover:bg-blue-500 hover:text-white" id="print">In <i class="fa-solid fa-print"></i></button>
             </div>
         </div>
         <div class="h-fit bg-gray-100 rounded-lg p-6">
             <form action="" method="POST" enctype="multipart/form-data">
-                <table class="text-base w-full text-center">
+                <table class="text-base w-full text-center" id="dishTable">
                     <thead>
                         <tr>
                             <th class="text-gray-600 border-2 py-2">Mã món</th>
                             <th class="text-gray-600 border-2 py-2">Tên món</th>
                             <th class="text-gray-600 border-2 py-2">Phân loại</th>
-                            <th class="text-gray-600 border-2 py-2">Giá bán (đ</th>
+                            <th class="text-gray-600 border-2 py-2">Giá bán (đ)</th>
                             <th class="text-gray-600 border-2 py-2">Trạng thái</th>
                             <th class="text-gray-600 border-2 py-2">Chức năng</th>
                         </tr>
@@ -131,7 +131,34 @@ if (isset($_POST["btnkhoa"])) {
                     <tbody>
                         <?php
                         $ctrl = new cDishes;
-                        $ctrl->cGetAllDish();
+                        if ($ctrl->cGetAllDish() != 0) {
+                            $result = $ctrl->cGetAllDish();
+                            $dishData = [];
+
+                            while ($row = $result->fetch_assoc()) {
+                                echo "
+                    <tr>
+                        <td class='py-2 border-2'>#010" . $row["dishID"] . "</td>
+                        <td class='py-2 border-2'>" . $row["dishName"] . "</td>
+                        <td class='py-2 border-2'>" . $row["dishCategory"] . "</td>
+                        <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
+                        <td class='py-2 border-2'><span class='bg-" . ($row["businessStatus"] == 1 ? "green" : "red") . "-100 text-" . ($row["businessStatus"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["businessStatus"] == 1 ? "Đang kinh doanh" : "Ngưng kinh doanh") . "</span></td>
+                        <td class='py-2 border-2 flex justify-center'>
+                            <button type='submit' class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["dishID"] . "'>Cập nhật</button>
+                            <button type='submit' class='btn btn-danger ml-1' name='btnkhoa' value='" . $row["dishID"] . "'>" . ($row["businessStatus"] == 1 ? "Khóa" : "Mở") . "</button>
+                        </td>
+                    </tr>";
+                                $dishData[] = [
+                                    "Mã món" => $row["dishID"],
+                                    "Tên món" => $row["dishName"],
+                                    "Danh mục" => $row["dishCategory"],
+                                    "Giá bán" => str_replace(".00", "", number_format($row["price"], "2", ".", ",")),
+                                    "Trạng thái" => ($row["businessStatus"] == 1 ? "Đang kinh doanh" : "Ngưng kinh doanh")
+                                ];
+                            }
+                            /* $_SESSION["dishData"] = $dishData; */
+                        }
+                        $data = json_encode($dishData);
                         ?>
                     </tbody>
                 </table>
@@ -159,14 +186,16 @@ if (isset($_POST["btnkhoa"])) {
                                     <label for="cate" class="w-full py-2"><b>Loại món ăn</b></label>
                                     <select name="cate" id="cate" class="w-full form-control">
                                         <?php
-                                            $category = $_SESSION["category"];
-                                            echo "<option value='".$category."' selected>".$category."</option>";
-                                            
-                                            $ctrl = new cCategories;
-                                            $result = $ctrl->cGetCategoryNotId($category);
+                                        $category = $_SESSION["category"];
+                                        echo "<option value='" . $category . "' selected>" . $category . "</option>";
+
+                                        $ctrl = new cDishes;
+                                        if ($ctrl->cGetDishByCategory($category) != 0) {
+                                            $result = $ctrl->cGetDishByCategory($category);
                                             while ($row = $result->fetch_assoc()) {
-                                                echo "<option value='".$row["dishCategory"]."'>".$row["dishCategory"]."</option>";
+                                                echo "<option value='" . $row["dishCategory"] . "'>" . $row["dishCategory"] . "</option>";
                                             }
+                                        } else echo "Không có dữ liệu!";
                                         ?>
                                     </select>
                                 </td>
@@ -302,3 +331,46 @@ if (isset($_POST["btnkhoa"])) {
         </div>
     </div>
 </div>
+
+<script>
+    /* Xuất */
+    document.getElementById("export").addEventListener("click", function() {
+        let data = <?php echo $data; ?>;
+
+        let worksheet = XLSX.utils.json_to_sheet(data);
+
+        let workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Danh sách món ăn");
+
+        XLSX.writeFile(workbook, "DishList.xlsx");
+    });
+
+    /* In  */
+    document.getElementById("print").addEventListener("click", () => {
+        var actionColumn = document.querySelectorAll("#dishTable tr td:last-child, #dishTable tr th:last-child");
+
+        actionColumn.forEach(function(cell) {
+            cell.style.display = "none";
+        });
+
+        var content = document.getElementById("dishTable").outerHTML;
+
+        var printWindow = window.open("", "", "height=500,width=800");
+
+        printWindow.document.write("<html><head><title>In danh sách món ăn</title>");
+        printWindow.document.write("<style>table {width: 100%; border-collapse: collapse;} table, th, td {border: 1px solid black; padding: 10px;} </style>");
+        printWindow.document.write("</head><body>");
+        printWindow.document.write("<h1>Danh sách món ăn</h1>");
+        printWindow.document.write(content);
+        printWindow.document.write("</body></html>");
+
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+
+        actionColumn.forEach(function(cell) {
+            cell.style.display = "block";
+        });
+    });
+</script>
