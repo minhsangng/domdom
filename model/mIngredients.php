@@ -165,7 +165,31 @@ class mIngredients
         $conn = $db->connect();
         $sql = "INSERT INTO ingredient (ingredientName, unitOfcalculation, price, typeIngredient) VALUES ('$ingreName', '$unit', $price, '$type')";
 
-        return $conn->query($sql);
+        if ($conn->query($sql))
+            return $conn->insert_id;
+        else
+            return -1;
+    }
+
+    public function mInsertStoreIngredient($ingredientID)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $i = 1;
+        $isSuccess = false;
+        while ($i != 6) {
+            $sql = "INSERT INTO store_ingredient (ingredientID, storeID, quantityInStock) VALUES ('$ingredientID', '$i', '0')";
+            if ($conn != null) {
+                if ($conn->query($sql)) {
+                    $isSuccess = true;
+                    $i++;
+                }else {
+                    $isSuccess = false;
+                    break;
+                }
+            }
+        }
+        return $isSuccess;
     }
 
     public function mUpdateIngredient($ingreName, $unit, $price, $type, $ingreID)

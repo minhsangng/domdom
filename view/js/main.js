@@ -269,7 +269,7 @@ $(document).ready(function () {
     }
   });
 
-  // regex UC Thêm nguyên liệu
+  // regex UC Thêm món ăn
   function ktDishName() {
     let dishName = $("#iDishName").val()
     if (dishName.length === 0) {
@@ -376,7 +376,7 @@ $(document).ready(function () {
     }
   });
 
-  // regex UC Sửa nguyên liệu
+  // regex UC Sửa món ăn
   function ktuDishName() {
     let dishName = $("#uDishName").val()
     if (dishName.length === 0) {
@@ -483,5 +483,94 @@ $(document).ready(function () {
     }
   });
 
+  // regex UC Thêm nguyên liệu
+  function ktIngredientName() {
+    let ingredientName = $("#iIngredientName").val()
+    if (ingredientName.length === 0) {
+      $("#errIngredientName").html("Tên nguyên liệu không được rỗng")
+      return false
+    } else {
+      $("#errIngredientName").html("*")
+      return true
+    }
+  }
+
+  function ktIngredientPrice() {
+    let ingredientPrice = $("#iIngredientPrice").val()
+    if (ingredientPrice === "") {
+      $("#errIngredientPrice").html("Giá mua không được rỗng")
+      return false
+    } else if (Number(ingredientPrice) < 0) {
+      $("#errIngredientPrice").html("Giá mua không được nhỏ hơn 0")
+      return false
+    } else {
+      $("#errIngredientPrice").html("*")
+      return true
+    }
+  }
+
+  $("#iIngredientName").blur(function () {
+    ktIngredientName()
+  })
+
+  $("#iIngredientPrice").blur(function () {
+    ktIngredientPrice()
+  })
+
+  $("#form-themnguyenlieu").on("submit", function (event) {
+    let isValid = false;
+    if (ktIngredientName() && ktIngredientPrice()) {
+      isValid = true;
+    }
+    if (!isValid) {
+      event.preventDefault();
+      alert("Thông tin không hợp lệ")
+    }
+  });
+
+    // regex UC Sửa nguyên liệu
+    function ktuIngredientName() {
+      let ingredientName = $("#uIngredientName").val()
+      if (ingredientName.length === 0) {
+        $("#uerrIngredientName").html("Tên nguyên liệu không được rỗng")
+        return false
+      } else {
+        $("#uerrIngredientName").html("*")
+        return true
+      }
+    }
+  
+    function ktuIngredientPrice() {
+      let ingredientPrice = $("#uIngredientPrice").val()
+      if (ingredientPrice === "") {
+        $("#uerrIngredientPrice").html("Giá mua không được rỗng")
+        return false
+      } else if (Number(ingredientPrice) < 0) {
+        $("#uerrIngredientPrice").html("Giá mua không được nhỏ hơn 0")
+        return false
+      } else {
+        $("#uerrIngredientPrice").html("*")
+        return true
+      }
+    }
+  
+    $("#uIngredientName").blur(function () {
+      ktuIngredientName()
+    })
+  
+    $("#uIngredientPrice").blur(function () {
+      ktuIngredientPrice()
+    })
+  
+    $("#form-suanguyenlieu").on("submit", function (event) {
+      let isValid = false;
+      if (ktuIngredientName() && ktuIngredientPrice()) {
+        isValid = true;
+      }
+      if (!isValid) {
+        event.preventDefault();
+        alert("Thông tin không hợp lệ")
+      }
+    });
 
 });

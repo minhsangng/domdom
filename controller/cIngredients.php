@@ -141,12 +141,16 @@ class cIngredients extends mIngredients
         return 0;
     }
 
-    public function cInsertIngredient($ingreName, $unit, $price, $type)
+    public function cInsertIngredient($ingreName, $unit, $price, $type, $storeID)
     {
-        if ($this->mInsertIngredient($ingreName, $unit, $price, $type) != 0) {
-            echo "<script>alert('Thêm nguyên liệu thành công');</script>";
+        $ingredientID = $this->mInsertIngredient($ingreName, $unit, $price, $type);
+        if ($ingredientID != -1) {
+            if ($this->mInsertStoreIngredient($ingredientID, $storeID))
+                return true;
+            else
+                return false;
         } else
-            echo "<script>alert('Thêm nguyên liệu thất bại. Vui lòng nhập lại!');</script>";
+            return false;
     }
 
     public function cUpdateIngredient($ingreName, $unit, $price, $type, $ingreID)

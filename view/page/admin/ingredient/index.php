@@ -11,12 +11,21 @@ echo "<script>
 $ctrl = new cIngredients;
 
 if (isset($_POST["btnthemnl"])) {
+    $ctrl1 = new cUsers;
+    $user = $ctrl1->cGetUserByID($_SESSION["user"][0]);
+    $r = $user->fetch_assoc();
+    $storeID = $r["storeID"];
     $ingreName = $_POST["ingreName"];
     $unit = $_POST["unitCalculation"];
     $price = $_POST["price"];
     $type = $_POST["typeIngre"];
 
-    $ctrl->cInsertIngredient($ingreName, $unit, $price, $type);
+    if ($ctrl->cInsertIngredient($ingreName, $unit, $price, $type, $storeID)) {
+        echo "<script>alert('Thêm nguyên liệu thành công')</script>";
+    } else {
+        echo "<script>alert('Thêm nguyên liệu thất bại')</script>";
+
+    }
 }
 
 if (isset($_POST["btncapnhat"])) {
@@ -183,7 +192,7 @@ if (isset($_POST["btnkhoa"])) {
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="" class="form-container w-full" method="POST">
+                <form id="form-themnguyenlieu" action="" class="form-container w-full" method="POST">
                     <div class="modal-header">
                         <h2 class="modal-title fs-5 font-bold text-3xl" id="insertModalLabel" style="color: #E67E22;">
                             Thêm nguyên liệu</h2>
@@ -192,15 +201,16 @@ if (isset($_POST["btnkhoa"])) {
                         <table class="w-full">
                             <tr>
                                 <td>
-                                    <label for="ingreName" class="w-full py-2"><b>Tên NL <span
-                                                class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="ingreName" required>
+                                    <label for="ingreName" class="w-full py-2"><b>Tên NL <span class="text-red-500"
+                                                id="errIngredientName">*</span></b></label>
+                                    <input type="text" class="w-full form-control" id="iIngredientName"
+                                        name="ingreName">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="typeIngre" class="w-full py-2"><b>Loại NL <span
-                                                class="text-red-500">*</span></b></label>
+                                                class="text-red-500"></span></b></label>
                                     <select name="typeIngre" class="w-full form-control">
                                         <?php
                                         $ctrl = new cIngredients;
@@ -215,15 +225,15 @@ if (isset($_POST["btnkhoa"])) {
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="price" class="w-full py-2"><b>Giá mua <span
-                                                class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="price" required>
+                                    <label for="price" class="w-full py-2"><b>Giá mua <span class="text-red-500"
+                                                id="errIngredientPrice">*</span></b></label>
+                                    <input type="number" class="w-full form-control" name="price" id="iIngredientPrice">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="unit" class="w-full py-2"><b>Đơn vị tính <span
-                                                class="text-red-500">*</span></b></label>
+                                                class="text-red-500"></span></b></label>
                                     <select name="unitCalculation" id="unit" class="w-full form-control">
                                         <?php
                                         $ctrl = new cIngredients;
@@ -258,7 +268,7 @@ if (isset($_POST["btnkhoa"])) {
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="" method="POST" class="form-container w-full">
+                <form id="form-suanguyenlieu" action="" method="POST" class="form-container w-full">
                     <div class="modal-header justify-center">
                         <h2 class="modal-title fs-5 font-bold text-3xl" id="updateModalLabel" style="color: #E67E22;">
                             Cập nhật nguyên liệu</h2>
@@ -267,8 +277,9 @@ if (isset($_POST["btnkhoa"])) {
                         <table class="w-full">
                             <tr>
                                 <td>
-                                    <label for="ingreName" class="w-full py-2"><b>Tên ngyên liệu</b></label>
-                                    <input type="text" class="w-full form-control" name="ingreName"
+                                    <label for="ingreName" class="w-full py-2"><b>Tên nguyên liệu <span
+                                                class="text-red-500" id="uerrIngredientName">*</span></b></label>
+                                    <input id="uIngredientName" type="text" class="w-full form-control" name="ingreName"
                                         value="<?php echo $_SESSION["ingreName"]; ?>">
                                 </td>
                             </tr>
@@ -290,8 +301,9 @@ if (isset($_POST["btnkhoa"])) {
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="price" class="w-full py-2"><b>Giá mua</b></label>
-                                    <input type="number" class="w-full form-control" name="price"
+                                    <label for="price" class="w-full py-2"><b>Giá mua <span class="text-red-500"
+                                                id="uerrIngredientPrice">*</span></b></label>
+                                    <input id="uIngredientPrice" type="number" class="w-full form-control" name="price"
                                         value="<?php echo $_SESSION["price"]; ?>">
                                 </td>
                             </tr>
@@ -363,30 +375,30 @@ if (isset($_POST["btnkhoa"])) {
                         </table>
                         <p class="font-bold text-gray-600 mb-2 mt-3">Chuyển nguyên liệu giữa các cửa hàng</p>
                         <div class="d-flex">
-                        <div class="d-flex w-50 mr-3">
-                            <label style="width:30%;" class="mt-1" for="txtStoreThua">CH thừa</label>
-                            <select class="form-control" name="txtStoreThua" id="txtStoreThua">
-                                <?php
-                                foreach ($_SESSION["storeNameSLT"] as $index => $storeName) {
-                                    echo "<option data-quantity='".  $_SESSION["quantityInStockSLT"][$index] ."' value='" . $_SESSION["storeIDSLT"][$index] . "'>$storeName</option>";
-                                }
-                                ?>
-                            </select>
-                        </div>
+                            <div class="d-flex w-50 mr-3">
+                                <label style="width:30%;" class="mt-1" for="txtStoreThua">CH thừa</label>
+                                <select class="form-control" name="txtStoreThua" id="txtStoreThua">
+                                    <?php
+                                    foreach ($_SESSION["storeNameSLT"] as $index => $storeName) {
+                                        echo "<option data-quantity='" . $_SESSION["quantityInStockSLT"][$index] . "' value='" . $_SESSION["storeIDSLT"][$index] . "'>$storeName</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
 
-                        <div class="d-flex w-50 ml-3">
-                            <label style="width:30%;" class="mt-1" for="txtStoreThieu">CH thiếu</label>
-                            <select class="form-control" name="txtStoreThieu" id="txtStoreThieu">
-                                <?php
-                                foreach ($_SESSION["storeNameSLT"] as $index => $storeName) {
-                                    echo "<option data-quantity='".  $_SESSION["quantityInStockSLT"][$index] ."' value='" . $_SESSION["storeIDSLT"][$index] . "'>$storeName</option>";
-                                }
-                                ?>
-                            </select>
-                        </div>
+                            <div class="d-flex w-50 ml-3">
+                                <label style="width:30%;" class="mt-1" for="txtStoreThieu">CH thiếu</label>
+                                <select class="form-control" name="txtStoreThieu" id="txtStoreThieu">
+                                    <?php
+                                    foreach ($_SESSION["storeNameSLT"] as $index => $storeName) {
+                                        echo "<option data-quantity='" . $_SESSION["quantityInStockSLT"][$index] . "' value='" . $_SESSION["storeIDSLT"][$index] . "'>$storeName</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
                         </div>
                         <div class="mt-1 d-flex">
-                        <div style="width: 12.3%;"></div>
+                            <div style="width: 12.3%;"></div>
                             <p class="text-danger" id="errStore">*</p>
                         </div>
 
@@ -397,7 +409,7 @@ if (isset($_POST["btnkhoa"])) {
 
                         <div class="d-flex mt-2">
                             <div style="width: 12.3%;"></div>
-                        <p class="text-danger" id="errQuantityInStock">*</p>
+                            <p class="text-danger" id="errQuantityInStock">*</p>
                         </div>
 
 
