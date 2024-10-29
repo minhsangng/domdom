@@ -50,6 +50,14 @@ class cIngredients extends mIngredients
             return $result->fetch_assoc();
         }
     }
+
+    public function cGetTotalIngredient() {
+        if ($this->mGetTotalIngredient() != 0) {
+            $result = $this->mGetTotalIngredient();
+           
+            return $result;
+        }
+    }
     
     public function cInsertIngredient($ingreName, $unit, $price, $type)
     {

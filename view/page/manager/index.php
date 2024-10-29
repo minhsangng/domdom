@@ -14,7 +14,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playwrite+DE+Grund:wght@100..400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+DE+Grund:wght@100..400&display=swap"
+        rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link href="../../css/bootstrap.min.css" rel="stylesheet">
@@ -84,6 +85,30 @@
             padding: 20px;
             margin-top: 20px;
         }
+
+        .pagination {
+            margin-left: 40%;
+            margin-bottom: 8%;
+        }
+
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+        .pagination a.active {
+            background-color: #C92127;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <?php
@@ -127,25 +152,32 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 </a>
             </div>
             <nav class="mt-10">
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="admin" href="index.php">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="admin"
+                    href="index.php">
                     <i class="fas fa-tachometer-alt mr-3"></i>Tổng quan
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="employee" href="index.php?i=employee">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="employee" href="index.php?i=employee">
                     <i class="fa-solid fa-users-gear mr-3"></i></i>Xem thông tin NV
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="ingredient" href="index.php?i=ingredient">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="ingredient" href="index.php?i=ingredient">
                     <i class="fa-solid fa-cubes mr-3"></i>Tính toán ng.liệu
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="revenue" href="index.php?i=revenue">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="revenue" href="index.php?i=revenue">
                     <i class="fa-solid fa-file-invoice-dollar mr-3"></i>Xem thống kê
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="shift" href="index.php?i=shift">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="shift"
+                    href="index.php?i=shift">
                     <i class="fa-regular fa-calendar-days mr-3"></i>Phân ca
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="attendance" href="index.php?i=attendance">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="attendance" href="index.php?i=attendance">
                     <i class="fa-solid fa-clock mr-3"></i>Chấm công
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="proposal" href="index.php?i=proposal">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="proposal" href="index.php?i=proposal">
                     <i class="fa-solid fa-paper-plane mr-3"></i>Đề xuất
                 </a>
             </nav>
@@ -153,25 +185,30 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
         <div class="bg-gray-100 flex-1 p-6 h-fit pb-2 md:p-10" id="right">
             <div class="flex justify-between items-center mb-6 hover:cursor-pointer">
                 <div class="relative w-1/2 flex">
-                    <input class="w-full py-2 px-4 mr-2 rounded-lg border border-gray-300" placeholder="Tìm kiếm..." type="text" />
+                    <input class="w-full py-2 px-4 mr-2 rounded-lg border border-gray-300" placeholder="Tìm kiếm..."
+                        type="text" />
                     <button type="submit" class="btn btn-primary ml-2 px-3">Tìm</button>
                 </div>
                 <div class="flex items-center hover:cursor-pointer">
-                    <div class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
+                    <div
+                        class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
                         <i class="fa-regular fa-envelope"></i>
                     </div>
-                    <div class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
+                    <div
+                        class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
                         <i class="fa-regular fa-bell"></i>
                     </div>
                     <div class="ml-4 flex items-center relative user-container">
-                        <img alt="User Avatar" class="rounded-full mr-1 border-solid border-2" height="40" width="40" src="../../../images/user.png" />
+                        <img alt="User Avatar" class="rounded-full mr-1 border-solid border-2" height="40" width="40"
+                            src="../../../images/user.png" />
                         <span class="text-xs font-bold ml-1">
                             <?php
                             echo $_SESSION["userName"];
                             ?>
                         </span>
 
-                        <div class="subnav absolute top-11 right-0 bg-white rounded-lg bg-gray-500 h-fit p-2 text-center border-2">
+                        <div
+                            class="subnav absolute top-11 right-0 bg-white rounded-lg bg-gray-500 h-fit p-2 text-center border-2">
                             <a href="index.php?m=logout">Đăng xuất <i class="fa-solid fa-right-from-bracket"></i></a>
                         </div>
                     </div>
@@ -192,7 +229,7 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
             } else {
                 require("home/index.php");
             }
-            
+
             if (isset($_GET["m"])) {
                 unset($_SESSION["userName"]);
                 unset($_SESSION["login"]);
@@ -213,15 +250,15 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 rightSession.style.height = "100vh";
             }
         }
-        
+
         window.onload = adjustContentHeight;
 
         window.onresize = adjustContentHeight;
-        
+
         const navAd = document.querySelectorAll(".adnav");
         let idActiveAd = "admin";
 
-        navAd.forEach(function(item) {
+        navAd.forEach(function (item) {
             item.addEventListener("click", () => {
                 navAd.forEach((i) => i.classList.remove("activeAd"));
             });
@@ -231,7 +268,7 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
             idActiveAd = window.location.search.slice(3);
 
         window.addEventListener("load", () => {
-            navAd.forEach(function(item) {
+            navAd.forEach(function (item) {
                 if (item.id == idActiveAd) item.classList.add("activeAd");
                 else item.classList.remove("activeAd");
             });

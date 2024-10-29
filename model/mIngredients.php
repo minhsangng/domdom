@@ -32,6 +32,21 @@ class mIngredients
             return $conn->query($sql);
         return 0;
     }
+
+    public function mGetTotalIngredient()
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT COUNT(*) as total FROM ingredient";
+        if ($conn != null){
+            $result = $conn->query($sql);
+            $row = $result->fetch_assoc();
+            $totalProducts = $row['total'];
+            return $totalProducts;
+        }else {
+            return 0;
+        }
+    }
     
     public function mInsertIngredient($ingreName, $unit, $price, $type)
     {
