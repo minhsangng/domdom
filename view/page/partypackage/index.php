@@ -110,6 +110,12 @@
             transform: translatey(0px);
         }
     }
+    
+    .swal2-confirm {
+        width: 24rem !important;
+        padding: 10px auto !important;
+        border-radius: 12px;
+    }
 </style>
 
 <?php
@@ -128,18 +134,18 @@ if (isset($_POST["btndattiec"])) {
             <input type='time' id='swal-input5' class='swal2-input form-control w-full' placeholder='Giờ diễn ra...'>
             <input type='text' id='swal-input6' class='swal2-input form-control w-full' placeholder='Yêu cầu khác...'>
         </div>
-        <div class='w-96 h-fit mx-auto'>
-        <h4>Phương thức thanh toán</h4>
-        <ol>
-        <li class='flex justify-center items-center h-fit'>
-        <input type='radio' id='swal-input7' class='swal2-input'>
-        <label for='swal-input7'>Ví diện tử</label>
-        </li>
-        <li class='flex justify-center items-center h-fit'>
-        <input type='radio' id='swal-input8' class='swal2-input'>
-        <label for='swal-input8'>Ngân hàng</label>
-        </li>
-        </ol>
+        <div class='flex flex-col items-start mt-3 w-96 h-fit mx-auto'>
+            <h2 style='font-weight: 700; margin-bottom: 8px;'>Phương thức thanh toán</h2>
+            <ol class='p-0 m-0'>
+                <li class='flex justify-center items-center w-fit'>
+                    <input type='radio' id='swal-input7' class='swal2-input m-0' style='height: 1.5rem !important;'>
+                    <label for='swal-input7' class='ml-2'>Ví diện tử</label>
+                </li>
+                <li class='flex justify-center items-center w-fit'>
+                    <input type='radio' id='swal-input8' class='swal2-input m-0' style='height: 1.5rem !important;'>
+                    <label for='swal-input8' class='ml-2'>Ngân hàng</label>
+                </li>
+            </ol>
         </div>
     `,
         focusConfirm: false,
