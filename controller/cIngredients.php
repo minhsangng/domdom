@@ -160,6 +160,22 @@ class cIngredients extends mIngredients
         }
     }
 
+    public function cUpdateStoresIngredient($storeThua, $storeThieu, $soLuongChuyen)
+    {
+        $isSuccess = false;
+        if ($this->mUpdateStoreThuaIngredient($storeThua, $soLuongChuyen) != 0) {
+            if ($this->mUpdateStoreThieuIngredient($storeThieu, $soLuongChuyen) != 0) {
+                $isSuccess = true;
+            } else {
+                $isSuccess = false;
+            }
+        } else {
+            $isSuccess = false;
+        }
+
+        return $isSuccess;
+    }
+
     public function cLockIngredient($status, $ingredientID)
     {
         if ($this->mLockIngredient($status, $ingredientID) != 0) {

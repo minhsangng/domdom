@@ -69,6 +69,18 @@ if (isset($_POST["btnSLT"])) {
     }
 }
 
+if (isset($_POST["btnChuyenNL"])) {
+    $soLuongChuyen = $_POST["txtQuantityInStock"];
+    $storeThua = $_POST["txtStoreThua"];
+    $storeThieu = $_POST["txtStoreThieu"];
+    if ($ctrl->cUpdateStoresIngredient($storeThua, $storeThieu, $soLuongChuyen)) {
+        echo "<script>alert('Chuyển nguyên liệu thành công')</script>";
+    } else {
+        echo "<script>alert('Chuyển nguyên liệu thất bại')</script>";
+    }
+
+}
+
 if (isset($_POST["btnsuanl"])) {
     $ingreID = $_SESSION["ingreID"];
     $ingreName = $_POST["ingreName"];
@@ -414,7 +426,7 @@ if (isset($_POST["btnkhoa"])) {
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" name="btndong" data-bs-dismiss="modal"
                             onclick="if (confirm('Thông tin chưa được lưu. Bạn có chắc chắn thoát?') === false) { var modalUpdate = new bootstrap.Modal(document.querySelector('.modalUpdate')); modalUpdate.show();}">Hủy</button>
-                        <button type="submit" class="btn btn-primary" name="btnsuanl">Xác nhận</button>
+                        <button type="submit" class="btn btn-primary" name="btnChuyenNL">Xác nhận</button>
                     </div>
                 </form>
             </div>

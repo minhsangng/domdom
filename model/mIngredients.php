@@ -203,6 +203,28 @@ class mIngredients
         return 0;
     }
 
+    public function mUpdateStoreThuaIngredient($storeThua, $soLuongChuyen)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "UPDATE `store_ingredient` SET quantityInStock = quantityInStock - $soLuongChuyen WHERE storeID = $storeThua";
+
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+
+    public function mUpdateStoreThieuIngredient($storeThieu, $soLuongChuyen)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "UPDATE `store_ingredient` SET quantityInStock = quantityInStock + $soLuongChuyen WHERE storeID = $storeThieu";
+
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+
     public function mLockIngredient($status, $ingredientID)
     {
         $db = new Database;
