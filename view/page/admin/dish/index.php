@@ -66,7 +66,7 @@ if (isset($_POST["btncapnhat"])) {
             $u_ingredientID[$count] = $row["ingredientID"];
             $u_quantity[$count] = $row["quantity"];
             $u_ingredientName[$count] = $row["ingredientName"];
-            $u_unitOfcalculaton[$count] = $row["unitOfcalculaton"];
+            $u_unitOfcalculation[$count] = $row["unitOfcalculation"];
             $count++;
         }
     }
@@ -314,7 +314,7 @@ if (isset($_POST["btnkhoa"])) {
 
                                                     while ($row = $result->fetch_assoc()) {
 
-                                                        echo "<option value='" . $row["unitOfcalculaton"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
+                                                        echo "<option value='" . $row["unitOfcalculation"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
 
 
                                                     }
@@ -331,7 +331,7 @@ if (isset($_POST["btnkhoa"])) {
 
                                                 while ($row = $result->fetch_assoc()) {
 
-                                                    echo "<option value='" . $row["unitOfcalculaton"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
+                                                    echo "<option value='" . $row["unitOfcalculation"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
 
 
                                                 }
@@ -472,7 +472,7 @@ if (isset($_POST["btnkhoa"])) {
 
                                             while ($row = $result->fetch_assoc()) {
                                                 $selected = ($row["ingredientName"] == $u_ingredientName[$i]) ? "selected" : "";
-                                                echo "<option $selected value='" . $row["unitOfcalculaton"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
+                                                echo "<option $selected value='" . $row["unitOfcalculation"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
 
 
                                             }
@@ -489,7 +489,7 @@ if (isset($_POST["btnkhoa"])) {
 
                                             while ($row = $result->fetch_assoc()) {
 
-                                                echo "<option value='" . $row["unitOfcalculaton"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
+                                                echo "<option value='" . $row["unitOfcalculation"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
 
 
                                             }
@@ -498,7 +498,7 @@ if (isset($_POST["btnkhoa"])) {
                                         </div>
                                         <td>
                                             <input type="text" id="u-unit-0" class="w-full form-control bg-gray-100"
-                                                readonly value="' . $u_unitOfcalculaton[$i] . '">
+                                                readonly value="' . $u_unitOfcalculation[$i] . '">
                                         </td>
                                         <td>
                                             <input type="number" class="w-full form-control" name="u-quantity[]"
