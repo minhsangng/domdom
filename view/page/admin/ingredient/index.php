@@ -268,7 +268,7 @@ if (isset($_POST["btnkhoa"])) {
                         </table>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button onclick="if (confirm('Thông tin chưa được lưu. Bạn có chắc chắn thoát?') === false) { var modalInsert = new bootstrap.Modal(document.querySelector('.modalInsert')); modalInsert.show();}" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                         <button type="submit" class="btn btn-primary" name="btnthemnl">Thêm</button>
                     </div>
                 </form>
@@ -429,7 +429,7 @@ if (isset($_POST["btnkhoa"])) {
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" name="btndong" data-bs-dismiss="modal"
-                            onclick="if (confirm('Thông tin chưa được lưu. Bạn có chắc chắn thoát?') === false) { var modalUpdate = new bootstrap.Modal(document.querySelector('.modalUpdate')); modalUpdate.show();}">Hủy</button>
+                            onclick="if (confirm('Thông tin chưa được lưu. Bạn có chắc chắn thoát?') === false) { var modalSLT = new bootstrap.Modal(document.querySelector('.modalSLT')); modalSLT.show();}">Hủy</button>
                         <button type="submit" class="btn btn-primary" name="btnChuyenNL">Xác nhận</button>
                     </div>
                 </form>
