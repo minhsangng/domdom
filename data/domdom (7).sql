@@ -3,13 +3,13 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th12 08, 2024 lúc 05:15 PM
+-- Thời gian đã tạo: Th12 15, 2024 lúc 07:15 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
-SET time_zone = "+07:00";
+SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -69,7 +69,7 @@ CREATE TABLE `dish` (
 --
 
 INSERT INTO `dish` (`dishID`, `dishName`, `dishCategory`, `price`, `businessStatus`, `availabilityStatus`, `description`, `preparationProcess`, `image`) VALUES
-(1, 'Burger bò', 'Burger/Cơm', 39000.00, 1, 1, 'Burger với nhân bò nướng mềm, thêm rau và sốt.', 'Nướng bò, chuẩn bị bánh, kết hợp chúng.', 'burgerbo.png'),
+(1, 'Burgur bò', 'Burger/Cơm', 39000.00, 1, 1, 'Burger với nhân bò nướng mềm, thêm rau và sốt.', 'Nướng bò, chuẩn bị bánh, kết hợp chúng.', 'burgerbo.png'),
 (2, 'Burger heo', 'Burger/Cơm', 35000.00, 1, 1, 'Burger với nhân heo giòn, rau xà lách và sốt đặc biệt.', 'Nướng bánh Burger, chiên thịt heo và cùng rau và sốt.', 'burgerheo.png'),
 (3, 'Burger tôm', 'Burger/Cơm', 35000.00, 1, 1, 'Burger với nhân tôm giòn, rau xà lách và sốt đặc biệt.', 'Nướng bánh hamburger, chiên tôm và cùng rau và sốt.', 'burgertom.png'),
 (4, 'Gà rán giòn', 'Gà rán', 25000.00, 1, 1, 'Gà rán giòn với lớp vỏ bột chiên xù.', 'Chiên gà với bột chiên giòn cho đến khi vàng đều.', 'garangion.png'),
@@ -98,7 +98,12 @@ INSERT INTO `dish` (`dishID`, `dishName`, `dishCategory`, `price`, `businessStat
 (27, 'Bánh xoài đào', 'Tráng miệng', 30000.00, 1, 1, 'Bánh xoài đào ngọt thanh, mềm mại.', 'Làm bánh với xoài và đào tươi làm nhân, chiên giòn.', 'banhxoaidao.png'),
 (28, 'Kem vani', 'Tráng miệng', 20000.00, 1, 1, 'Kem vani mềm mịn.', 'Kem vani.', 'kemvani.png'),
 (29, 'Kem dừa', 'Tráng miệng', 25000.00, 1, 1, 'Kem dừa mát lạnh, thơm ngon.', 'Làm kem từ nước dừa và sữa, cho vào tủ đông để đông cứng.', 'kemdua.png'),
-(30, 'Kem dâu', 'Tráng miệng', 22000.00, 1, 1, 'Kem dâu ngọt ngào.', 'Xay dâu với kem và sữa.', 'kemdau.png');
+(30, 'Kem dâu', 'Tráng miệng', 22000.00, 1, 1, 'Kem dâu ngọt ngào.', 'Xay dâu với kem và sữa.', 'kemdau.png'),
+(75, 'tritam', 'Ăn kèm', 2.00, 1, 1, 'â', 'a', '20241213005041_tritam.png'),
+(76, 'áasas', 'Ăn kèm', 1.00, 1, 1, 'a', 'a', 'aasas.png'),
+(78, 'âsasasas', 'Ăn kèm', 2.00, 1, 1, 'rrtrtrt', 'âsas', 'asasasas.png'),
+(79, 'bbbbb', 'Ăn kèm', 123.00, 1, 1, 'a', 'a', 'bbbbb.png');
+
 -- --------------------------------------------------------
 
 --
@@ -207,16 +212,12 @@ INSERT INTO `dish_ingredient` (`dishID`, `ingredientID`, `quantity`) VALUES
 (30, 1, 120),
 (30, 5, 70),
 (30, 9, 40),
-(32, 10, 10),
-(33, 1, 4),
-(33, 7, 1233),
-(34, 9, 4),
-(34, 10, 8),
-(34, 12, 3),
-(34, 13, 4),
-(38, 6, 3),
-(38, 7, 44),
-(38, 12, 33);
+(75, 1, 1),
+(76, 1, 1),
+(78, 1, 2),
+(78, 1, 2),
+(79, 1, 2),
+(79, 1, 3);
 
 -- --------------------------------------------------------
 
@@ -236,12 +237,12 @@ CREATE TABLE `employee_shift` (
 --
 
 INSERT INTO `employee_shift` (`shiftID`, `userID`, `date`, `status`) VALUES
-(1, 7, '2024-10-20', 1),
-(1, 7, '2024-10-23', 0),
-(1, 7, '2024-11-24', 1),
-(1, 32, '2024-10-26', 1),
-(1, 32, '2024-11-15', 1),
-(1, 32, '2024-11-23', 1),
+(1, 7, '2024-11-20', 1),
+(1, 7, '2024-11-23', 0),
+(1, 7, '2024-12-24', 1),
+(1, 32, '2024-12-15', 1),
+(1, 32, '2024-12-23', 1),
+(1, 32, '2024-12-26', 1),
 (2, 7, '2024-10-26', 0),
 (2, 7, '2024-11-24', 0),
 (2, 7, '2024-11-26', 1),
@@ -270,7 +271,16 @@ INSERT INTO `importorder` (`importOrderID`, `importOrderDate`, `userID`) VALUES
 (1, '2024-12-07 18:36:53', 2),
 (2, '2024-12-07 22:32:39', 2),
 (3, '2024-12-08 06:10:22', 2),
-(4, '2024-12-08 20:08:37', 2);
+(4, '2024-12-08 20:08:37', 2),
+(5, '2024-12-09 18:29:32', 2),
+(6, '2024-12-10 03:58:55', 2),
+(7, '2024-12-10 07:12:56', 2),
+(8, '2024-12-10 07:13:45', 2),
+(9, '2024-12-10 07:13:53', 2),
+(10, '2024-12-11 17:07:10', 2),
+(11, '2024-12-11 17:35:08', 2),
+(12, '2024-12-13 05:23:44', 2),
+(13, '2024-12-13 06:54:42', 2);
 
 -- --------------------------------------------------------
 
@@ -312,7 +322,7 @@ INSERT INTO `ingredient` (`ingredientID`, `ingredientName`, `unitOfcalculation`,
 (18, 'Muối', 'kg', 5000, 'Khô', 1),
 (19, 'Chanh', 'quả', 5000, 'Tươi', 1),
 (20, 'Mật ong', 'kg', 120000, 'Khô', 1),
-(21, 'sewssws', 'lít', 1, 'Khô', 1);
+(28, 'testtttt1', 'gói', 12, 'Khô', 1);
 
 -- --------------------------------------------------------
 
@@ -366,7 +376,86 @@ INSERT INTO `needingredient` (`importOrderID`, `ingredientID`, `quantity`) VALUE
 (4, 8, 90),
 (4, 9, 60),
 (4, 10, 110),
-(4, 13, 75);
+(4, 13, 75),
+(5, 2, 50),
+(5, 3, 30),
+(5, 4, 150),
+(5, 5, 70),
+(5, 6, 40),
+(5, 7, 100),
+(5, 12, 20),
+(6, 1, 4),
+(6, 2, 50),
+(6, 3, 30),
+(6, 4, 150),
+(6, 5, 120),
+(6, 6, 40),
+(6, 7, 250),
+(6, 8, 90),
+(6, 9, 60),
+(6, 10, 110),
+(6, 11, 70),
+(8, 2, 50),
+(8, 3, 30),
+(8, 4, 150),
+(8, 5, 70),
+(8, 6, 40),
+(8, 7, 220),
+(8, 8, 90),
+(8, 9, 60),
+(8, 10, 110),
+(9, 2, 50),
+(9, 3, 30),
+(9, 4, 150),
+(9, 5, 70),
+(9, 6, 40),
+(9, 7, 220),
+(9, 8, 90),
+(9, 9, 60),
+(9, 10, 110),
+(10, 2, 50),
+(10, 3, 30),
+(10, 4, 150),
+(10, 5, 70),
+(10, 6, 40),
+(10, 7, 220),
+(10, 8, 90),
+(10, 9, 60),
+(10, 10, 110),
+(10, 11, 39),
+(10, 12, 69),
+(11, 2, 50),
+(11, 3, 30),
+(11, 4, 150),
+(11, 5, 70),
+(11, 6, 40),
+(11, 7, 220),
+(11, 8, 90),
+(11, 9, 60),
+(11, 10, 110),
+(11, 11, 39),
+(11, 12, 30),
+(12, 1, 49),
+(12, 2, 50),
+(12, 3, 30),
+(12, 4, 150),
+(12, 5, 120),
+(12, 6, 40),
+(12, 7, 250),
+(12, 8, 90),
+(12, 9, 60),
+(12, 10, 110),
+(12, 11, 39),
+(13, 2, 50),
+(13, 3, 100),
+(13, 4, 150),
+(13, 5, 70),
+(13, 6, 40),
+(13, 7, 220),
+(13, 8, 130),
+(13, 9, 60),
+(13, 10, 60),
+(13, 12, 1);
 
 -- --------------------------------------------------------
 
@@ -393,7 +482,7 @@ CREATE TABLE `order` (
 --
 
 INSERT INTO `order` (`orderID`, `orderDate`, `total`, `sumOfQuantity`, `paymentMethod`, `note`, `status`, `phoneNumber`, `promotionID`, `partyPackageID`, `storeID`) VALUES
-(1, '2024-12-07', 489000.00, 15, 'Tiền mặt', 'thêm sốt cà chua', 0, '0901234567', 1, NULL, 1),
+(1, '2024-12-07', 372000.00, 12, 'Tiền mặt', 'thêm sốt cà chua', 0, '0901234567', 1, NULL, 1),
 (2, '2024-12-07', 2499000.00, 1, 'Tiền mặt', 'Đơn hàng abcde....', 0, '0901234567', 3, 1, 1);
 
 -- --------------------------------------------------------
@@ -413,7 +502,7 @@ CREATE TABLE `order_dish` (
 --
 
 INSERT INTO `order_dish` (`orderID`, `dishID`, `quantity`) VALUES
-(1, 1, 11),
+(1, 1, 8),
 (1, 16, 4);
 
 -- --------------------------------------------------------
@@ -576,7 +665,7 @@ CREATE TABLE `proposal` (
 --
 
 INSERT INTO `proposal` (`proposalID`, `typeOfProposal`, `content`, `status`, `userID`) VALUES
-(1, 'Đề xuất món ăn', 'Món ăn: Bánh mì kẹp thịt nướng, Nguyên liệu: Thịt bò, bánh mì, rau sống, gia vị, Cách chế biến: Nướng thịt, kẹp vào bánh mì với rau sống', '0', 1),
+(1, 'Đề xuất món ăn', 'Món ăn: Bánh mì kẹp thịt nướng, Nguyên liệu: Thịt bò, bánh mì, rau sống, gia vị, Cách chế biến: Nướng thịt, kẹp vào bánh mì với rau sống', '1', 1),
 (2, 'Đề xuất món ăn', 'Món ăn: Gà rán giòn, Nguyên liệu: Gà, bột chiên xù, gia vị, Dụng cụ: Chảo chiên', '1', 2),
 (3, 'Đề xuất món ăn', 'Món ăn: Phở bò, Nguyên liệu: Thịt bò, bún phở, gia vị, hành, nước dùng', '0', 3),
 (4, 'Đề xuất món ăn', 'Món ăn: Pizza hải sản, Nguyên liệu: Hải sản, phô mai, bột pizza, gia vị', '1', 4),
@@ -677,46 +766,48 @@ CREATE TABLE `store_ingredient` (
 --
 
 INSERT INTO `store_ingredient` (`storeID`, `ingredientID`, `quantityInStock`) VALUES
-(1, 1, 50),
-(1, 2, 30),
-(1, 3, 40),
-(1, 4, 60),
-(1, 5, 80),
-(1, 6, 25),
-(1, 7, 10),
-(1, 8, 50),
-(1, 9, 35),
-(1, 10, 65),
-(1, 11, 40),
-(1, 12, 30),
-(1, 13, 55),
-(1, 14, 70),
-(1, 15, 45),
-(1, 16, 60),
-(1, 17, 75),
-(1, 18, 90),
-(1, 19, 20),
-(1, 20, 100),
-(2, 1, 55),
-(2, 2, 35),
-(2, 3, 45),
-(2, 4, 65),
-(2, 5, 75),
-(2, 6, 40),
-(2, 7, 15),
-(2, 8, 55),
-(2, 9, 40),
-(2, 10, 70),
-(2, 11, 45),
-(2, 12, 35),
-(2, 13, 60),
-(2, 14, 75),
-(2, 15, 50),
-(2, 16, 65),
-(2, 17, 80),
-(2, 18, 95),
-(2, 19, 25),
-(2, 20, 105),
+(1, 1, 49),
+(1, 2, 29),
+(1, 3, 39),
+(1, 4, 59),
+(1, 5, 79),
+(1, 6, 24),
+(1, 7, 9),
+(1, 8, 49),
+(1, 9, 34),
+(1, 10, 64),
+(1, 11, 39),
+(1, 12, 29),
+(1, 13, 54),
+(1, 14, 69),
+(1, 15, 44),
+(1, 16, 59),
+(1, 17, 74),
+(1, 18, 89),
+(1, 19, 19),
+(1, 20, 99),
+(1, 28, -2),
+(2, 1, 56),
+(2, 2, 36),
+(2, 3, 46),
+(2, 4, 66),
+(2, 5, 76),
+(2, 6, 41),
+(2, 7, 16),
+(2, 8, 56),
+(2, 9, 41),
+(2, 10, 71),
+(2, 11, 46),
+(2, 12, 36),
+(2, 13, 61),
+(2, 14, 76),
+(2, 15, 51),
+(2, 16, 66),
+(2, 17, 81),
+(2, 18, 96),
+(2, 19, 26),
+(2, 20, 106),
+(2, 28, 2),
 (3, 1, 60),
 (3, 2, 40),
 (3, 3, 50),
@@ -737,6 +828,7 @@ INSERT INTO `store_ingredient` (`storeID`, `ingredientID`, `quantityInStock`) VA
 (3, 18, 100),
 (3, 19, 30),
 (3, 20, 110),
+(3, 28, 0),
 (4, 1, 65),
 (4, 2, 45),
 (4, 3, 55),
@@ -757,6 +849,7 @@ INSERT INTO `store_ingredient` (`storeID`, `ingredientID`, `quantityInStock`) VA
 (4, 18, 105),
 (4, 19, 35),
 (4, 20, 115),
+(4, 28, 0),
 (5, 1, 70),
 (5, 2, 50),
 (5, 3, 60),
@@ -776,7 +869,8 @@ INSERT INTO `store_ingredient` (`storeID`, `ingredientID`, `quantityInStock`) VA
 (5, 17, 95),
 (5, 18, 110),
 (5, 19, 40),
-(5, 20, 120);
+(5, 20, 120),
+(5, 28, 0);
 
 -- --------------------------------------------------------
 
@@ -881,7 +975,6 @@ ALTER TABLE `dish`
 -- Chỉ mục cho bảng `dish_ingredient`
 --
 ALTER TABLE `dish_ingredient`
-  ADD PRIMARY KEY (`dishID`,`ingredientID`),
   ADD KEY `ingredientID` (`ingredientID`);
 
 --
@@ -1002,19 +1095,19 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT cho bảng `dish`
 --
 ALTER TABLE `dish`
-  MODIFY `dishID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `dishID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
 
 --
 -- AUTO_INCREMENT cho bảng `importorder`
 --
 ALTER TABLE `importorder`
-  MODIFY `importOrderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `importOrderID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT cho bảng `ingredient`
 --
 ALTER TABLE `ingredient`
-  MODIFY `ingredientID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `ingredientID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT cho bảng `order`
@@ -1072,7 +1165,7 @@ ALTER TABLE `user`
 -- Các ràng buộc cho bảng `dish_ingredient`
 --
 ALTER TABLE `dish_ingredient`
-  ADD CONSTRAINT `dish_ingredient_ibfk_1` FOREIGN KEY (`dishID`) REFERENCES `dish` (`dishID`),
+  ADD CONSTRAINT `dish_ingredient_ibfk_1` FOREIGN KEY (`dishID`) REFERENCES `dish` (`dishID`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `dish_ingredient_ibfk_2` FOREIGN KEY (`ingredientID`) REFERENCES `ingredient` (`ingredientID`);
 
 --
