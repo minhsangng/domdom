@@ -24,7 +24,7 @@
     }
 </style>
 
-<div class="flex flex-col justify-center items-center absolute top-44 left-16">
+<div class="flex flex-col justify-center items-center absolute top-44 left-28">
     <h1 class="font-bold text-3xl mb-4">🎉 Chương Trình Khuyến Mãi 🎉</h1>
     <p class="italic text-lg">Quay để nhận ngay ưu đãi hấp dẫn!</p>
     <div id="wheel" class="wheel size-72 rounded-full mx-auto my-4 border-red-600 border-8 shadow shadow-red-500"></div>
@@ -32,7 +32,7 @@
     <button id="spinButton" class="btn btn-danger px-4 py-2 rounded-xl">Quay Ngay!</button>
 </div>
 
-<div class="w-full py-20" style="background: linear-gradient(135deg, #ffcc00, var(--secondary-color));">
+<div class="w-full py-20">
     <h2 class="text-center text-3xl font-bold w-1/3 my-0 mx-auto pb-4 rounded-md border-b-4 border-gray-300 border-dotted">ƯU ĐÃI ĐANG DIỄN RA</h2>
     <div class="flex-col justify-center items-center pt-20">
         <?php

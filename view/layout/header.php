@@ -36,7 +36,7 @@
     <!-- Bootstrap JS (bundle includes Popper.js) -->
     <script src="view/js/bootstrap.bundle.min.js"></script>
     
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         header {

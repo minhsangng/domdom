@@ -25,7 +25,7 @@
                         placeholder="exam@gmail.com" />
 
                     <button
-                        class="absolute end-1 top-1/2 -translate-y-1/2 rounded-full btn btn-warning px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700">
+                        class="absolute end-1 top-1/2 -translate-y-1/2 rounded-full btn btn-warning px-5 py-3 text-sm font-medium text-white transition">
                         Đăng ký
                     </button>
                 </div>
@@ -48,7 +48,7 @@
                 <div class="mt-6 flex gap-4">
                     <a
                         class="text-gray-700 transition hover:text-gray-700/75"
-                        href="#"
+                        href="https://www.facebook.com"
                         target="_blank"
                         rel="noreferrer">
                         <span class="sr-only"> Facebook </span>
@@ -63,7 +63,7 @@
 
                     <a
                         class="text-gray-700 transition hover:text-gray-700/75"
-                        href="#"
+                        href="https://www.instagram.com"
                         target="_blank"
                         rel="noreferrer">
                         <span class="sr-only"> Instagram </span>
@@ -78,7 +78,7 @@
 
                     <a
                         class="text-gray-700 transition hover:text-gray-700/75"
-                        href="#"
+                        href="https://www.twitter.com"
                         target="_blank"
                         rel="noreferrer">
                         <span class="sr-only"> Twitter </span>
@@ -91,7 +91,7 @@
 
                     <a
                         class="text-gray-700 transition hover:text-gray-700/75"
-                        href="#"
+                        href="https://www.github.com"
                         target="_blank"
                         rel="noreferrer">
                         <span class="sr-only"> GitHub </span>
@@ -106,7 +106,7 @@
 
                     <a
                         class="text-gray-700 transition hover:text-gray-700/75"
-                        href="#"
+                        href="https://www.tiktok.com"
                         target="_blank"
                         rel="noreferrer">
                         <span class="sr-only"> Tiktok </span>
@@ -120,7 +120,7 @@
 
             <div class="grid grid-cols-1 gap-8 text-center lg:grid-cols-3 lg:text-left">
                 <div>
-                    <strong class="font-bold border-b border-gray-300 pb-1 text-gray-900"> Chính sách </strong>
+                    <strong class="font-bold border-b border-gray-500/75 pb-1 text-gray-900 uppercase uppercase"> Chính sách </strong>
 
                     <ul class="mt-6 space-y-1">
                         <li>
@@ -133,7 +133,7 @@
                 </div>
 
                 <div>
-                    <strong class="font-bold border-b border-gray-300 pb-1 text-gray-900"> Thông tin </strong>
+                    <strong class="font-bold border-b border-gray-500/75 pb-1 text-gray-900 uppercase"> Thông tin </strong>
 
                     <ul class="mt-6 space-y-1">
                         <li>
@@ -149,7 +149,7 @@
                 </div>
 
                 <div>
-                    <strong class="font-bold border-b border-gray-300 pb-1 text-gray-900"> Hỗ trợ </strong>
+                    <strong class="font-bold border-b border-gray-500/75 pb-1 text-gray-900 uppercase"> Hỗ trợ </strong>
 
                     <ul class="mt-6 space-y-1">
                         <li>

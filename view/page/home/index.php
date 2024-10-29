@@ -103,8 +103,8 @@ if (isset($_POST["search"])) {
                             <div class='relative'>
                             <img alt='' class='rounded-full size-52' style='border-width: 12px; border-left: 0; border-color: " . $border . ";' src='" . $img_dish . "'/>
                             </div>
-                            <div class='title-product py-2 px-4 rounded-lg w-fit group-hover:translate-y-0'>
-                            <h2 class='text-2xl text-amber-600 font-bold uppercase'>" . $row["dishCategory"] . "</h2>
+                            <div class='title-product py-2 px-4 rounded-lg w-96 group-hover:translate-y-0 delay-150 ease-linear'>
+                            <h2 class='text-2xl text-center text-amber-600 font-bold uppercase'>" . $row["dishCategory"] . "</h2>
                             </div>
                         </a>
                     </div>";
@@ -140,15 +140,15 @@ if (isset($_POST["search"])) {
             $bg = "#EF5350";
             $color = "rgb(255, 255, 255)";
           } else {
-            $bg = "rgba(255, 255, 255)";
+            $bg = "rgba(255, 255, 255, 0.8)";
             $color = "#EF5350";
           }
 
           echo "
-                    <div class='rounded-3xl pb-6 flex flex-col items-center h-fit relative hover:scale-125 transition-all' style='background-color: " . $bg . "; color: " . $color . ";'>
+                    <div class='rounded-3xl pb-6 flex flex-col items-center h-fit relative hover:scale-110 delay-150 ease-linear transition-all' style='background-color: " . $bg . "; color: " . $color . ";'>
                         <img alt='" . $row["promotionName"] . "' class='rounded-full size-48 absolute bottom-32 border-dark-300 border-2' src='" . $img_pomotion . "'/>
                         <h2 class='text-lg font-semibold mt-32 mb-2'>" . $row["promotionName"] . "</h2>
-                        <p class='text-md text-center'>" . $row["description"] . "</p>
+                        <p class='text-md text-center px-2'>" . $row["description"] . "</p>
                     </div>";
         }
       } else echo "Không có dữ liệu!";
