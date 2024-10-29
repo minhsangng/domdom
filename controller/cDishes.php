@@ -20,7 +20,7 @@ class cDishes extends mDishes
         }
         return 0;
     }
-    
+
     public function cSearchDish($input)
     {
         if ($this->mSearchDish($input) != 0) {
@@ -69,14 +69,15 @@ class cDishes extends mDishes
         }
         return 0;
     }
-    
+
     public function cGetDishTop()
     {
         if ($this->mGetDishTop() != 0) {
             $result = $this->mGetDishTop();
-            
+
             return $result;
-        } return 0;
+        }
+        return 0;
     }
 
     public function cGetDishById($dishID)
@@ -113,9 +114,9 @@ class cDishes extends mDishes
         $dishId = $this->mInsertDish($dishName, $dishCategory, $price, $prepare, $image, $description);
         if ($dishId != -1) {
             if ($this->mInsertDishIngredients($dishId, $ingredient, $quantity)) {
-                echo "<script>alert('Thêm món ăn thành công')</script>";
+                return true;
             } else {
-                echo "<script>alert('Thêm món ăn thất bại')</script>";
+                return false;
             }
         } else
             return 0;
@@ -125,11 +126,8 @@ class cDishes extends mDishes
     public function cUpdateDish($dishName, $dishCategory, $price, $prepare, $image, $dishID, $imgName, $description, $ingredient, $ingredient_old, $quantity)
     {
         $success = true;
-        if (strlen($imgName) === 0) {
-            $result = $this->mUpdateDish($dishName, $dishCategory, $price, $prepare, $image, $dishID, $description);
-        } else {
-            $result = $this->mUpdateDishNoImg($dishName, $dishCategory, $price, $prepare, $dishID, $description);
-        }
+
+        $result = $this->mUpdateDish($dishName, $dishCategory, $price, $prepare, $imgName, $dishID, $description);
         if ($result) {
             // echo "<script>alert('1')</script>";
             if ($this->mUpdateDishIngredient($dishID, $ingredient, $ingredient_old, $quantity)) {
