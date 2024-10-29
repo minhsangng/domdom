@@ -174,12 +174,22 @@ class mDishes
         return 0;
     }
 
-    public function mInsertDish($dishName, $dishCategory, $price, $prepare, $image)
+
+    public function mInsertDish($dishName, $dishCategory, $price, $prepare, $image, $description)
     {
-        $db = new Database;
+        $db = new Database();
         $conn = $db->connect();
-        $sql = "INSERT INTO dish (dishName, dishCategory, price, preparationProcess, image) VALUES ('$dishName', '$dishCategory', $price, '$prepare', '$image')";
-        return $conn->query($sql);
+        $sql = "INSERT INTO dish (dishName, dishCategory, price, preparationProcess, image, description) VALUES ('$dishName', '$dishCategory', $price, '$prepare', '$image', '$description')";
+        if ($conn) {
+            if ($conn->query($sql)) {
+                // Lấy ID của món ăn vừa được thêm vào
+                return $conn->insert_id;
+            } else {
+                return -1;
+            }
+        } else {
+            return false;
+        }
     }
 
     public function mUpdateDish($dishName, $dishCategory, $price, $prepare, $image, $dishID, $description)

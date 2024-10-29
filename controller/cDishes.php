@@ -108,11 +108,11 @@ class cDishes extends mDishes
         return 0;
     }
 
-    public function cInsertDish($dishName, $dishCategory, $price, $prepare, $image, $ingredients, $quantities)
+    public function cInsertDish($dishName, $dishCategory, $price, $prepare, $image, $description, $ingredient, $quantity)
     {
-        $dishId = $this->mInsertDish($dishName, $dishCategory, $price, $prepare, $image);
+        $dishId = $this->mInsertDish($dishName, $dishCategory, $price, $prepare, $image, $description);
         if ($dishId != -1) {
-            if ($this->mInsertDishIngredients($dishId, $ingredients, $quantities)) {
+            if ($this->mInsertDishIngredients($dishId, $ingredient, $quantity)) {
                 echo "<script>alert('Thêm món ăn thành công')</script>";
             } else {
                 echo "<script>alert('Thêm món ăn thất bại')</script>";
