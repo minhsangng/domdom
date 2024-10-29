@@ -92,6 +92,14 @@ include("../../../model/connect.php");
 
 $db = new Database();
 $conn = $db->connect();
+
+// Kiểm tra nếu URL có tham số logout và xử lý đăng xuất
+if (isset($_GET['logout']) && $_GET['logout'] == 'true') {
+    unset($_SESSION["userName"]);
+    unset($_SESSION["login"]);
+    echo "<script>window.location.href = '../login/';</script>";
+    exit();
+}
 ?>
 
 <body class="bg-gray-900" style="scroll-behavior: smooth; font-family: 'Playwrite DE Grund', cursive;">
@@ -147,7 +155,7 @@ $conn = $db->connect();
                         </span>
 
                         <div class="subnav absolute top-11 right-0 bg-white rounded-lg bg-gray-500 h-fit p-2 text-center border-2">
-                            <a href="index.php?m=lgout">Đăng xuất <i class="fa-solid fa-right-from-bracket"></i></a>
+                            <a href="javascript:void(0)" onclick="lgout()">Đăng xuất <i class="fa-solid fa-right-from-bracket"></i></a>
                         </div>
                     </div>
                 </div>
@@ -166,10 +174,12 @@ $conn = $db->connect();
             else if ($i == "home")
                 require("home/index.php");
 
-            if (isset($_GET["m"])) {
+
+            if (isset($_GET['m']) && $_GET['m'] == 'true') {
                 unset($_SESSION["userName"]);
                 unset($_SESSION["login"]);
-                echo "<script>window.location.href = '../login/'</script>";
+                echo "<script>window.location.href = '../login/';</script>";
+                exit();
             }
             ?>
         </div>
@@ -213,12 +223,15 @@ $conn = $db->connect();
             });
         });
 
-        function logout() {
-            <?php
-            unset($_SESSION["loginstaff"]);
-            unset($_SESSION["name"]);
-            ?>
+        
+        function lgout() {
+            // Hiển thị thông báo xác nhận
+            if (confirm("Bạn có chắc chắn muốn đăng xuất không?")) {
+                // Chuyển hướng đến `index.php?m=true` nếu người dùng đồng ý
+                window.location.href = "index.php?m=true";
+            }
         }
+
     </script>
 </body>
 
