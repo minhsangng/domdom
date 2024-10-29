@@ -337,7 +337,7 @@ $(document).ready(function () {
   function ktDishProcess() {
     let dishName = $("#iDishProcess").val()
     if (dishName.length === 0) {
-      $("#ierrDishProcess").html("Mô tả không được rỗng")
+      $("#ierrDishProcess").html("Quy trình chế biến không được rỗng")
       return false
     } else {
       $("#ierrDishProcess").html("*")
@@ -444,7 +444,7 @@ $(document).ready(function () {
   function ktuDishProcess() {
     let dishName = $("#uDishProcess").val()
     if (dishName.length === 0) {
-      $("#uerrDishProcess").html("Mô tả không được rỗng")
+      $("#uerrDishProcess").html("Quy trình chế biến không được rỗng")
       return false
     } else {
       $("#uerrDishProcess").html("*")
