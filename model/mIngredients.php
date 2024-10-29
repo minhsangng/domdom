@@ -183,7 +183,7 @@ class mIngredients
                 if ($conn->query($sql)) {
                     $isSuccess = true;
                     $i++;
-                }else {
+                } else {
                     $isSuccess = false;
                     break;
                 }

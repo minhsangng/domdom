@@ -11,16 +11,12 @@ echo "<script>
 $ctrl = new cIngredients;
 
 if (isset($_POST["btnthemnl"])) {
-    $ctrl1 = new cUsers;
-    $user = $ctrl1->cGetUserByID($_SESSION["user"][0]);
-    $r = $user->fetch_assoc();
-    $storeID = $r["storeID"];
     $ingreName = $_POST["ingreName"];
     $unit = $_POST["unitCalculation"];
     $price = $_POST["price"];
     $type = $_POST["typeIngre"];
 
-    if ($ctrl->cInsertIngredient($ingreName, $unit, $price, $type, $storeID)) {
+    if ($ctrl->cInsertIngredient($ingreName, $unit, $price, $type)) {
         echo "<script>alert('Thêm nguyên liệu thành công')</script>";
     } else {
         echo "<script>alert('Thêm nguyên liệu thất bại')</script>";

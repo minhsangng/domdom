@@ -141,11 +141,11 @@ class cIngredients extends mIngredients
         return 0;
     }
 
-    public function cInsertIngredient($ingreName, $unit, $price, $type, $storeID)
+    public function cInsertIngredient($ingreName, $unit, $price, $type)
     {
         $ingredientID = $this->mInsertIngredient($ingreName, $unit, $price, $type);
         if ($ingredientID != -1) {
-            if ($this->mInsertStoreIngredient($ingredientID, $storeID))
+            if ($this->mInsertStoreIngredient($ingredientID))
                 return true;
             else
                 return false;
