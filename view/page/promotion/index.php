@@ -7,16 +7,18 @@ require_once "PHPMailer/src/SMTP.php";
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+$ctrl = new cMessage;
+
 if (isset($_POST["promotionName"])) {
     $promotion = $_POST["promotionName"];
     $mail = new PHPMailer(true);
-    $email = "sangminh4062@gmail.com";
+    $email = $_POST["emailInput"];
     try {
         $mail->isSMTP();
         $mail->Host = "smtp.gmail.com";
         $mail->SMTPAuth = true;
         $mail->Username = "nmsangtg26@gmail.com";
-        $mail->Password = "amle ckqv nguj tfim";
+        $mail->Password = "slsd pceb dgnq xhlv";
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
@@ -32,8 +34,10 @@ if (isset($_POST["promotionName"])) {
                 Trân trọng,<br>
                 Đội ngũ hỗ trợ | DomDom";
         $mail->send();
+
+        $ctrl->freeMessageLarge("Vui lòng kiểm tra email! Voucher đã được gửi đến email của bạn.");
     } catch (Exception $e) {
-        echo "Lỗi khi gửi email: {$mail->ErrorInfo}";
+        $ctrl->freeMessageLarge("Đã có lỗi khi gửi mail (" . $mail->ErrorInfo . "). Vui lòng nhập lại!");
     }
 }
 ?>
@@ -132,11 +136,9 @@ if (isset($_POST["promotionName"])) {
     #background>div {
         --size: 5vw;
         --symbol: "✽";
-
         --pos_x: 0vw;
         --duration_move: 7s;
         --delay_move: 0s;
-
         --duration_rotate: 1.5s;
         --delay_rotate: 0s;
         --duration_clip: 10s;
@@ -588,9 +590,6 @@ if (isset($_POST["promotionName"])) {
     <img src="images/logo.png" alt="Logo" class="absolute size-10 rounded-full" style="top: 14.8rem; right: 14.3rem;"
         id="img">
     <span id="arrow"></span>
-    <form action="" method="POST" id="formHidden">
-        <input type="hidden" name="promotionName" id="hidden">
-    </form>
     <button id="spinButton" name="spinButton" class="btn btn-danger px-4 py-2 rounded-xl">Quay Ngay!</button>
 </div>
 
@@ -657,29 +656,26 @@ if (isset($_POST["promotionName"])) {
             echo "Không có dữ liệu!";
         ?>
     </div>
-    
-    <h2 id="title"
-        class="text-center text-3xl font-bold w-1/3 mb-0 mx-auto mt-14 pb-4 rounded-md border-b-4 border-gray-300 border-dotted">
-        ƯU ĐÃI SẮP DIỄN RA</h2>
-    <div class="grid grid-cols-1 gap-y-10 w-2/3 mx-auto flex justify-center p-8 rounded-md">
-        <?php
-        $ctrl = new cPromotions;
 
-        if ($ctrl->cGetAllPromotionComming() != 0) {
-            $result = $ctrl->cGetAllPromotionComming();
-            $n = 0;
-            $order = 1;
+    <?php
+    $ctrl = new cPromotions;
 
-            $img_pomotion = "";
+    if ($ctrl->cGetAllPromotionComming()->num_rows > 0) {
+        $result = $ctrl->cGetAllPromotionComming();
+        $n = 0;
+        $order = 1;
 
-            while ($row = $result->fetch_assoc()) {
-                if (!file_exists("images/promotion/" . $row["image"]))
-                    $img_promotion = "images/nodish.png";
-                else
-                    $img_promotion = "images/promotion/" . $row["image"];
-                $n++;
+        $img_pomotion = "";
+        echo "<h2 id='title' class='text-center text-3xl font-bold w-1/3 mb-0 mx-auto mt-14 pb-4 rounded-md border-b-4 border-gray-300 border-dotted'>ƯU ĐÃI SẮP DIỄN RA</h2>
+                <div class='grid grid-cols-1 gap-y-10 w-2/3 mx-auto flex justify-center p-8 rounded-md'>";
+        while ($row = $result->fetch_assoc()) {
+            if (!file_exists("images/promotion/" . $row["image"]))
+                $img_promotion = "images/nodish.png";
+            else
+                $img_promotion = "images/promotion/" . $row["image"];
+            $n++;
 
-                echo "<div id='" . $row["promotionID"] . "' class='flex justify-between items-center bg-white relative z-1 w-full rounded-2xl px-8 py-4 shadow transition-transform hover:-translate-y-3'>
+            echo "<div id='" . $row["promotionID"] . "' class='flex justify-between items-center bg-white relative z-1 w-full rounded-2xl px-8 py-4 shadow transition-transform hover:-translate-y-3'>
                     <img src='" . $img_promotion . "' style='clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 6% 44%, 17% 12%);' class='h-40 w-48 border-8 border-amber-300  order-" . ($n % 2 == 0 ? $order : $order + 1) . "'/>
                     <div class='text-center order-" . ($n % 2 == 0 ? $order + 1 : $order) . "'>
                         <h2 class='text-[#ff6347] mb-4 text-2xl font-bold'>" . $row["promotionName"] . "</h2>
@@ -690,11 +686,10 @@ if (isset($_POST["promotionName"])) {
                         <button type='submit' class='btn bg-[#ff6347] text-white rounded-xl text-xl mt-3 transition-all hover:bg-[#e5533d] hover:scale-105'>Đặt món ngay!</button>
                     </div>
                 </div>";
-            }
-        } else
-            echo "Không có dữ liệu!";
-        ?>
-    </div>
+        }
+    }
+    ?>
+</div>
 </div>
 
 <script>
@@ -728,17 +723,27 @@ if (isset($_POST["promotionName"])) {
             const promotionIndex = Math.floor((currentDegree + (degreePerPromotion / 2)) / degreePerPromotion) % promotions.length;
 
             Swal.fire({
-                title: "Chúc mừng bạn đã nhận được Voucher:",
-                text: promotions[promotionIndex],
+                title: "Chúc mừng!",
+                html: `
+                <p>Vui lòng nhập email của bạn để nhận voucher: <br> ${promotions[promotionIndex]}</p>
+                <form method='POST' id='formHidden'>
+                    <input type='hidden' id='hidden' name='promotionName'>
+                    <input type="email" id="emailInput" name='emailInput' class="swal2-input" placeholder="Email của bạn" required>
+                </form>`,
                 icon: "success",
-                confirmButtonText: "Đồng ý"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById("hidden").value = promotions[promotionIndex];
-                    document.getElementById("formHidden").submit();
+                confirmButtonText: "Xác nhận",
+                showCancelButton: true,
+                cancelButtonText: "Hủy",
+                preConfirm: () => {
+                    const email = Swal.getPopup().querySelector("#emailInput").value;
+                    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+                        Swal.showValidationMessage("Vui lòng nhập một địa chỉ email hợp lệ");
+                    }
                 }
+            }).then((result) => {
+                document.getElementById("hidden").value = promotions[promotionIndex];
+                document.getElementById("formHidden").submit();
             });
-
         }, 4000);
     });
 </script>

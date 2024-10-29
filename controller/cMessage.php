@@ -24,6 +24,23 @@ class cMessage
                 });
         </script>";
   }
+  
+  public function freeMessageLarge($text) {
+    echo "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+              Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: '<h3 class=\"text-lg\">".$text."</h3>',
+                showConfirmButton: false,
+                timer: 1500,
+                customClass: {
+                  title: ''
+                }
+              });
+            });
+        </script>";
+  }
 
   public function errorMessage($text)
   {

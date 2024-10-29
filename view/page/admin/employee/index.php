@@ -102,17 +102,22 @@ if (isset($_POST["btnthemnv"])) {
             $targetFile = $targetDir . removeVietnameseAccents($userName) . ".png";
             move_uploaded_file($_FILES["image"]["tmp_name"], $targetFile);
         }
-    
-        $ctrl->cInsertUser($userName, $dateBirth, $phoneNumber, $email, $sex, $roleID, $pass, removeVietnameseAccents($userName) . ".png", $storeID);
-        $ctrlMessage->successMessage("Thêm nhân viên ");
-    } else {
-        $ctrlMessage->emptyMessage();
-        echo "<script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var modalInsert = new bootstrap.Modal(document.getElementById('insertModal')); 
-                modalInsert.show();
-            });
-        </script>";
+
+        $result = $ctrl->cInsertUser($userName, $dateBirth, $phoneNumber, $email, $sex, $roleID, $pass, removeVietnameseAccents($userName) . ".png", $storeID);
+        //     $ctrlMessage->successMessage("Thêm nhân viên ");
+        // } else {
+        //     $ctrlMessage->emptyMessage();
+        //     echo "<script>
+        //         document.addEventListener('DOMContentLoaded', function() {
+        //             var modalInsert = new bootstrap.Modal(document.getElementById('insertModal')); 
+        //             modalInsert.show();
+        //         });
+        //     </script>";
+        if ($result) {
+            $ctrlMessage->successMessage("Thêm nhân viên ");
+        } else {
+            $ctrlMessage->errorMessage("Thêm nhân viên ");
+        }
     }
 }
 
@@ -188,7 +193,8 @@ if (isset($_POST["btnthemnv"])) {
                                     "Trạng thái" => $row["status"] == 1 ? "Đang làm" : "Đã nghỉ"
                                 ];
                             }
-                        } else echo "Không có dữ liệu!";
+                        } else
+                            echo "Không có dữ liệu!";
 
                         $data = json_encode($employeeData);
                         ?>
@@ -202,7 +208,7 @@ if (isset($_POST["btnthemnv"])) {
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="" class="form-container w-full" method="POST" enctype="multipart/form-data" >
+                <form action="" class="form-container w-full" method="POST" enctype="multipart/form-data">
                     <div class="modal-header">
                         <h2 class="modal-title fs-5 font-bold text-3xl" id="insertModalLabel" style="color: #E67E22;">
                             Thêm nhân viên</h2>
@@ -213,7 +219,8 @@ if (isset($_POST["btnthemnv"])) {
                                 <td>
                                     <label for="userName" class="w-full py-2"><b>Tên nhân viên <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="userName" required>
+                                    <input type="text" class="w-full form-control" name="userName" required
+                                        pattern="^[\p{L}\s]+$" title="Họ tên chỉ được nhập chữ cái">
                                 </td>
                             </tr>
                             <tr>
@@ -227,21 +234,25 @@ if (isset($_POST["btnthemnv"])) {
                                 <td>
                                     <label for="phone" class="w-full py-2"><b>Số điện thoại <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="phone" required>
+                                    <input type="text" class="w-full form-control" name="phone" required
+                                        pattern="^(0(2[0-9]|3[0-9]|7[0-9]|8[0-9]|9[0-9])[0-9]{7})|(\+84(2[0-9]|3[0-9]|7[0-9]|8[0-9]|9[0-9])[0-9]{7})$"
+                                        title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 0 hoặc +84, với các mã vùng 02, 03, 07, 08, 09">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="email" class="w-full py-2"><b>Email <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="email" required>
+                                    <input type="email" class="w-full form-control" name="email" required
+                                        pattern="[a-zA-Z0-9._%+-]+@domdom\.vn"
+                                        title="Email phải đúng định dạng: example@domdom.vn">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="image" class="w-full py-2"><b>Hình ảnh <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="file" class="w-full form-control" name="image" required accept="image/*">
+                                    <input type="file" class="w-full form-control" name="image" accept="image/*">
                                 </td>
                             </tr>
                             <tr>
@@ -255,9 +266,9 @@ if (isset($_POST["btnthemnv"])) {
                                 <td>
                                     <label for="sex" class="w-full py-2"><b>Giới tính <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="radio" class="mr-1" name="sex" value="1" id="male"><label for="male"
-                                        class="mr-4">Nam</label>
-                                    <input type="radio" class="mr-1" name="sex" value="0" id="female"><label
+                                    <input type="radio" class="mr-1" name="sex" value="1" id="male" required><label
+                                        for="male" class="mr-4">Nam</label>
+                                    <input type="radio" class="mr-1" name="sex" value="0" id="female" required><label
                                         for="female">Nữ</label>
                                 </td>
                             </tr>
@@ -265,11 +276,12 @@ if (isset($_POST["btnthemnv"])) {
                                 <td>
                                     <label for="role" class="w-full py-2"><b>Vai trò <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="radio" class="mr-1" name="role" value="2" id="qlch"><label for="qlch"
-                                        class="mr-4">QL cửa hàng</label>
-                                    <input type="radio" class="mr-1" name="role" value="3" id="nvnd"><label for="nvnd"
-                                        class="mr-4">NV nhận đơn</label>
-                                    <input type="radio" class="mr-1" name="role" value="4" id="nvb"><label for="nvb">NV
+                                    <input type="radio" class="mr-1" name="role" value="2" id="qlch" required><label
+                                        for="qlch" class="mr-4">QL cửa hàng</label>
+                                    <input type="radio" class="mr-1" name="role" value="3" id="nvnd" required><label
+                                        for="nvnd" class="mr-4">NV nhận đơn</label>
+                                    <input type="radio" class="mr-1" name="role" value="4" id="nvb" required><label
+                                        for="nvb">NV
                                         bếp</label>
                                 </td>
                             </tr>
@@ -298,7 +310,8 @@ if (isset($_POST["btnthemnv"])) {
                             <tr>
                                 <td>
                                     <label for="userName" class="w-full py-2"><b>Tên nhân viên</b></label>
-                                    <input type="text" class="w-full form-control" name="userName"
+                                    <input type="text" class="w-full form-control" name="userName" required
+                                        pattern="^[\p{L}\s]+$" title="Họ tên chỉ được nhập chữ cái tiếng Việt"
                                         value="<?php echo $userName; ?>">
                                 </td>
                             </tr>
@@ -312,14 +325,16 @@ if (isset($_POST["btnthemnv"])) {
                             <tr>
                                 <td>
                                     <label for="phone" class="w-full py-2"><b>Số điện thoại</b></label>
-                                    <input type="text" class="w-full form-control" name="phone"
+                                    <input type="text" class="w-full form-control" name="phone" required
+                                        pattern="^(0(2[0-9]|3[0-9]|7[0-9]|8[0-9]|9[0-9])[0-9]{7})|(\+84(2[0-9]|3[0-9]|7[0-9]|8[0-9]|9[0-9])[0-9]{7})$"
+                                        title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 0 hoặc +84, với các mã vùng 02, 03, 07, 08, 09"
                                         value="<?php echo $phone; ?>">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="email" class="w-full py-2"><b>Email</b></label>
-                                    <input type="text" class="w-full form-control" name="email"
+                                    <input type="email" class="w-full form-control" name="email" required
                                         value="<?php echo $email; ?>">
                                 </td>
                             </tr>

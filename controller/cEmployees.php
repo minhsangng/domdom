@@ -72,10 +72,6 @@ class cEmployees extends mEmployees
         return 0;
     }
     
-    public function cDeleteEmployeeShift($ESID) {
-        return $this->mDeleteEmployeeShift($ESID); 
-    }
-    
     public function cInsertEmployeeShift($shiftID, $userID, $date) {
         return $this->mInsertEmployeeShift($shiftID, $userID, $date); 
     }
@@ -110,5 +106,9 @@ class cEmployees extends mEmployees
             return $result;
         }
         return 0;
+    }
+    
+    public function cDeleteEmployeeShift($shiftID, $userID, $date) {
+        return $this->mDeleteEmployeeShift($shiftID, $userID, $date); 
     }
 }

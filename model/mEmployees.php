@@ -73,11 +73,11 @@ class mEmployees
         return 0;
     }
 
-    public function mDeleteEmployeeShift($ESID)
+    public function mDeleteEmployeeShift($shiftID, $userID, $date)
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "DELETE FROM `employee_shift` WHERE employeeshiftID = $ESID";
+        $sql = "DELETE FROM `employee_shift` WHERE shiftID = $shiftID AND userID = $userID AND date = '$date'";
 
         return $conn->query($sql);
     }

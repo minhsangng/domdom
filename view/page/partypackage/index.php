@@ -167,29 +167,42 @@ if (isset($_POST["btnxn"])) {
         $email = $_POST["email"];
         $paymentMethod = $_POST["method"] == 1 ? "Ví điện tử" : "Ngân hàng";
 
-        $ctrlCustomer->cInsertCustomer($phone, $name, $address, $email);
-
-        $ctrlOrder->cInsertOrderPartyPackage($phone, $_SESSION["ppPrice"], $_SESSION["quantity"], $_SESSION["promotionID"], $paymentMethod, $_COOKIE["selectedStore"], $_SESSION["ppID"]);
-
-        $row2 = $ctrlOrder->cGetOrderIDNew()->fetch_assoc();
-        $orderID = $row2["orderID"];
-
-        if ($ctrlParty->cGetDishFromPartyPacakge($ppID) != 0) {
-            $resultParty = $ctrlParty->cGetDishFromPartyPacakge($ppID);
-
-            while ($row3 = $resultParty->fetch_assoc()) {
-                $dishID = $row3["dishID"];
-                $quantity = $row3["quantity"];
-
-                $resultOrderDish = $ctrlOrder->cInsertOrderDish($orderID, $dishID, $quantity);
-
-                if ($resultOrderDish)
-                    $ctrlMessage->successMessage("Đặt tiệc");
-                else
-                    $ctrlMessage->errorMessage("Đặt tiệc");
+        if ($ctrlCustomer->cGetAllCustomer() != 0) {
+            $result = $ctrlCustomer->cGetAllCustomer();
+            
+            $exist = false;
+            while ($row = $result->fetch_assoc()) {
+                if ($phone != $row["phoneNumber"]) {
+                    $exist = true;
+                    break;    
+                }
             }
-        } else
-            $ctrlMessage->falseMessage("Không có dữ liệu!");
+            
+            if (!$exist)
+                $ctrlCustomer->cInsertCustomer($phone, $name, $address, $email);
+            
+            $ctrlOrder->cInsertOrderPartyPackage($phone, $_SESSION["ppPrice"], $_SESSION["quantity"], $_SESSION["promotionID"], $paymentMethod, $_COOKIE["selectedStore"], $_SESSION["ppID"]);
+
+            $row2 = $ctrlOrder->cGetOrderIDNew()->fetch_assoc();
+            $orderID = $row2["orderID"];
+
+            if ($ctrlParty->cGetDishFromPartyPacakge($ppID) != 0) {
+                $resultParty = $ctrlParty->cGetDishFromPartyPacakge($ppID);
+
+                while ($row3 = $resultParty->fetch_assoc()) {
+                    $dishID = $row3["dishID"];
+                    $quantity = $row3["quantity"];
+
+                    $resultOrderDish = $ctrlOrder->cInsertOrderDish($orderID, $dishID, $quantity);
+
+                    if ($resultOrderDish)
+                        $ctrlMessage->successMessage("Đặt tiệc");
+                    else
+                        $ctrlMessage->errorMessage("Đặt tiệc");
+                }
+            } else
+                $ctrlMessage->falseMessage("Không có dữ liệu!");
+        }
     }
 }
 ?>
@@ -251,22 +264,22 @@ if (isset($_POST["btnxn"])) {
                                 <td>
                                     <h2 class="text-[#EF5350] font-bold mb-2">Thông tin cá nhân</h2>
                                     <input type="text" id="" name="name" class="form-control w-full mb-3"
-                                        placeholder="Họ và tên...">
+                                        placeholder="Họ và tên..." required>
                                     <input type="text" id="" name="phone" class="form-control w-full mb-3"
-                                        placeholder="Số điện thoại...">
+                                        placeholder="Số điện thoại..." required>
                                     <input type="email" id="" name="email" class="form-control w-full mb-3"
-                                        placeholder="Email...">
+                                        placeholder="Email..." required>
                                     <input type="text" id="" name="address" class="form-control w-full mb-3"
-                                        placeholder="Địa chỉ...">
+                                        placeholder="Địa chỉ..." required>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <h2 class="text-[#EF5350] font-bold mb-2">Thông tin tiệc</h2>
                                     <input type="date" id="" class="form-control w-full mb-3"
-                                        placeholder="Ngày diễn ra...">
+                                        placeholder="Ngày diễn ra..." required>
                                     <input type="time" id="" class="form-control w-full mb-3"
-                                        placeholder="Giờ diễn ra...">
+                                        placeholder="Giờ diễn ra..." required>
                                     <input type="text" id="" class="form-control w-full mb-3"
                                         placeholder="Yêu cầu khác...">
                                 </td>

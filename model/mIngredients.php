@@ -218,4 +218,17 @@ class mIngredients
             return $conn->query($sql);
         return 0;
     }
+
+    public function mUpdateNeedIngredientQuantity($ingredientID, $quantity)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "UPDATE needingredient SET quantity = $quantity WHERE ingredientID = $ingredientID";
+        $sql2 = "UPDATE `store_ingredient` SET `quantityInStock` = `quantityInStock` + $quantity WHERE `ingredientID` = $ingredientID";
+
+        if ($conn != null) {
+            return $conn->query($sql) && $conn->query($sql2);
+        }
+        return 0;
+    }
 }
