@@ -319,13 +319,16 @@ $selectedStore = isset($_COOKIE["selectedStore"]) ? $_COOKIE["selectedStore"] : 
             $ctrlMessage->falseMessage("Đơn hàng này không được phép chỉnh sửa");
     }
 
-    if (isset($_POST["HuyDonHang"])) {
+    if (isset($_POST["statusOrder0"]) && isset($_POST["HuyDonHang"])) {
         $ctrl = new cOrders;
         $ctrlMessage = new cMessage;
         if ($ctrl->cUpdateStatusOrder($_SESSION["orderIDD"], 4, NULL))
             $ctrlMessage->successMessage("Huỷ đơn hàng ");
         else
             $ctrlMessage->errorMessage("Huỷ đơn hàng ");
+    }else if(!isset($_POST["statusOrder0"]) && isset($_POST["HuyDonHang"])) {
+        $ctrlMessage = new cMessage;
+        $ctrlMessage->errorMessage("Huỷ đơn hàng ");
     }
     ?>
 
