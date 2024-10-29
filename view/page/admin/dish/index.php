@@ -38,9 +38,13 @@ if (isset($_POST["btnthemmon"])) {
     $image = $_FILES["image"];
     $imgName = removeVietnameseAccents($dishName) . ".png";
     if (move_uploaded_file($image["tmp_name"], "../../../images/dish/" . $imgName))
-        $ctrl->cInsertDish($dishName, $category, $price, $prepare, $imgName, $description, $ingredient, $quantity);
+        if($ctrl->cInsertDish($dishName, $category, $price, $prepare, $imgName, $description, $ingredient, $quantity)) {
+            echo "<script>alert('Thêm món ăn thành công')</script>";
+        }else {
+            echo "<script>alert('Thêm món ăn thất bại')</script>";
+        }
     
-    $db->close($conn);
+    // $db->close($conn);
 }
 
 
@@ -73,7 +77,7 @@ if (isset($_POST["btncapnhat"])) {
         }
     }
     
-    $db->close($conn);
+    // $db->close($conn);
 }
 
 
@@ -126,7 +130,7 @@ if (isset($_POST["btnkhoa"])) {
 
     $ctrl->cLockDish($newStatus, $dishID);
     
-    $db->close($conn);
+    // $db->close($conn);
 }
 ?>
 <script>
@@ -217,7 +221,7 @@ if (isset($_POST["btnkhoa"])) {
                         }
                         $data = json_encode($dishData);
                         
-                        $db->close($conn);
+                        // $db->close($conn);
                         ?>
                     </tbody>
                 </table>
@@ -235,7 +239,7 @@ if (isset($_POST["btnkhoa"])) {
             }
             echo '</div>';
             
-            $db->close($conn);
+            // $db->close($conn);
             ?>
         </div>
     </div>
@@ -275,7 +279,7 @@ if (isset($_POST["btnkhoa"])) {
                                             }
                                         }
                                         
-                                        $db->close($conn);
+                                        // $db->close($conn);
                                         ?>
                                     </select>
                                 </td>
@@ -325,7 +329,7 @@ if (isset($_POST["btnkhoa"])) {
                                                     }
                                                 }
                                                 
-                                                $db->close($conn);
+                                                // $db->close($conn);
                                                 ?>
                                             </select>
                                         </td>
@@ -342,7 +346,7 @@ if (isset($_POST["btnkhoa"])) {
                                                 }
                                             }
                                             
-                                            $db->close($conn);
+                                            // $db->close($conn);
                                             ?>
                                         </div>
                                         <td>
@@ -441,7 +445,7 @@ if (isset($_POST["btnkhoa"])) {
                                         }
                                     }
                                     
-                                    $db->close($conn);
+                                    // $db->close($conn);
                                     ?>
                                     </select>
                                 </td>
@@ -531,7 +535,7 @@ if (isset($_POST["btnkhoa"])) {
                                     </tr>';
                                     }
                                     
-                                    $db->close($conn);
+                                    // $db->close($conn);
                                     ?>
 
 
