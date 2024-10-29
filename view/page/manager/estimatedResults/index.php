@@ -73,14 +73,14 @@ if (isset($_POST["btnTinhNL"])) {
                         <?php
                         $ctrl = new cIngredients;
                             $result = $ctrl->cGetQuantityDryIngredient($_SESSION["soluong"], (int)$_SESSION["user"][0]);
-
+                            $nlkID = 0;
                             while ($row = $result->fetch_assoc()) {
                                 echo "<tr>
                                     <td class='py-2 border-2'><input readonly style='border: none; background: none;' type='number' name='' value='" . $row["ingredientID"] . "' class='w-20 py-1 px-3 rounded-md'></td>
                                     <td class='py-2 border-2'>" . $row["ingredientName"] . "</td>
                                     <td class='py-2 border-2'><input readonly style='border: none; background: none;' type='number' name='' value='" . $row["TotalQuantity"] . "' class='w-20 py-1 px-3 rounded-md' id='tinhtoannlinput-" . $row["dishID"] . "'></td>";
                                 if ($row["TotalQuantity"] - $row["quantityInStock"] > 0) {
-                                    echo "<td class='py-2 border-2'><input type='number' name='' value='" . $row["TotalQuantity"] - $row["quantityInStock"] . "' class='w-20 py-1 px-3 rounded-md tinhtoannlinputcls' id='tinhtoannlinputt-" . $row["dishID"] . "'></td>";
+                                    echo "<td class='py-2 border-2'><input type='number' name='' value='" . $row["TotalQuantity"] - $row["quantityInStock"] . "' class='w-20 py-1 px-3 rounded-md tinhtoannlinputcls' id='tinhtoannlinputt-" . $nlkID . "'></td>";
                                 } else {
                                     echo "<td class='py-2 border-2'>Đã đủ</td>";
                                 }
@@ -94,6 +94,7 @@ if (isset($_POST["btnTinhNL"])) {
                                 }
 
                                 echo "</tr>";
+                                $nlkID++;
                             }
                         ?>
                         <tr>
