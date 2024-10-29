@@ -37,8 +37,8 @@ if (isset($_POST["btnthemmon"])) {
     $description = $_POST["description"];
     $image = $_FILES["image"];
     $imgName = removeVietnameseAccents($dishName) . ".png";
-        if(move_uploaded_file($image["tmp_name"], "../../../images/dish/" . $imgName))
-            $ctrl->cInsertDish($dishName, $category, $price, $prepare, $imgName, $description, $ingredient, $quantity);
+    if (move_uploaded_file($image["tmp_name"], "../../../images/dish/" . $imgName))
+        $ctrl->cInsertDish($dishName, $category, $price, $prepare, $imgName, $description, $ingredient, $quantity);
 }
 
 
@@ -54,8 +54,8 @@ if (isset($_POST["btncapnhat"])) {
 
     if ($ctrl->cGetDishById($dishID) != 0) {
         $result = $ctrl->cGetDishById($dishID);
-        $count =0;
-        while($row = $result->fetch_assoc()) {
+        $count = 0;
+        while ($row = $result->fetch_assoc()) {
             $u_dishID = $row["dishID"];
             $u_dishName = $row["dishName"];
             $u_category = $row["dishCategory"];
@@ -97,11 +97,11 @@ if (isset($_POST["btnsuamon"])) {
 
 if (isset($_POST["btnkhoa"])) {
     $dishID = $_POST["btnkhoa"];
-   $ctrl = new cDishes;
-   $table = $ctrl->cGetDishById($dishID);
-   while ($row = $table->fetch_assoc()) {
-       $status= $row["businessStatus"];
-   }
+    $ctrl = new cDishes;
+    $table = $ctrl->cGetDishById($dishID);
+    while ($row = $table->fetch_assoc()) {
+        $status = $row["businessStatus"];
+    }
 
     $newStatus = ($status == 1) ? 0 : 1;
 
@@ -110,12 +110,12 @@ if (isset($_POST["btnkhoa"])) {
 ?>
 <script>
     document.querySelector('[name="btncapnhat"]').addEventListener('click', function (event) {
-    // Ngăn chặn hành động mặc định của nút submit
-    event.preventDefault();
+        // Ngăn chặn hành động mặc định của nút submit
+        event.preventDefault();
 
-    // Hiển thị modal
-    document.getElementById('updateModal').style.display = 'block';
-});
+        // Hiển thị modal
+        document.getElementById('updateModal').style.display = 'block';
+    });
 </script>
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
     <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
@@ -126,7 +126,7 @@ if (isset($_POST["btnkhoa"])) {
             <div class="flex items-center">
                 <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#insertModal">Thêm
                     món ăn</button>
-                    
+
             </div>
             <div class="flex items-center">
                 <button
@@ -167,7 +167,7 @@ if (isset($_POST["btnkhoa"])) {
                             $totalProducts = $table->num_rows;
                             // Tính toán số trang
                             $totalPages = ceil($totalProducts / $productsPerPage);
-                            
+
                             $table = $ctrl->cGetAllDishLimit($startFrom, $productsPerPage);
                             $dishData = [];
 
@@ -180,7 +180,7 @@ if (isset($_POST["btnkhoa"])) {
                         <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
                         <td class='py-2 border-2'><span class='bg-" . ($row["businessStatus"] == 1 ? "green" : "red") . "-100 text-" . ($row["businessStatus"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["businessStatus"] == 1 ? "Đang kinh doanh" : "Ngưng kinh doanh") . "</span></td>
                         <td class='py-2 border-2 flex justify-center'>
-                            <button value='".$row["dishID"]."' type='submit' class='btn btn-primary' name='btncapnhat' data-bs-toggle='modal' data-bs-target='#updateModal'>Cập nhật</button>
+                            <button value='" . $row["dishID"] . "' type='submit' class='btn btn-primary' name='btncapnhat' data-bs-toggle='modal' data-bs-target='#updateModal'>Cập nhật</button>
                             <button onclick='return confirm(\" Bạn có chắc muốn " . ($row["businessStatus"] == 1 ? "khóa" : "mở khóa") . " không? \")' type='submit' class='btn btn-danger ml-1' name='btnkhoa' value='" . $row["dishID"] . "'>" . ($row["businessStatus"] == 1 ? "Khóa" : "Mở") . "</button>
                         </td>
                     </tr>";
@@ -215,29 +215,33 @@ if (isset($_POST["btnkhoa"])) {
         </div>
     </div>
 
-    <div class="modal modal-lg modalUpdate fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal modal-lg modalUpdate fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" method="POST" class="form-container w-full">
                     <div class="modal-header justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="updateModalLabel" style="color: #E67E22;">Cập nhật món ăn</h2>
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="updateModalLabel" style="color: #E67E22;">
+                            Cập nhật món ăn</h2>
                     </div>
                     <div class="modal-body">
-                    <table class="w-full">
+                        <table class="w-full">
                             <tr id="hiddenIngre"></tr>
                             <tr>
                                 <td>
                                     <label for="u-name" class="w-full py-2"><b>Tên món ăn <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="u-name" required value="<?php if(isset($u_dishName)) echo $u_dishName ?>">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="u-cate" class="w-full py-2"><b>Loại món ăn <span
-                                                class="text-red-500">*</span></b></label>
-                                    <select name="u-cate"  class="w-full form-control">
-                                        <?php
+                                    <input type="text" class="w-full form-control" name="u-name" required
+                                        value="<?php if (isset($u_dishName))
+                                            echo $u_dishName ?>">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="u-cate" class="w-full py-2"><b>Loại món ăn <span
+                                                    class="text-red-500">*</span></b></label>
+                                        <select name="u-cate" class="w-full form-control">
+                                            <?php
                                         if ($ctrl->cGetAllDish() != 0) {
                                             $result = $ctrl->cGetAllCategory();
 
@@ -254,134 +258,155 @@ if (isset($_POST["btnkhoa"])) {
                                 <td>
                                     <label for="u-price" class="w-full py-2"><b>Giá bán <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="number" class="w-full form-control" name="u-price" required value="<?php if(isset($u_price)) echo $u_price ?>">
-                                </td>
-                            </tr>
-                            <tr>
-                                <table id="u-tableIngredient" class="w-full  text-center">
-                                    <tr class="mb-2">
-                                        <td> <label for="name" class="w-full py-2"><b>Mã NL</b></label></td>
-                                        <td> <label for="name" class="w-full py-2"><b>Tên nguyên liệu <span
-                                        class="text-red-500">*</span></b></label></td>
-                                        <td> <label for="name" class="w-full py-2"><b>Đơn vị tính</b></label></td>
-                                        <td> <label for="name" class="w-full py-2"><b>Số lượng <span
-                                        class="text-red-500">*</span></b></label></td>
-                                        <td> <label for="name" class="w-full py-2"><b>Hành động</b></label></td>
+                                    <input type="number" class="w-full form-control" name="u-price" required
+                                        value="<?php if (isset($u_price))
+                                            echo $u_price ?>">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <table id="u-tableIngredient" class="w-full  text-center">
+                                        <tr class="mb-2">
+                                            <td> <label for="name" class="w-full py-2"><b>Mã NL</b></label></td>
+                                            <td> <label for="name" class="w-full py-2"><b>Tên nguyên liệu <span
+                                                            class="text-red-500">*</span></b></label></td>
+                                            <td> <label for="name" class="w-full py-2"><b>Đơn vị tính</b></label></td>
+                                            <td> <label for="name" class="w-full py-2"><b>Số lượng <span
+                                                            class="text-red-500">*</span></b></label></td>
+                                            <td> <label for="name" class="w-full py-2"><b>Hành động</b></label></td>
 
-                                    </tr>
-                                    <tr>
-                                    <td> 
-                                    <input name="u-ingredientIds[]" type="text" id="u-ma-0" class="w-20 form-control bg-gray-100" readonly></td>
-                                        <td>
-                                    <select name="u-ingredient[]" id="u-cateIngredient-0" data-row-id="0" class="w-full form-control"
-                                        >
-                                        <?php
+                                        </tr>
+                                        
+                                       <?php
+                                       for($i=0; $i<count($u_ingredientID); $i++) {
+                                        echo '<tr>
+                                            <td>
+                                                <input name="u-ingredientIds[]" type="text" id="u-ma-0"
+                                                    class="w-20 form-control bg-gray-100" readonly value="'. $u_ingredientID[$i] .'">
+                                            </td>
+                                            <td>
+                                                <select name="u-ingredient[]" id="u-cateIngredient-0" data-row-id="0"
+                                                    class="w-full form-control" value="'. $u_ingredientName[$i] .'">';
                                         $ctrl = new cIngredients;
 
                                         if ($ctrl->cGetAllIngredient() != 0) {
                                             $result = $ctrl->cGetAllIngredient();
 
                                             while ($row = $result->fetch_assoc()) {
-                                                $selected = ($row["ingredientName"] == $u_ingredientName) ? "selected" : "";
-                                                echo "<option $selected value='".$row["unitOfcalculaton"]."' data-id='".$row["ingredientID"]."'>".$row["ingredientName"]."</option>";
-                                           
+                                                $selected = ($row["ingredientName"] == $u_ingredientName[$i]) ? "selected" : "";
+                                                echo "<option $selected value='" . $row["unitOfcalculaton"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
+
 
                                             }
-                                        }
-                                        ?>
-                                    </select>
-                                    </td>
-                                    <div id="u-ingredientOptions" style="display: none;">
-                                    <?php
-                                        $ctrl = new cIngredients;
+                                        } 
+                                        echo '
+                                            </select>
+                                        </td>
+                                        <div id="u-ingredientOptions" style="display: none;">';
+                                            
+                                            $ctrl = new cIngredients;
 
-                                        if ($ctrl->cGetAllIngredient() != 0) {
-                                            $result = $ctrl->cGetAllIngredient();
+                                            if ($ctrl->cGetAllIngredient() != 0) {
+                                                $result = $ctrl->cGetAllIngredient();
 
-                                            while ($row = $result->fetch_assoc()) {
-                    
-                                                echo "<option value='".$row["unitOfcalculaton"]."' data-id='".$row["ingredientID"]."'>".$row["ingredientName"]."</option>";
-                                           
+                                                while ($row = $result->fetch_assoc()) {
 
+                                                    echo "<option value='" . $row["unitOfcalculaton"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
+
+
+                                                }
                                             }
-                                        }
-                                        ?>
-                                    </div>
-                                        <td> 
-                                    <input type="text" id="u-unit-0" class="w-full form-control bg-gray-100" readonly></td>
+                                            echo'
+                                        </div>
                                         <td>
-                                    <input type="number" class="w-full form-control" name="u-quantity[]" required></td>
-                                    <td>
-                                        <a href="javascript:void(0);" class="deleteRowBtn"><i class="fa-solid fa-circle-minus text-danger text-xl text-center w-full"></i></a>
-                                    </td>
-                                    </tr>
+                                            <input type="text" id="u-unit-0" class="w-full form-control bg-gray-100"
+                                                readonly value="'. $u_unitOfcalculaton[$i] .'">
+                                        </td>
+                                        <td>
+                                            <input type="number" class="w-full form-control" name="u-quantity[]"
+                                                required value="'. $u_quantity[$i] .'">
+                                        </td>
+                                        <td>
+                                            <a href="javascript:void(0);" class="deleteRowBtn"><i
+                                                    class="fa-solid fa-circle-minus text-danger text-xl text-center w-full"></i></a>
+                                        </td>
+                                    </tr>';
+                                       }
+                                       ?>
 
-                                    
+
                                 </table>
-                                <a href="javascript:void(0);" id="u-addRowBtn" class="btn btn-secondary mt-2">Thêm Hàng<i class="fa-solid fa-plus"></i></a>
+                                <a href="javascript:void(0);" id="u-addRowBtn" class="btn btn-secondary mt-2">Thêm
+                                    Hàng<i class="fa-solid fa-plus"></i></a>
                             </tr>
 
                             <tr>
                                 <td>
                                     <label for="u-description" class="w-full py-2"><b>Mô tả <span
                                                 class="text-red-500">*</span></b></label>
-                                    <textarea class="w-full form-control" name="u-description" rows="4" cols="50" placeholder="Nhập mô tả..." required><?php if(isset($u_description)) echo $u_description ?></textarea>
+                                    <textarea class="w-full form-control" name="u-description" rows="4" cols="50"
+                                        placeholder="Nhập mô tả..."
+                                        required><?php if (isset($u_description))
+                                            echo $u_description ?></textarea>
 
-                                </td>
-                            </tr>
+                                    </td>
+                                </tr>
 
-                            <tr>
-                                <td>
-                                    <label for="u-prepare" class="w-full py-2"><b>Quy trình chế biến <span
-                                                class="text-red-500">*</span></b></label>
-                                    <textarea class="w-full form-control" name="u-prepare" rows="4" cols="50" placeholder="Nhập quy trình chế biến..." required><?php if(isset($u_prepare)) echo $u_prepare ?></textarea>
+                                <tr>
+                                    <td>
+                                        <label for="u-prepare" class="w-full py-2"><b>Quy trình chế biến <span
+                                                    class="text-red-500">*</span></b></label>
+                                        <textarea class="w-full form-control" name="u-prepare" rows="4" cols="50"
+                                            placeholder="Nhập quy trình chế biến..."
+                                            required><?php if (isset($u_prepare))
+                                            echo $u_prepare ?></textarea>
 
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="u-image" class="w-full py-2"><b>Hình ảnh <span
-                                                class="text-red-500">*</span></b></label>
-                                    <input value="kk" type="file" class="w-full form-control" name="u-image">
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" name="btndong" data-bs-dismiss="modal" onclick="if (confirm('Thông tin chưa được lưu. Bạn có chắc chắn thoát?') === false) { var modalUpdate = new bootstrap.Modal(document.querySelector('.modalUpdate')); modalUpdate.show();}">Hủy</button>
-                        <button type="submit" class="btn btn-primary" name="btnsuamonan">Xác nhận</button>
-                    </div>
-                </form>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="u-image" class="w-full py-2"><b>Hình ảnh <span
+                                                    class="text-red-500">*</span></b></label>
+                                        <input value="kk" type="file" class="w-full form-control" name="u-image">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" name="btndong" data-bs-dismiss="modal"
+                                onclick="if (confirm('Thông tin chưa được lưu. Bạn có chắc chắn thoát?') === false) { var modalUpdate = new bootstrap.Modal(document.querySelector('.modalUpdate')); modalUpdate.show();}">Hủy</button>
+                            <button type="submit" class="btn btn-primary" name="btnsuamonan">Xác nhận</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="modal modal-lg modalInsert fade" id="insertModal" tabindex="-1" aria-labelledby="insertModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="" method="POST" class="form-container w-full" enctype="multipart/form-data">
-                    <div class="modal-header justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="insertModalLabel" style="color: #E67E22;">
-                            Thêm món ăn</h2>
-                    </div>
-                    <div class="modal-body">
-                        <table class="w-full">
-                            <tr id="hiddenIngre"></tr>
-                            <tr>
-                                <td>
-                                    <label for="name" class="w-full py-2"><b>Tên món ăn <span
-                                                class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="name" required>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="cate" class="w-full py-2"><b>Loại món ăn <span
-                                                class="text-red-500">*</span></b></label>
-                                    <select name="cate" id="cateDish" class="w-full form-control">
-                                        <?php
-                                         $ctrl = new cDishes;
+        <div class="modal modal-lg modalInsert fade" id="insertModal" tabindex="-1" aria-labelledby="insertModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form action="" method="POST" class="form-container w-full" enctype="multipart/form-data">
+                        <div class="modal-header justify-center">
+                            <h2 class="modal-title fs-5 font-bold text-3xl" id="insertModalLabel" style="color: #E67E22;">
+                                Thêm món ăn</h2>
+                        </div>
+                        <div class="modal-body">
+                            <table class="w-full">
+                                <tr id="hiddenIngre"></tr>
+                                <tr>
+                                    <td>
+                                        <label for="name" class="w-full py-2"><b>Tên món ăn <span
+                                                    class="text-red-500">*</span></b></label>
+                                        <input type="text" class="w-full form-control" name="name" required>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="cate" class="w-full py-2"><b>Loại món ăn <span
+                                                    class="text-red-500">*</span></b></label>
+                                        <select name="cate" id="cateDish" class="w-full form-control">
+                                            <?php
+                                        $ctrl = new cDishes;
                                         if ($ctrl->cGetAllDish() != 0) {
                                             $result = $ctrl->cGetAllCategory();
 
@@ -405,70 +430,78 @@ if (isset($_POST["btnkhoa"])) {
                                     <tr class="mb-2">
                                         <td> <label for="name" class="w-full py-2"><b>Mã NL</b></label></td>
                                         <td> <label for="name" class="w-full py-2"><b>Tên nguyên liệu <span
-                                        class="text-red-500">*</span></b></label></td>
+                                                        class="text-red-500">*</span></b></label></td>
                                         <td> <label for="name" class="w-full py-2"><b>Đơn vị tính</b></label></td>
                                         <td> <label for="name" class="w-full py-2"><b>Số lượng <span
-                                        class="text-red-500">*</span></b></label></td>
+                                                        class="text-red-500">*</span></b></label></td>
                                         <td> <label for="name" class="w-full py-2"><b>Hành động</b></label></td>
 
                                     </tr>
                                     <tr>
-                                    <td> 
-                                    <input name="ingredientIds[]" type="text" id="ma-0" class="w-20 form-control bg-gray-100" readonly></td>
                                         <td>
-                                    <select name="ingredient[]" id="cateIngredient-0" data-row-id="0" class="w-full form-control"
-                                        >
-                                        <?php
-                                        $ctrl = new cIngredients;
-
-                                        if ($ctrl->cGetAllIngredient() != 0) {
-                                            $result = $ctrl->cGetAllIngredient();
-
-                                            while ($row = $result->fetch_assoc()) {
-                    
-                                                echo "<option value='".$row["unitOfcalculaton"]."' data-id='".$row["ingredientID"]."'>".$row["ingredientName"]."</option>";
-                                           
-
-                                            }
-                                        }
-                                        ?>
-                                    </select>
-                                    </td>
-                                    <div id="ingredientOptions" style="display: none;">
-                                    <?php
-                                        $ctrl = new cIngredients;
-
-                                        if ($ctrl->cGetAllIngredient() != 0) {
-                                            $result = $ctrl->cGetAllIngredient();
-
-                                            while ($row = $result->fetch_assoc()) {
-                    
-                                                echo "<option value='".$row["unitOfcalculaton"]."' data-id='".$row["ingredientID"]."'>".$row["ingredientName"]."</option>";
-                                           
-
-                                            }
-                                        }
-                                        ?>
-                                    </div>
-                                        <td> 
-                                    <input type="text" id="unit-0" class="w-full form-control bg-gray-100" readonly></td>
+                                            <input name="ingredientIds[]" type="text" id="ma-0"
+                                                class="w-20 form-control bg-gray-100" readonly>
+                                        </td>
                                         <td>
-                                    <input type="number" class="w-full form-control" name="quantity[]" required></td>
-                                    <td>
-                                        <a href="javascript:void(0);" class="deleteRowBtn"><i class="fa-solid fa-circle-minus text-danger text-xl text-center w-full"></i></a>
-                                    </td>
+                                            <select name="ingredient[]" id="cateIngredient-0" data-row-id="0"
+                                                class="w-full form-control">
+                                                <?php
+                                                $ctrl = new cIngredients;
+
+                                                if ($ctrl->cGetAllIngredient() != 0) {
+                                                    $result = $ctrl->cGetAllIngredient();
+
+                                                    while ($row = $result->fetch_assoc()) {
+
+                                                        echo "<option value='" . $row["unitOfcalculaton"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
+
+
+                                                    }
+                                                }
+                                                ?>
+                                            </select>
+                                        </td>
+                                        <div id="ingredientOptions" style="display: none;">
+                                            <?php
+                                            $ctrl = new cIngredients;
+
+                                            if ($ctrl->cGetAllIngredient() != 0) {
+                                                $result = $ctrl->cGetAllIngredient();
+
+                                                while ($row = $result->fetch_assoc()) {
+
+                                                    echo "<option value='" . $row["unitOfcalculaton"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
+
+
+                                                }
+                                            }
+                                            ?>
+                                        </div>
+                                        <td>
+                                            <input type="text" id="unit-0" class="w-full form-control bg-gray-100"
+                                                readonly>
+                                        </td>
+                                        <td>
+                                            <input type="number" class="w-full form-control" name="quantity[]" required>
+                                        </td>
+                                        <td>
+                                            <a href="javascript:void(0);" class="deleteRowBtn"><i
+                                                    class="fa-solid fa-circle-minus text-danger text-xl text-center w-full"></i></a>
+                                        </td>
                                     </tr>
 
-                                    
+
                                 </table>
-                                <a href="javascript:void(0);" id="addRowBtn" class="btn btn-secondary mt-2">Thêm Hàng<i class="fa-solid fa-plus"></i></a>
+                                <a href="javascript:void(0);" id="addRowBtn" class="btn btn-secondary mt-2">Thêm Hàng<i
+                                        class="fa-solid fa-plus"></i></a>
                             </tr>
 
                             <tr>
                                 <td>
                                     <label for="description" class="w-full py-2"><b>Mô tả <span
                                                 class="text-red-500">*</span></b></label>
-                                    <textarea class="w-full form-control" name="description" rows="4" cols="50" placeholder="Nhập quy mô tả..." required></textarea>
+                                    <textarea class="w-full form-control" name="description" rows="4" cols="50"
+                                        placeholder="Nhập quy mô tả..." required></textarea>
 
                                 </td>
                             </tr>
@@ -477,7 +510,8 @@ if (isset($_POST["btnkhoa"])) {
                                 <td>
                                     <label for="prepare" class="w-full py-2"><b>Quy trình chế biến <span
                                                 class="text-red-500">*</span></b></label>
-                                    <textarea class="w-full form-control" name="prepare" rows="4" cols="50" placeholder="Nhập quy trình chế biến..." required></textarea>
+                                    <textarea class="w-full form-control" name="prepare" rows="4" cols="50"
+                                        placeholder="Nhập quy trình chế biến..." required></textarea>
 
                                 </td>
                             </tr>
