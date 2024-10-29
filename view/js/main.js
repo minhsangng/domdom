@@ -60,6 +60,19 @@ $(document).ready(function () {
 
   // đổi đơn vị tính
   let u_rowId = $("#u_countIngreDish").val();
+  for (var i=0; i< u_rowId;i++) {
+    $("#u-ma-" + i).val($(`#u-cateIngredient-${i}`).find("option:selected").data("id"));
+    $(`#u-unit-${i}`).val($(`#u-cateIngredient-${i}`).val());
+    $(document).on("change", `#u-cateIngredient-${i}`, function () {
+      var u_rowId = $(this).attr("data-row-id");
+      var ingredientId = $(this).find("option:selected").data("id");
+      var selectedValue = $(`#u-cateIngredient-${u_rowId}`).val();
+      $("#u-ma-" + u_rowId).val(ingredientId);
+      $(`#u-unit-${u_rowId}`).val(selectedValue);
+      console.log(selectedValue);
+      console.log(ingredientId);
+    });
+  }
   $("#u-ma-" + u_rowId).val($(`#u-cateIngredient-${u_rowId}`).find("option:selected").data("id"));
   $(`#u-unit-${u_rowId}`).val($(`#u-cateIngredient-${u_rowId}`).val());
   $(document).on("change", `#u-cateIngredient-${u_rowId}`, function () {

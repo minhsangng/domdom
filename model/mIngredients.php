@@ -13,6 +13,17 @@ class mIngredients
         return 0;
     }
 
+    public function mGetAllIngredient1()
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT * FROM ingredient ";
+
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+
     public function mGetUnitIngredient()
     {
         $db = new Database;

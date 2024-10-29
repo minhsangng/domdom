@@ -21,6 +21,16 @@ class cIngredients extends mIngredients
         return 0;
     }
 
+    public function cGetAllIngredient1()
+    {
+        if ($this->mGetAllIngredient1() != 0) {
+            $result = $this->mGetAllIngredient1();
+
+            return $result;
+        }
+        return 0;
+    }
+
     public function cGetAllIngredientLimit($startFrom, $productsPerPage)
     {
         if ($this->mGetAllIngredient() != 0) {

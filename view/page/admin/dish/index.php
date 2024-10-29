@@ -314,8 +314,8 @@ if (isset($_POST["btnkhoa"])) {
                                                 <?php
                                                 $ctrl = new cIngredients;
 
-                                                if ($ctrl->cGetAllIngredient() != 0) {
-                                                    $result = $ctrl->cGetAllIngredient();
+                                                if ($ctrl->cGetAllIngredient1() != 0) {
+                                                    $result = $ctrl->cGetAllIngredient1();
 
                                                     while ($row = $result->fetch_assoc()) {
 
@@ -331,8 +331,8 @@ if (isset($_POST["btnkhoa"])) {
                                             <?php
                                             $ctrl = new cIngredients;
 
-                                            if ($ctrl->cGetAllIngredient() != 0) {
-                                                $result = $ctrl->cGetAllIngredient();
+                                            if ($ctrl->cGetAllIngredient1() != 0) {
+                                                $result = $ctrl->cGetAllIngredient1();
 
                                                 while ($row = $result->fetch_assoc()) {
 
@@ -469,19 +469,19 @@ if (isset($_POST["btnkhoa"])) {
                                         <input type="hidden" name="countIngre" id="u_countIngreDish" value="<?php echo count($u_ingredientID);?>">
                                         <?php
                                     for ($i = 0; $i < count($u_ingredientID); $i++) {
-                                        echo '<tr><td><span id="u-error-quantity-0" class="text-red-500 error-message"></span></td></tr>
+                                        echo '<tr><td><span id="u-error-quantity-'.$i.'" class="text-red-500 error-message"></span></td></tr>
                                         <tr>
                                             <td>
-                                                <input name="u-ingredientIds[]" type="text" id="u-ma-0"
+                                                <input name="u-ingredientIds[]" type="text" id="u-ma-'.$i.'"
                                                     class="w-20 form-control bg-gray-100" readonly value="' . $u_ingredientID[$i] . '">
                                             </td>
                                             <td>
-                                                <select name="u-ingredient[]" id="u-cateIngredient-0" data-row-id="0"
+                                                <select name="u-ingredient[]" id="u-cateIngredient-'.$i.'" data-row-id="'.$i.'"
                                                     class="w-full form-control" value="' . $u_ingredientName[$i] . '">';
                                         $ctrl = new cIngredients;
 
-                                        if ($ctrl->cGetAllIngredient() != 0) {
-                                            $result = $ctrl->cGetAllIngredient();
+                                        if ($ctrl->cGetAllIngredient1() != 0) {
+                                            $result = $ctrl->cGetAllIngredient1();
 
                                             while ($row = $result->fetch_assoc()) {
                                                 $selected = ($row["ingredientName"] == $u_ingredientName[$i]) ? "selected" : "";
@@ -497,8 +497,8 @@ if (isset($_POST["btnkhoa"])) {
 
                                         $ctrl = new cIngredients;
 
-                                        if ($ctrl->cGetAllIngredient() != 0) {
-                                            $result = $ctrl->cGetAllIngredient();
+                                        if ($ctrl->cGetAllIngredient1() != 0) {
+                                            $result = $ctrl->cGetAllIngredient1();
                                             while ($row = $result->fetch_assoc()) {
 
                                                 echo "<option value='" . $row["unitOfcalculation"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
@@ -509,7 +509,7 @@ if (isset($_POST["btnkhoa"])) {
                                         echo '
                                         </div>
                                         <td>
-                                            <input type="text" id="u-unit-0" class="w-full form-control bg-gray-100"
+                                            <input type="text" id="u-unit-'.$i.'" class="w-full form-control bg-gray-100"
                                                 readonly value="' . $u_unitOfcalculation[$i] . '">
                                         </td>
                                         <td>
