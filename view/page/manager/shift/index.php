@@ -3,8 +3,8 @@
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-semibold">Bảng phân ca</h2>
             <select name="" id="" class="form-control w-fit">
+                <option value="">Nhân viên bếp</option>
                 <option value="">Nhân viên nhận đơn</option>
-                <option value="">Nhân viên bán hàng</option>
             </select>
             <div class="flex items-center">
                 <button class="btn bg-green-100 text-green-500 py-2 px-4 rounded-lg mr-1 hover:bg-green-500 hover:text-white">Xuất <i class="fa-solid fa-table"></i></button>
@@ -50,6 +50,51 @@
         </div>
     </div>
 
+    
+
+<div class="modal modalInsert fade" id="insertModal" tabindex="-1" aria-labelledby="insertModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="" class="form-container w-full" method="POST" enctype="multipart/form-data">
+                    <div class="modal-header">
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="insertModalLabel" style="color: #E67E22;">Thêm ca làm</h2>
+                    </div>
+                    <div class="modal-body">
+                    <div id="employeeList">
+                        <strong>Chọn nhân viên:</strong>
+                        <?php
+                            $sql = "SELECT * FROM `user` WHERE roleID IN ('3', '4')";
+                            $result = $conn->query($sql);
+                            
+                            echo '<select name="" id="">';
+                            while($r = mysqli_fetch_assoc($result)){
+                                echo '<option value="'.$r["userID"].'">'.$r["userName"].'</option>';
+                            }
+                            echo '</select>';
+                        ?>
+                    </div>
+
+                    <div id="shiftOptions" class="mt-4">
+                        <strong>Chọn ca làm:</strong>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="shift" value="Sáng">
+                            <label class="form-check-label" >Ca sáng (8:00 - 14:00)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="shift" value="Chiều">
+                            <label class="form-check-label" >Ca chiều (14:00 - 20:00)</label>
+                        </div>
+                    </div>
+                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary" name="btnthemnv">Thêm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         const workShifts = <?php echo $jsonWorkShifts; ?>;
 
@@ -88,16 +133,17 @@
 
             if (shifts) {
                 shifts.forEach(shift => {
-                    detailsDiv.innerHTML += `<div class='flex items-center mb-2'><button class='bg-gray-300 size-8 p-1 text-center mr-4 rounded-full'><i class="fa-solid fa-minus"></i></button><span>${shift.employee} (${shift.time})</span> <button class='bg-gray-300 size-8 p-1 text-center ml-4 rounded-full'><i class="fa-solid fa-wrench"></i></button></div>`;
+                    detailsDiv.innerHTML += `<div class='flex items-center mb-2'><button class='bg-gray-300 size-8 p-1 text-center mr-4 rounded-full'><i class="fa-solid fa-minus"></i></button><span>${shift.employee} (${shift.time})</span> </i></button></div>`;
                 });
-                
-                detailsDiv.innerHTML += `<div class='flex items-center mb-2'><button class='bg-gray-300 size-8 p-1 text-center mr-4 rounded-full'><i class="fa-solid fa-plus"></i></button><span class='text-gray-600'>Thêm nhân viên</span></div>`;
+                detailsDiv.innerHTML += `<div class='flex items-center mb-2'><button class='bg-gray-300 size-8 p-1 text-center mr-4 rounded-full' data-bs-toggle="modal" data-bs-target="#insertModal"><i class="fa-solid fa-plus"></i></button><span class='text-gray-600'>Thêm ca làm</span></div>`;
             } else {
                 detailsDiv.innerHTML += `<p>Không có thông tin ca làm cho ngày này.</p>`;
             }
+            
 
             infoDiv.classList.remove("hidden");
         }
+        
 
         createCalendar();
     </script>

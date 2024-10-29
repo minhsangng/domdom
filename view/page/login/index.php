@@ -51,31 +51,38 @@ $conn = $db->connect();
 if (isset($_POST["btndn"])) {
     $email = $_POST["email"];
     $psw = $_POST["psw"];
-    $role = $_POST["role"];
-    $sql = "SELECT * FROM user WHERE roleID = $role AND email = '$email' AND password = '$psw'";
+    
+    if (empty($email) || empty($psw)) {
+        echo "<script>alert('Thông tin chưa hợp lệ. Vui lòng nhập lại!');</script>";
+    } else {
+        $sql = "SELECT * FROM user WHERE roleID AND email = '$email' AND password = '$psw'";
     $result = $conn->query($sql);
 
     $row = $result->fetch_assoc();
 
-    if ($result->num_rows > 0) {
-        $_SESSION["userName"] = $row["userName"];
-        $_SESSION["login"] = 1;
+        if ($result->num_rows > 0) {
+            $_SESSION["userName"] = $row["userName"];
+            $_SESSION["login"] = 1;
 
-        switch ($row["roleID"]) {
-            case 1:
-                echo "<script>window.location.href = '../admin/index.php'</script>";
-                break;
-            case 2:
-                echo "<script>window.location.href = '../manager/index.php'</script>";
-                break;
-            case 3:
-                echo "<script>window.location.href = '../orderstaff/index.php'</script>";
-                break;
-            case 4:
-                echo "<script>window.location.href = '../kitchenstaff/index.php'</script>";
-                break;
+            switch ($row["roleID"]) {
+                case 1:
+                    echo "<script>window.location.href = '../admin/index.php'</script>";
+                    break;
+                case 2:
+                    echo "<script>window.location.href = '../manager/index.php'</script>";
+                    break;
+                case 3:
+                    echo "<script>window.location.href = '../orderstaff/index.php'</script>";
+                    break;
+                case 4:
+                    echo "<script>window.location.href = '../kitchenstaff/index.php'</script>";
+                    break;
+            }
+        } else {
+            echo "<script>alert('Thông tin chưa hợp lệ. Vui lòng nhập lại!');</script>";
         }
-    } else echo "<script>alert('Thông tin chưa hợp lệ. Vui lòng nhập lại!');</script>";
+    }
+    
 }
 ?>
 
@@ -101,19 +108,6 @@ if (isset($_POST["btndn"])) {
                     </div>
                     <div class="flex justify-end items-center mb-4">
                         <a class="text-blue-500 text-sm" href="#"> Quên mật khẩu? </a>
-                    </div>
-                    <div class="flex justify-center items-center mb-4 text-sm">
-                        <input type="radio" name="role" id="role1" value="1"
-                            class="mr-1 size-4 rounded-full" /><label for="role1"
-                            class="text-gray-500">QLCCH</label>
-                        <input type="radio" name="role" id="role2" value="2"
-                            class="ml-6 mr-1 size-4 rounded-full" /><label for="role2"
-                            class="text-gray-500">QLCH</label>
-                        <input type="radio" name="role" id="role3" value="3"
-                            class="ml-6 mr-1 size-4 rounded-full" /><label for="role3"
-                            class="text-gray-500">NVND</label>
-                        <input type="radio" name="role" id="role4" value="4"
-                            class="ml-6 mr-1 size-4 rounded-full" /><label for="role4" class="text-gray-500">NVB</label>
                     </div>
                     <button class="w-full text-white py-2 px-4 rounded-lg btn btn-primary" name="btndn">
                         Đăng nhập

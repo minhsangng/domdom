@@ -87,7 +87,7 @@ class cPromotions extends mPromotions
                             <td class='py-2 border-2 text-" . ($row["status"] == 1 ? "green" : "red") . "-500'>" . ($row["status"] == 1 ? "Đang áp dụng" : "Ngưng áp dụng") . "</td>
                             <td class='py-2 border-2 flex justify-center items-center h-28'>
                                 <button class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["promotionID"] . "'>Cập nhật</button>
-                                <button class='btn btn-danger ml-1' name='btnkhoa'>Khóa</button>
+                                <button class='btn btn-danger ml-1' name='btnkhoa'>Xóa</button>
                             </td>
                         </tr>";
                 }
