@@ -6,7 +6,7 @@ class mDishes
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT DISTINCT dishCategory FROM dish";
+        $sql = "SELECT DISTINCT * FROM dish group by dishCategory";
         if ($conn != null)
             return $conn->query($sql);
         return 0;
