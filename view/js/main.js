@@ -35,7 +35,7 @@ $(document).ready(function () {
                     <a href="javascript:void(0);" class="deleteRowBtn"><i class="fa-solid fa-circle-minus text-danger text-xl text-center w-full"></i></a>
                 </td>
                 </tr>`;
-                
+
     table.append(newRow);
 
     $(`#cateIngredient-${rowId}`).change(function () {
@@ -182,4 +182,69 @@ $(document).ready(function () {
     $(this).html("✔");
     $(this).removeClass("btn-danger").addClass("btn-success");
   });
+
+  // REGEX
+  // regex UC chuyen nguyen lieu tu cua hang thua sang cua hang thieu
+  function ktStore() {
+    let storeThua = $("#txtStoreThua").val()
+    let storeThieu = $("#txtStoreThieu").val()
+    if (storeThua === "") {
+      $("#errStore").html("Cửa hàng không được rỗng")
+      return false
+    } else if (storeThieu === "") {
+      $("#errStore").html("Cửa hàng không được rỗng")
+      return false
+    } else if (storeThieu === storeThua) {
+      $("#errStore").html("Cửa hàng thiếu phải khác cửa hàng thừa")
+      return false
+    } else {
+      $("#errStore").html("*")
+      return true
+    }
+  }
+
+  function ktQuantityInStock() {
+    let quantityInStock = $("#txtQuantityInStock").val()
+    let quantityThua = $("#txtStoreThua").find(":selected").data("quantity")
+    if (quantityInStock === "") {
+      $("#errQuantityInStock").html("Số lượng không được rỗng")
+      return false
+    } else if (Number(quantityInStock) > quantityThua) {
+      $("#errQuantityInStock").html("Số lượng chuyển không được lớn hơn số lượng tồn cửa hàng thừa")
+      return false
+    } else if (Number(quantityInStock) < 1) {
+      $("#errQuantityInStock").html("Số lượng chuyển không được nhỏ hơn 1")
+      return false
+    } else {
+      $("#errQuantityInStock").html("*")
+      return true
+    }
+  }
+
+  $("#txtStoreThua").blur(function () {
+    ktStore()
+  })
+
+  $("#txtStoreThieu").blur(function () {
+    ktStore()
+  })
+
+  $("#txtQuantityInStock").blur(function () {
+    ktQuantityInStock()
+  })
+
+  $("#form-SLT").on("submit", function (event) {
+    let isValid = false;
+    if (ktStore() && ktQuantityInStock()) {
+      isValid = true;
+    }
+    if (!isValid) {
+      event.preventDefault();
+      alert("Thông tin không hợp lệ")
+    }
+  });
+
+
+
+
 });

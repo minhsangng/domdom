@@ -17,7 +17,7 @@ if (isset($_POST["btnthemnl"])) {
     $type = $_POST["typeIngre"];
 
     $ctrl->cInsertIngredient($ingreName, $unit, $price, $type);
-} 
+}
 
 if (isset($_POST["btncapnhat"])) {
 
@@ -51,12 +51,14 @@ if (isset($_POST["btnSLT"])) {
             });
         </script>";
     $_SESSION["storeNameSLT"] = [];
+    $_SESSION["storeIDSLT"] = [];
     $_SESSION["quantityInStockSLT"] = [];
     $sltdem = 0;
     while ($r = $table->fetch_assoc()) {
         $_SESSION["ingredientIDSLT"] = $r["ingredientID"];
         $_SESSION["ingredientNameSLT"] = $r["ingredientName"];
         $_SESSION["storeNameSLT"][$sltdem] = $r["storeName"];
+        $_SESSION["storeIDSLT"][$sltdem] = $r["storeID"];
         $_SESSION["quantityInStockSLT"][$sltdem] = $r["quantityInStock"];
         $sltdem++;
     }
@@ -332,47 +334,74 @@ if (isset($_POST["btnkhoa"])) {
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="" method="POST" class="form-container w-full">
+                <form id="form-SLT" action="" method="POST" class="form-container w-full">
                     <div class="modal-header justify-center">
                         <h2 class="modal-title fs-5 font-bold text-3xl" id="sltModalLabel" style="color: #E67E22;">Số
                             lượng tồn</h2>
                     </div>
                     <div class="modal-body">
+                        <p class="font-bold text-gray-600 mb-2">Danh sách tồn kho của
+                            <?php echo $_SESSION["ingredientNameSLT"]; ?>
+                        </p>
                         <table class="text-base w-full text-center">
                             <thead>
                                 <tr>
-                                    <th class="text-gray-600 border-2 py-2">Mã NL</th>
-                                    <th class="text-gray-600 border-2 py-2">Tên NL</th>
                                     <th class="text-gray-600 border-2 py-2">Cửa hàng</th>
                                     <th class="text-gray-600 border-2 py-2">Số lượng tồn</th>
                                 </tr>
                             </thead>
                             <tbody>
-
                                 <?php
                                 foreach ($_SESSION["storeNameSLT"] as $index => $storeName) {
-                                    echo "<tr><td class='py-2 border-2'>" . $_SESSION["ingredientIDSLT"] . "</td>
-                                    <td class='py-2 border-2'>" . $_SESSION["ingredientNameSLT"] . "</td>
+                                    echo "<tr>
                                     <td class='py-2 border-2'>" . $storeName . "</td>
                                     <td class='py-2 border-2'>" . $_SESSION["quantityInStockSLT"][$index] . "</td></tr>
                                     ";
                                 }
                                 ?>
-                                <tr>
-                                    <td>
-                                        <label for="">Chọn cửa hàng </label>
-                                        <select name="" id="">
-                                        <?php
-                                            
-                                        ?>
-                                            <option value=""></option>
-                                        </select>
-                                    </td>
-                                    <td><input type="text"></td>
-                                </tr>
-
                             </tbody>
                         </table>
+                        <p class="font-bold text-gray-600 mb-2 mt-3">Chuyển nguyên liệu giữa các cửa hàng</p>
+                        <div class="d-flex">
+                        <div class="d-flex w-50 mr-3">
+                            <label style="width:30%;" class="mt-1" for="txtStoreThua">CH thừa</label>
+                            <select class="form-control" name="txtStoreThua" id="txtStoreThua">
+                                <?php
+                                foreach ($_SESSION["storeNameSLT"] as $index => $storeName) {
+                                    echo "<option data-quantity='".  $_SESSION["quantityInStockSLT"][$index] ."' value='" . $_SESSION["storeIDSLT"][$index] . "'>$storeName</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+
+                        <div class="d-flex w-50 ml-3">
+                            <label style="width:30%;" class="mt-1" for="txtStoreThieu">CH thiếu</label>
+                            <select class="form-control" name="txtStoreThieu" id="txtStoreThieu">
+                                <?php
+                                foreach ($_SESSION["storeNameSLT"] as $index => $storeName) {
+                                    echo "<option data-quantity='".  $_SESSION["quantityInStockSLT"][$index] ."' value='" . $_SESSION["storeIDSLT"][$index] . "'>$storeName</option>";
+                                }
+                                ?>
+                            </select>
+                        </div>
+                        </div>
+                        <div class="mt-1 d-flex">
+                        <div style="width: 12.3%;"></div>
+                            <p class="text-danger" id="errStore">*</p>
+                        </div>
+
+                        <div class="d-flex mt-2">
+                            <label style="width: 12.3%" for="txtQuantityInStock">Số lượng</label>
+                            <input class="form-control" type="number" id="txtQuantityInStock" name="txtQuantityInStock">
+                        </div>
+
+                        <div class="d-flex mt-2">
+                            <div style="width: 12.3%;"></div>
+                        <p class="text-danger" id="errQuantityInStock">*</p>
+                        </div>
+
+
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" name="btndong" data-bs-dismiss="modal"
