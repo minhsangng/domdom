@@ -2,7 +2,9 @@ $(document).ready(function () {
   // TRÍ TÂM
   // đổi đơn vị tính
   let rowId = 0;
-  $(document).on("change", 'select[name="ingredient[]"]', function () {
+  $("#ma-" + rowId).val($(`#cateIngredient-${rowId}`).find("option:selected").data("id"));
+  $(`#unit-${rowId}`).val($(`#cateIngredient-${rowId}`).val());
+  $(document).on("change", `#cateIngredient-${rowId}`, function () {
     var rowId = $(this).attr("data-row-id");
     var ingredientId = $(this).find("option:selected").data("id");
     var selectedValue = $(`#cateIngredient-${rowId}`).val();
@@ -17,32 +19,43 @@ $(document).ready(function () {
     var table = $("#tableIngredient");
 
     var newRow = `
+    <tr>
+    <td></td>
+                                        <td></td>
+                                        <td></td>
+    <td><span id="error-quantity-${rowId}" class="text-red-500 error-message"></span></td></tr>
              <tr>
                 <td> 
-                <input name="ingredientIds[]" type="text" id="ma-${rowId}" class="w-20 form-control bg-gray-100" readonly></td>
+                <input name="ingredientIds[]" type="text" id="ma-${rowId}" class="clsNLThem w-20 form-control bg-gray-100" readonly></td>
                     
                     <td>
-                <select name="ingredient[]" id="cateIngredient-${rowId}" data-row-id="${rowId}" class="w-full form-control"
+                <select class="clsIngreName" name="ingredient[]" id="cateIngredient-${rowId}" data-row-id="${rowId}" class="w-full form-control"
                     >
                     ${options}
                 </select>
                 </td>
                     <td> 
-                <input type="text" id="unit-${rowId}" class="w-full form-control bg-gray-100" readonly></td>
+                <input type="text" id="unit-${rowId}" class="clsDVT w-full form-control bg-gray-100" readonly></td>
                     <td>
-                <input type="number" class="w-full form-control" name="quantity[]" required></td>
+                <input type="number" class="w-full form-control quantityIngre" id="quantityIngre-${rowId}" name="quantity[]" required></td>
                 <td>
                     <a href="javascript:void(0);" class="deleteRowBtn"><i class="fa-solid fa-circle-minus text-danger text-xl text-center w-full"></i></a>
                 </td>
                 </tr>`;
 
     table.append(newRow);
-
+    $("#ma-" + rowId).val($(`#cateIngredient-${rowId}`).find("option:selected").data("id"));
+    $(`#unit-${rowId}`).val($(`#cateIngredient-${rowId}`).val());
     $(`#cateIngredient-${rowId}`).change(function () {
       var rowId = $(this).attr("data-row-id");
-      var selectedValue = $(this).val();
+      var ingredientId = $(this).find("option:selected").data("id");
+      var selectedValue = $(`#cateIngredient-${rowId}`).val();
+      $("#ma-" + rowId).val(ingredientId);
       $(`#unit-${rowId}`).val(selectedValue);
     });
+
+    updateQuantityInputs();
+
   });
 
   // đổi đơn vị tính
@@ -64,6 +77,11 @@ $(document).ready(function () {
     var table = $("#u-tableIngredient");
 
     var newRow = `
+    <tr>
+    <td></td>
+                                        <td></td>
+                                        <td></td>
+    <td><span id="u-error-quantity-${u_rowId}" class="text-red-500 error-message"></span></td></tr>
             <tr>
                 <td> 
                 <input name="u-ingredientIds[]" type="text" id="u-ma-${u_rowId}" class="w-20 form-control bg-gray-100" readonly></td>
@@ -95,7 +113,24 @@ $(document).ready(function () {
 
   // xóa hàng cho tablebutton
   $(document).on("click", ".deleteRowBtn", function () {
+    $(this).closest("tr").prev("tr").remove();
     $(this).closest("tr").remove();
+    // $(".error-message").each(function (index) {
+    //   $(this).attr("id", "error-quantity-" + index);
+    // });
+    // $(".clsNLThem").each(function (index) {
+    //   $(this).attr("id", "cateIngredient-" + index);
+    // });
+    // $(".clsDVT").each(function (index) {
+    //   $(this).attr("id", "unit-" + index);
+    // });
+    // $(".clsIngreName").each(function (index) {
+    //   $(this).attr("id", "cateIngredient-" + index);
+    //   $(this).attr("data-row-id", index);
+
+    // });
+
+
   });
 
   // Cập nhật tổng tiền
@@ -244,7 +279,108 @@ $(document).ready(function () {
     }
   });
 
+  // regex UC Thêm nguyên liệu
+  function ktDishName() {
+    let dishName = $("#iDishName").val()
+    if (dishName.length === 0) {
+      $("#ierrDishName").html("Tên món ăn không được rỗng")
+      return false
+    } else {
+      $("#ierrDishName").html("*")
+      return true
+    }
+  }
 
+  function ktDishPrice() {
+    let dishPrice = $("#iDishPrice").val()
+    if (dishPrice === "") {
+      $("#ierrDishPrice").html("Giá bán không được rỗng")
+      return false
+    } else if (Number(dishPrice) < 0) {
+      $("#ierrDishPrice").html("Giá bán không được nhỏ hơn 0")
+      return false
+    } else {
+      $("#ierrDishPrice").html("*")
+      return true
+    }
+  }
+
+  function ktQuantity(index) {
+    let quantity = $("#quantityIngre-"+ index).val();
+    let errorElement = $("#error-quantity-" + index);
+    if (quantity === "") {
+      errorElement.html("Số lượng không được rỗng" + index);
+      return false;
+    } else if (Number(quantity) < 0) {
+      errorElement.html("Số lượng phải lớn hơn 0");
+      return false;
+    } else {
+      errorElement.html("");
+      return true;
+    }
+  }
+
+  function ktDishDescription() {
+    let dishName = $("#iDishDescription").val()
+    if (dishName.length === 0) {
+      $("#ierrDishDescription").html("Mô tả không được rỗng")
+      return false
+    } else {
+      $("#ierrDishDescription").html("*")
+      return true
+    }
+  }
+
+  function ktDishProcess() {
+    let dishName = $("#iDishProcess").val()
+    if (dishName.length === 0) {
+      $("#ierrDishProcess").html("Mô tả không được rỗng")
+      return false
+    } else {
+      $("#ierrDishProcess").html("*")
+      return true
+    }
+  }
+
+  $("#iDishName").blur(function () {
+    ktDishName()
+  })
+
+  $("#iDishDescription").blur(function () {
+    ktDishDescription()
+  })
+
+  $("#iDishProcess").blur(function () {
+    ktDishProcess()
+  })
+
+  $("#iDishPrice").blur(function () {
+    ktDishPrice()
+  })
+
+  function updateQuantityInputs() {
+    for (let i = 0; i <= rowId; i++) {
+      $("#quantityIngre-"+ i).blur(function () {
+        ktQuantity(i);
+      });
+    }
+  }
+  updateQuantityInputs();
+
+  $("#form-themmonan").on("submit", function (event) {
+    let isValid = false;
+    if (ktDishName() && ktDishDescription() && ktDishProcess() && ktDishPrice() ) {
+      isValid = true;
+    }
+    for (let i = 0; i <= rowId; i++) {
+        if(ktQuantity(i))
+          isValid = true;
+      }
+    if (!isValid) {
+      event.preventDefault();
+      alert("Thông tin không hợp lệ")
+    }
+  });
 
 
 });
