@@ -30,6 +30,30 @@ if (isset($_POST["btncapnhat"])) {
     $_SESSION["type"] = $row["typeIngredient"];
 }
 
+if (isset($_POST["btnSLT"])) {
+    $ingreID = $_POST["btnSLT"];
+    $ctrl = new cIngredients;
+    $table = $ctrl->cGetAllStoreIngredient($ingreID);
+
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', function() {
+                var modalSLT = new bootstrap.Modal(document.getElementById('sltModal')); 
+                modalSLT.show();
+            });
+        </script>";
+    $_SESSION["storeNameSLT"] = [];
+    $_SESSION["quantityInStockSLT"] = [];
+    $sltdem =0;
+    while ($r = $table->fetch_assoc()) {
+        $_SESSION["ingredientIDSLT"] = $r["ingredientID"];
+        $_SESSION["ingredientNameSLT"] = $r["ingredientName"];
+        $_SESSION["storeNameSLT"][$sltdem] = $r["storeName"];
+        $_SESSION["quantityInStockSLT"][$sltdem] = $r["quantityInStock"];
+        $sltdem++;
+    }
+
+}
+
 if (isset($_POST["btnsuanl"])) {
     $ingreID = $_SESSION["ingreID"];
     $ingreName = $_POST["ingreName"];
@@ -41,14 +65,14 @@ if (isset($_POST["btnsuanl"])) {
 }
 
 if (isset($_POST["btnkhoa"])) {
-            $ingredientID = $_POST["btnkhoa"];
-           $ctrl = new cIngredients;
-           $table = $ctrl->cGetIngredientById($ingredientID);
-                  $status= $table["status"];
-        
-            $newStatus = ($status == 1) ? 0 : 1;
-        
-            $ctrl->cLockIngredient($newStatus, $ingredientID);
+    $ingredientID = $_POST["btnkhoa"];
+    $ctrl = new cIngredients;
+    $table = $ctrl->cGetIngredientById($ingredientID);
+    $status = $table["status"];
+
+    $newStatus = ($status == 1) ? 0 : 1;
+
+    $ctrl->cLockIngredient($newStatus, $ingredientID);
 }
 ?>
 
@@ -59,12 +83,19 @@ if (isset($_POST["btnkhoa"])) {
                 Danh sách nguyên liệu
             </h2>
             <div class="flex items-center">
-                <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#insertModal">Thêm nguyên liệu</button>
+                <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#insertModal">Thêm
+                    nguyên liệu</button>
             </div>
+
             <div class="flex items-center">
-                <button class="btn bg-green-100 text-green-500 py-2 px-4 rounded-lg mr-1 hover:bg-green-500 hover:text-white">Xuất <i class="fa-solid fa-table"></i></button>
-                <button class="btn bg-blue-100 text-blue-500 py-2 px-4 rounded-lg ml-1 hover:bg-blue-500 hover:text-white">In <i class="fa-solid fa-print"></i></button>
+                <button
+                    class="btn bg-green-100 text-green-500 py-2 px-4 rounded-lg mr-1 hover:bg-green-500 hover:text-white">Xuất
+                    <i class="fa-solid fa-table"></i></button>
+                <button
+                    class="btn bg-blue-100 text-blue-500 py-2 px-4 rounded-lg ml-1 hover:bg-blue-500 hover:text-white">In
+                    <i class="fa-solid fa-print"></i></button>
             </div>
+
         </div>
         <div class="h-fit bg-gray-100 rounded-lg p-6">
             <form action="" method="POST">
@@ -76,6 +107,7 @@ if (isset($_POST["btnkhoa"])) {
                             <th class="text-gray-600 border-2 py-2">Đơn vị tính</th>
                             <th class="text-gray-600 border-2 py-2">Giá mua (đồng)</th>
                             <th class="text-gray-600 border-2 py-2">Loại NL</th>
+                            <th class="text-gray-600 border-2 py-2">Số lượng tồn</th>
                             <th class="text-gray-600 border-2 py-2">Trạng thái</th>
                             <th class="text-gray-600 border-2 py-2">Chức năng</th>
                         </tr>
@@ -106,6 +138,7 @@ if (isset($_POST["btnkhoa"])) {
                             <td class='py-2 border-2'>" . $row["unitOfcalculaton"] . "</td>
                             <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
                             <td class='py-2 border-2'>" . $row["typeIngredient"] . "</td>
+                            <td class='py-2 border-2'> <button class=' mr-1' name='btnSLT' value='" . $row["ingredientID"] . "'><i class='fa-solid fa-eye fa-lg'></i></button></td>
                             <td class='py-2 border-2'><span class='bg-" . ($row["status"] == 1 ? "green" : "red") . "-100 text-" . ($row["status"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["status"] == 1 ? "Đang dùng" : "Ngưng dùng") . "</span></td>
                             <td class='py-2 border-2 flex justify-center items-center'>
                                 <button class='btn btn-primary mr-1' name='btncapnhat' value='" . $row["ingredientID"] . "'>Cập nhật</button>
@@ -113,7 +146,8 @@ if (isset($_POST["btnkhoa"])) {
                             </td>
                         </tr>";
                             }
-                        } else echo "<tr><td colspan='7' class='text-center pt-2'>Chưa có dữ liệu!</td></tr>";
+                        } else
+                            echo "<tr><td colspan='7' class='text-center pt-2'>Chưa có dữ liệu!</td></tr>";
                         ?>
                     </tbody>
                 </table>
@@ -134,24 +168,28 @@ if (isset($_POST["btnkhoa"])) {
         </div>
     </div>
 
-    <div class="modal modalInsert fade" id="insertModal" tabindex="-1" aria-labelledby="insertModalLabel" aria-hidden="true">
+    <div class="modal modalInsert fade" id="insertModal" tabindex="-1" aria-labelledby="insertModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" class="form-container w-full" method="POST">
                     <div class="modal-header">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="insertModalLabel" style="color: #E67E22;">Thêm nguyên liệu</h2>
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="insertModalLabel" style="color: #E67E22;">
+                            Thêm nguyên liệu</h2>
                     </div>
                     <div class="modal-body">
                         <table class="w-full">
                             <tr>
                                 <td>
-                                    <label for="ingreName" class="w-full py-2"><b>Tên NL <span class="text-red-500">*</span></b></label>
+                                    <label for="ingreName" class="w-full py-2"><b>Tên NL <span
+                                                class="text-red-500">*</span></b></label>
                                     <input type="text" class="w-full form-control" name="ingreName" required>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="typeIngre" class="w-full py-2"><b>Loại NL <span class="text-red-500">*</span></b></label>
+                                    <label for="typeIngre" class="w-full py-2"><b>Loại NL <span
+                                                class="text-red-500">*</span></b></label>
                                     <select name="typeIngre" class="w-full form-control">
                                         <?php
                                         $ctrl = new cIngredients;
@@ -166,22 +204,24 @@ if (isset($_POST["btnkhoa"])) {
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="price" class="w-full py-2"><b>Giá mua <span class="text-red-500">*</span></b></label>
+                                    <label for="price" class="w-full py-2"><b>Giá mua <span
+                                                class="text-red-500">*</span></b></label>
                                     <input type="number" class="w-full form-control" name="price" required>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="unit" class="w-full py-2"><b>Đơn vị tính <span class="text-red-500">*</span></b></label>
+                                    <label for="unit" class="w-full py-2"><b>Đơn vị tính <span
+                                                class="text-red-500">*</span></b></label>
                                     <select name="unit" class="w-full form-control">
-                                    <?php
+                                        <?php
                                         $ctrl = new cIngredients;
-                                            $result = $ctrl->cGetUnit();
-                                            
-                                            while ($row = $result->fetch_assoc())
-                                                echo "<option value='".$row["unitOfcalculaton"]."'>".$row["unitOfcalculaton"]."</option>";
-                                        
-                                    ?>
+                                        $result = $ctrl->cGetUnit();
+
+                                        while ($row = $result->fetch_assoc())
+                                            echo "<option value='" . $row["unitOfcalculaton"] . "'>" . $row["unitOfcalculaton"] . "</option>";
+
+                                        ?>
                                     </select>
                                 </td>
                             </tr>
@@ -201,19 +241,22 @@ if (isset($_POST["btnkhoa"])) {
         </div>
     </div>
 
-    <div class="modal modalUpdate fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal modalUpdate fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" method="POST" class="form-container w-full">
                     <div class="modal-header justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="updateModalLabel" style="color: #E67E22;">Cập nhật nguyên liệu</h2>
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="updateModalLabel" style="color: #E67E22;">
+                            Cập nhật nguyên liệu</h2>
                     </div>
                     <div class="modal-body">
                         <table class="w-full">
                             <tr>
                                 <td>
                                     <label for="ingreName" class="w-full py-2"><b>Tên ngyên liệu</b></label>
-                                    <input type="text" class="w-full form-control" name="ingreName" value="<?php echo $_SESSION["ingreName"]; ?>">
+                                    <input type="text" class="w-full form-control" name="ingreName"
+                                        value="<?php echo $_SESSION["ingreName"]; ?>">
                                 </td>
                             </tr>
                             <tr>
@@ -235,36 +278,90 @@ if (isset($_POST["btnkhoa"])) {
                             <tr>
                                 <td>
                                     <label for="price" class="w-full py-2"><b>Giá mua</b></label>
-                                    <input type="number" class="w-full form-control" name="price" value="<?php echo $_SESSION["price"]; ?>">
+                                    <input type="number" class="w-full form-control" name="price"
+                                        value="<?php echo $_SESSION["price"]; ?>">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="unit" class="w-full py-2"><b>Đơn vị tính</b></label>
                                     <select name="unit" class="w-full form-control">
-                                    <?php
+                                        <?php
                                         $ctrl = new cIngredients;
-                                        
+
                                         if ($ctrl->cGetIngredientById($_SESSION["ingreID"]) != 0) {
                                             $row = $ctrl->cGetIngredientById($_SESSION["ingreID"]);
-                                            
-                                            echo "<option value='".$row["unitOfcalculaton"]."'>".$row["unitOfcalculaton"]."</option>";
+
+                                            echo "<option value='" . $row["unitOfcalculaton"] . "'>" . $row["unitOfcalculaton"] . "</option>";
                                         }
-                                            
-                                        if ($ctrl->cGetIngredientNotUnit($_SESSION["unit"]) !=  0) {
+
+                                        if ($ctrl->cGetIngredientNotUnit($_SESSION["unit"]) != 0) {
                                             $result = $ctrl->cGetIngredientNotUnit($_SESSION["unit"]);
-                                            
+
                                             while ($row = $result->fetch_assoc())
-                                                echo "<option value='".$row["unitOfcalculaton"]."'>".$row["unitOfcalculaton"]."</option>";
+                                                echo "<option value='" . $row["unitOfcalculaton"] . "'>" . $row["unitOfcalculaton"] . "</option>";
                                         }
-                                    ?>
+                                        ?>
                                     </select>
                                 </td>
                             </tr>
                         </table>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" name="btndong" data-bs-dismiss="modal" onclick="if (confirm('Thông tin chưa được lưu. Bạn có chắc chắn thoát?') === false) { var modalUpdate = new bootstrap.Modal(document.querySelector('.modalUpdate')); modalUpdate.show();}">Hủy</button>
+                        <button type="button" class="btn btn-secondary" name="btndong" data-bs-dismiss="modal"
+                            onclick="if (confirm('Thông tin chưa được lưu. Bạn có chắc chắn thoát?') === false) { var modalUpdate = new bootstrap.Modal(document.querySelector('.modalUpdate')); modalUpdate.show();}">Hủy</button>
+                        <button type="submit" class="btn btn-primary" name="btnsuanl">Xác nhận</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modalSLT fade modal-lg" id="sltModal" tabindex="-1" aria-labelledby="sltModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="" method="POST" class="form-container w-full">
+                    <div class="modal-header justify-center">
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="sltModalLabel" style="color: #E67E22;">Số
+                            lượng tồn</h2>
+                    </div>
+                    <div class="modal-body">
+                        <table class="text-base w-full text-center">
+                            <thead>
+                                <tr>
+                                    <th class="text-gray-600 border-2 py-2">Mã NL</th>
+                                    <th class="text-gray-600 border-2 py-2">Tên NL</th>
+                                    <th class="text-gray-600 border-2 py-2">Cửa hàng</th>
+                                    <th class="text-gray-600 border-2 py-2">Số lượng tồn</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                    <?php
+                                    foreach($_SESSION["storeNameSLT"] as $index => $storeName) {
+                                        echo "<tr><td class='py-2 border-2'>" . $_SESSION["ingredientIDSLT"] . "</td>
+                                    <td class='py-2 border-2'>". $_SESSION["ingredientNameSLT"] ."</td>
+                                    <td class='py-2 border-2'>". $storeName ."</td>
+                                    <td class='py-2 border-2'>". $_SESSION["quantityInStockSLT"][$index] ."</td></tr>
+                                    ";
+                                    }
+                                    ?>
+                                <tr>
+                                    <td>
+                                        <label for="">Chọn cửa hàng </label>
+                                        <select name="" id="">
+                                        <option value=""></option>
+                                    </select></td>
+                                    <td><input type="text"></td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" name="btndong" data-bs-dismiss="modal"
+                            onclick="if (confirm('Thông tin chưa được lưu. Bạn có chắc chắn thoát?') === false) { var modalUpdate = new bootstrap.Modal(document.querySelector('.modalUpdate')); modalUpdate.show();}">Hủy</button>
                         <button type="submit" class="btn btn-primary" name="btnsuanl">Xác nhận</button>
                     </div>
                 </form>

@@ -21,6 +21,9 @@ if (isset($_POST["btnTinhNL"])) {
         </div>
         <div class="h-fit bg-gray-100 rounded-lg p-6">
             <form action="index.php?i=ingredient" method="POST" id="ketquanlform">
+            <h2 class="text-xl font-semibold">
+                Nguyên liệu tươi
+            </h2>
                 <table class="text-base w-full text-center">
                     <thead>
                         <tr>
@@ -43,6 +46,54 @@ if (isset($_POST["btnTinhNL"])) {
                                     <td class='py-2 border-2'>" . $row["unitOfcalculaton"] . "</td>
                                    
                                 </tr>";
+                        }
+                        ?>
+                        <tr>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h2 class="text-xl font-semibold mt-3">
+                Nguyên liệu khô
+            </h2>
+
+                <table class="text-base w-full text-center">
+                    <thead>
+                        <tr>
+                            <th class="text-gray-600 border-2 py-2">Mã nguyên liệu</th>
+                            <th class="text-gray-600 border-2 py-2">Tên nguyên liệu</th>
+                            <th class="text-gray-600 border-2 py-2">Số lượng ước tính</th>
+                            <th class="text-gray-600 border-2 py-2">Số lượng cần mua</th>
+                            <th class="text-gray-600 border-2 py-2">Đơn vị tính</th>
+                            <th class="text-gray-600 border-2 py-2">Số lượng tồn</th>
+                            <th class="text-gray-600 border-2 py-2">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $ctrl = new cIngredients;
+                        $result = $ctrl->cGetQuantityDryIngredient($_SESSION["soluong"], $_SESSION["userID"]);
+                        while ($row = $result->fetch_assoc()) {
+                            echo "<tr>
+                                    <td class='py-2 border-2'><input readonly style='border: none; background: none;' type='number' name='' value='" . $row["ingredientID"] . "' class='w-20 py-1 px-3 rounded-md'></td>
+                                    <td class='py-2 border-2'>" . $row["ingredientName"] . "</td>
+                                    <td class='py-2 border-2'><input readonly style='border: none; background: none;' type='number' name='' value='" . $row["TotalQuantity"] . "' class='w-20 py-1 px-3 rounded-md' id='tinhtoannlinput-" . $row["dishID"] . "'></td>"; 
+                                    if($row["TotalQuantity"]-$row["quantityInStock"]>0){
+                                        echo "<td class='py-2 border-2'><input type='number' name='' value='" . $row["TotalQuantity"]-$row["quantityInStock"] . "' class='w-20 py-1 px-3 rounded-md' id='tinhtoannlinput-" . $row["dishID"] . "'></td>";
+                                    }else {
+                                        echo "<td class='py-2 border-2'>Đã đủ</td>";
+                                    }  
+                                    echo"
+                                    <td class='py-2 border-2'>" . $row["unitOfcalculaton"] . "</td>
+                                    <td class='py-2 border-2'>" . $row["quantityInStock"] . "</td>";
+                                    if($row["TotalQuantity"]-$row["quantityInStock"]>0){
+                                        echo "<td class='py-2 border-2'><button type='button' class='btnNhapNLKho btn btn-danger'>Nhập</button></td>";
+                                    }else {
+                                        echo "<td class='py-2 border-2'><button disabled type='button' class='btn btn-secondary'>Nhập</button></td>";
+                                    }
+                                    
+                                   
+                                echo "</tr>";
                         }
                         ?>
                         <tr>

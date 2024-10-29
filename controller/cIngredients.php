@@ -28,6 +28,15 @@ class cIngredients extends mIngredients
         } return 0;
     }
 
+    public function cGetAllStoreIngredient($ingredientID)
+    {
+        if ($this->mGetAllStoreIngredient($ingredientID) != 0) {
+            $result = $this->mGetAllStoreIngredient($ingredientID);
+            
+            return $result;
+        } return 0;
+    }
+
     public function cGetTypeIngredient()
     {
         if ($this->mGetTypeIngre() != 0) {
@@ -41,6 +50,15 @@ class cIngredients extends mIngredients
     {
         if ($this->mGetQuantityFreshIngredient($quantities) != 0) {
             $result = $this->mGetQuantityFreshIngredient($quantities);
+            
+            return $result;
+        } return 0;
+    }
+
+    public function cGetQuantityDryIngredient($quantities, $userID)
+    {
+        if ($this->mGetQuantityDryIngredient($quantities, $userID) != 0) {
+            $result = $this->mGetQuantityDryIngredient($quantities, $userID);
             
             return $result;
         } return 0;

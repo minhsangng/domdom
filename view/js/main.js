@@ -150,7 +150,7 @@ $(document).ready(function () {
 
 
     $("#btnLuuThongTin").on('click', function () {
-        console.log(updatedTotal, currentTotal)
+        
         if (updatedTotal > currentTotal) {
             $(".thanhtoanthem").html(`Bạn cần thanh toán thêm ${(updatedTotal - currentTotal).toLocaleString('vi-VN')}đ`)
             if($("#statusOrder0").val() == 0) {
@@ -180,5 +180,18 @@ $(document).ready(function () {
         }
        
     });
+
+    // Nhập nguyên liệu khô 
+    $('.btnNhapNLKho').on('click', function () {
+        console.log("1")
+        var row = $(this).closest('tr');
+        row.find('input[type="number"]:first').attr('name', 'Ingre[]');
+        row.find('input[type="number"]:last').attr('name', 'TotalQuantity[]');
+        $(this).css('background-color', 'green');
+        $(this).html('✔');
+        $(this).removeClass('btn-danger').addClass('btn-success');
+    });
+
+    
 
 })

@@ -24,6 +24,17 @@ class mIngredients
         return 0;
     }
 
+    public function mGetAllStoreIngredient($ingredientID)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT * FROM ingredient i JOIN store_ingredient si ON i.ingredientID = si.ingredientID JOIN store s ON s.storeID = si.storeID WHERE i.ingredientID = $ingredientID";
+
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+
     public function mGetIngredientById($ingreID)
     {
         $db = new Database;
@@ -96,6 +107,23 @@ class mIngredients
         }
         $sql_case = implode(' ', $sql_parts);
         $sql = "SELECT di.ingredientID, i.ingredientName, i.unitOfcalculaton, SUM(di.quantity * CASE $sql_case ELSE 0 END) AS TotalQuantity FROM ingredient i inner join dish_ingredient di on i.ingredientID = di.ingredientID WHERE i.typeIngredient = 'Tươi' GROUP BY i.ingredientID HAVING TotalQuantity != 0";
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+
+    public function mGetQuantityDryIngredient($quantities, $userID){
+        $db = new Database;
+        $conn = $db->connect();
+        $count=0;
+        $sql_parts = [];
+        foreach ($quantities as $dishID => $quantity) {
+            $dishID+=1;
+            $sql_parts[] = "WHEN di.dishID = $dishID THEN $quantity";
+            $count++;
+        }
+        $sql_case = implode(' ', $sql_parts);
+        $sql = "SELECT *, SUM(di.quantity * CASE $sql_case ELSE 0 END) AS TotalQuantity FROM ingredient i inner join dish_ingredient di on i.ingredientID = di.ingredientID inner join store_ingredient si on i.ingredientID = si.ingredientID inner join user u on u.storeID = si.storeID WHERE i.typeIngredient = 'Khô' AND u.userID = $userID GROUP BY i.ingredientID HAVING TotalQuantity != 0";
         if ($conn != null)
             return $conn->query($sql);
         return 0;

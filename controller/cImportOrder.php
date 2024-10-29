@@ -24,11 +24,11 @@ class cImportOrder extends mImportOrder
         $importOrderId = $this->mInsertImportOrder($userID);
             if ($importOrderId != -1) {
                 if($this->mInsertNeedIngredient($importOrderId, $ingredient, $quantity)){
-                    echo "<script>alert('Thêm nguyên liệu cần mua thành công')</script>";
+                    echo "<script>alert('Lưu nguyên liệu cần mua thành công')</script>";
                     return true;
                 }else {
                     $this->checkAndDeleteInvalidImportOrder();
-                    echo "<script>alert('Thêm nguyên liệu cần mua thất bại')</script>";
+                    echo "<script>alert('Lưu nguyên liệu cần mua thất bại')</script>";
                     return false;
                 }
             }

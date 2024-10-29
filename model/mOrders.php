@@ -72,13 +72,15 @@ class mOrders
         $conn = $db->connect();
         $dem = 0;
         $total*=1000;
+        $sumOfQuantyty =0;
         foreach($quantityUpdate as $index => $quantity) {
+            $sumOfQuantyty += $quantity;
             $sql = "UPDATE `order` o
             JOIN `order_dish` od ON o.orderID = od.orderID
             SET o.total = '$total', 
                 od.quantity = '$quantity', 
-                o.note = '$notes', 
-                o.finalAmount = '$total'
+                o.note = '$notes',
+                o.sumOfQuantity = $sumOfQuantyty
             WHERE o.orderID = '$orderID' AND od.dishID = '$dishID[$index]'";
     
             if($conn->query($sql))

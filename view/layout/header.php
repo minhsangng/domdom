@@ -527,17 +527,17 @@ $_SESSION["currentTotal"] = 0;
                                                                 <div class="flex items-center border rounded">
                                                                 <input name="quantityUpdate[]" min="1" type="number" value="' . $row["quantity"] . '" 
                                                                         class="form-control w-20 quantity-input" 
-                                                                        data-unit-price="' . $row["unitPrice"] . '"
+                                                                        data-unit-price="' . $row["price"] . '"
                                                                        ></div>
                                                             </div>
                                                         </div>
                                                         <div class="text-right">
-                                                            <p class="text-lg font-semibold">' . number_format($row["unitPrice"], 0, ',', '.') . 'đ</p>
+                                                            <p class="text-lg font-semibold">' . number_format($row["price"], 0, ',', '.') . 'đ</p>
                                                         </div>
                                                     </div>
                                                         
                                                         ';
-                                                        $tongtien += $row['quantity'] * $row['unitPrice'];
+                                                        $tongtien += $row['quantity'] * $row['price'];
 
 
                                                         echo '<input type="hidden" name="currentTotal" id="currentTotal" value= "' . $row["total"] . '">';
