@@ -7,11 +7,11 @@ class mDishes
         $db = new Database;
         $conn = $db->connect();
         $sql = "SELECT * FROM dish GROUP BY dishCategory ORDER BY dishCategory DESC";
-        if ($conn != null) 
+        if ($conn != null)
             return $conn->query($sql);
         return 0;
     }
-    
+
     public function mGetCategoryNotId($category)
     {
         $db = new Database;
@@ -30,27 +30,37 @@ class mDishes
             return $conn->query($sql);
         return 0;
     }
-    
+
+    public function mGetAllDishLimit($startFrom, $productsPerPage)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT * FROM dish LIMIT $startFrom, $productsPerPage";
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+
     public function mGetDishById($dishID)
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT * FROM dish WHERE dishID = $dishID";
+        $sql = "SELECT d.*, di.*, i.ingredientName, i.unitOfcalculaton FROM dish d INNER JOIN dish_ingredient di ON d.dishID = di.dishID INNER JOIN ingredient i ON di.ingredientID = i.ingredientID WHERE d.dishID = '" . $dishID ."'";
         if ($conn != null)
             return $conn->query($sql);
         return 0;
     }
-    
+
     public function mGetDishByName($name)
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT * FROM dish WHERE dishName LIKE '%".$name."%'";
+        $sql = "SELECT * FROM dish WHERE dishName LIKE '%" . $name . "%'";
         if ($conn != null)
             return $conn->query($sql);
         return 0;
     }
-    
+
     public function mGetDishByCategory($category)
     {
         $db = new Database;
@@ -60,17 +70,45 @@ class mDishes
             return $conn->query($sql);
         return 0;
     }
-    
-    public function mInsertDish($dishName, $dishCategory, $price, $prepare, $image) {
+
+    public function mInsertDish($dishName, $dishCategory, $price, $prepare, $image, $description)
+    {
+        $db = new Database();
+        $conn = $db->connect();
+        $sql = "INSERT INTO dish (dishName, dishCategory, price, preparationProcess, image, description) VALUES ('$dishName', '$dishCategory', $price, '$prepare', '$image', '$description')";
+        if ($conn){
+            if ($conn->query($sql)) {
+                // Lấy ID của món ăn vừa được thêm vào
+                return $conn->insert_id;
+            }else {
+                return -1;
+            }
+        } else {
+            return false;
+        }
+    }
+
+
+    // Thêm nguyên liệu vào bảng dish_ingredient
+    public function mInsertDishIngredients($dishId, $ingredients, $quantities)
+    {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "INSERT INTO dish (dishName, dishCategory, price, preparationProcess, image) VALUES ('$dishName', '$dishCategory', $price, '$prepare', '$image')";
-        if ($conn != null)
-            return $conn->query($sql);
-        return 0;
+
+        // Lặp qua các nguyên liệu và chèn vào bảng dish_ingredient
+        foreach ($ingredients as $index => $ingredientId) {
+            $quantity = $quantities[$index];
+            $sql = "INSERT INTO dish_ingredient (dishId, ingredientId, quantity) VALUES ($dishId, '$ingredientId', $quantity)";
+
+            if ($conn != null) {
+                if($conn->query($sql))
+                return true;
+            }
+        }
     }
-    
-    public function mUpdateDish($dishName, $dishCategory, $price, $prepare, $image, $dishID) {
+
+    public function mUpdateDish($dishName, $dishCategory, $price, $prepare, $image, $dishID)
+    {
         $db = new Database;
         $conn = $db->connect();
         $sql = "UPDATE dish SET dishName = '$dishName', dishCategory = '$dishCategory', price = $price, preparationProcess = '$prepare', image = '$image' WHERE dishID = $dishID";
@@ -78,8 +116,9 @@ class mDishes
             return $conn->query($sql);
         return 0;
     }
-    
-    public function mUpdateDishAvailabilityStatus($availability, $dishID) {
+
+    public function mUpdateDishAvailabilityStatus($availability, $dishID)
+    {
         $db = new Database;
         $conn = $db->connect();
         $sql = "UPDATE dish SET availabilityStatus = $availability WHERE dishID = $dishID";
@@ -87,14 +126,30 @@ class mDishes
             return $conn->query($sql);
         return 0;
     }
-    
-    public function mLockDish($status, $dishID) {
+
+    public function mLockDish($status, $dishID)
+    {
         $db = new Database;
         $conn = $db->connect();
         $sql = "UPDATE dish SET businessStatus = $status WHERE dishID = $dishID";
-        
+
         if ($conn != null)
             return $conn->query($sql);
         return 0;
+    }
+
+    public function mGetTotalDish()
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT COUNT(*) as total FROM dish";
+        if ($conn != null) {
+            $result = $conn->query($sql);
+            $row = $result->fetch_assoc();
+            $totalProducts = $row['total'];
+            return $totalProducts;
+        } else {
+            return 0;
+        }
     }
 }

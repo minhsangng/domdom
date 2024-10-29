@@ -10,7 +10,8 @@
     <link href="view/css/all.css" rel="stylesheet" />
 
     <!-- Preconnect for Google Fonts -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playwrite+DE+Grund:wght@100..400&display=swap">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Playwrite+DE+Grund:wght@100..400&display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Baloo+2:400,800&display=swap">
 
     <!-- Bootstrap CSS -->
@@ -25,7 +26,8 @@
     <script src="view/js/tailwindcss.js"></script>
 
     <!-- jQuery -->
-    <script src="view/js/jquery.min.js"></script>
+    <!-- <script src="view/js/jquery.min.js"></script> -->
+    <script src="view/js/jquery-3.7.1.min.js"></script>
 
     <!-- Chart -->
     <script src="view/js/chart.js"></script>
@@ -33,10 +35,12 @@
     <!-- Font Awesome JS -->
     <script src="view/js/all.js"></script>
 
+
     <!-- Bootstrap JS (bundle includes Popper.js) -->
     <script src="view/js/bootstrap.bundle.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="view/js/main.js"></script>
 
     <style>
         header {
@@ -136,7 +140,8 @@
     </style>
 </head>
 
-<body style="scroll-behavior: smooth; font-family: 'Playwrite DE Grund', cursive; background-color: var(--third-color);">
+<body
+    style="scroll-behavior: smooth; font-family: 'Playwrite DE Grund', cursive; background-color: var(--third-color);">
     <header class="fixed w-full top-0 z-50">
         <div class="container mx-auto px-6">
             <nav class="navbar navbar-expand-md">
@@ -156,7 +161,8 @@
                                 while ($row = $result->fetch_assoc()) {
                                     echo "<a class='dropdown-item' href='index.php?p=dish&c=" . $row["dishCategory"] . "&#ci'>" . $row["dishCategory"] . "</a>";
                                 }
-                            } else echo "Không có dữ liệu!";
+                            } else
+                                echo "Không có dữ liệu!";
                             ?>
                         </div>
                     </li>
@@ -168,10 +174,12 @@
                     </li>
                 </ul>
                 <ul class="nav ml-auto py-4 py-md-0">
-                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4" data-bs-toggle="modal" data-bs-target="#cartModal" title="Giỏ hàng">
+                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4" data-bs-toggle="modal" data-bs-target="#cartModal"
+                        title="Giỏ hàng">
                         <a class="nav-link" href="#" id="cart"><i class="fas fa-shopping-cart text-xl"> </i></a>
                     </li>
-                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4" data-bs-toggle="modal" data-bs-target="#followModal" title="Theo dõi đơn hàng">
+                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4" data-bs-toggle="modal" data-bs-target="#followModal"
+                        title="Theo dõi đơn hàng">
                         <a class="nav-link" href="#" id="flCart"><i class="fa-solid fa-eye text-lg"></i></a>
                     </li>
                 </ul>
@@ -313,8 +321,8 @@
             <div class="modal-content">
                 <form action="" method="POST">
                     <div class="modal-header flex justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="checkoutModalLabel"
-                            style="color: #E67E22;">Thông tin thanh toán</h2>
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="checkoutModalLabel" style="color: #E67E22;">
+                            Thông tin thanh toán</h2>
                     </div>
                     <div class=" modal-body">
                         <div class="flex items-center border-b pb-4 mb-4">
@@ -352,14 +360,13 @@
         </div>
     </div>
 
-    <div class="modal modalCheckout" id="refund" tabindex="-1" aria-labelledby="checkoutModalLabel"
-        aria-hidden="true">
+    <div class="modal modalCheckout" id="refund" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" method="POST">
                     <div class="modal-header flex justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="checkoutModalLabel"
-                            style="color: #E67E22;">Thông tin thanh toán</h2>
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="checkoutModalLabel" style="color: #E67E22;">
+                            Thông tin thanh toán</h2>
                     </div>
                     <div class=" modal-body">
                         <b>Chúng tôi sẽ hoàn trả số tiền dư vào tài khoản của bạn trong vòng 24 giờ.</b>
@@ -374,149 +381,231 @@
         </div>
     </div>
 
-    <div class="modal modalFollow" id="followModal" tabindex="-1" aria-labelledby="followModalLabel"
-        aria-hidden="true">
+    <div class="modal modalFollow" id="followModal" tabindex="-1" aria-labelledby="followModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" method="POST">
                     <div class="modal-header flex justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="followModalLabel"
-                            style="color: #E67E22;">Theo dõi đơn hàng</h2>
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="followModalLabel" style="color: #E67E22;">
+                            Theo dõi đơn hàng</h2>
                     </div>
                     <div class=" modal-body">
                         <div class="w-full border-b pb-4 mb-4">
                             <label for="" class="font-bold text-lg mb-2">Nhập mã đơn hàng</label>
-                            <input type="text" name="" id="" class="form-control">
+                            <input type="text" name="txtMaDonHang" id="" class="form-control" required>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
-                            data-bs-target="#followDetailModal">Xác nhận</button>
+                        <button type="submit" class="btn btn-danger" name="btntt">Xác nhận</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+    <?php
+    $orderDetails = null;
+    $orderID = $_POST["txtMaDonHang"];
+    if (isset($_POST['btntt'])) {
+        $ctrl = new cOrders;
+        $orderDetails = $ctrl->cGetAllOrderByID($orderID);
+        if ($orderDetails == 0) {
+            echo "<script>alert('Không tìm thấy đơn hàng')</script>";
+        } else {
+            foreach ($orderDetails['data'] as $orderdetail) {
+                $_SESSION["orderIDD"] = $orderdetail["orderID"];
+                $orderDate = $orderdetail["orderDate"];
+                $total = $orderdetail["total"];
+                $status = $orderdetail["status"];
+                $note = $orderdetail["note"];
+            }
+            echo "<script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const followDetailModal = new bootstrap.Modal(document.getElementById('followDetailModal'));
+                followDetailModal.show();
+            });
+        </script>";
+        }
+    }
 
-    <div class="modal modalFollowDetail" id="followDetailModal" tabindex="-1"
-        aria-labelledby="followDetailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="" method="POST">
-                    <div class="modal-header flex justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="followDetailModalLabel"
-                            style="color: #E67E22;">Thông tin đơn hàng</h2>
-                    </div>
-                    <div class=" modal-body">
-                        <div class="w-full border-b pb-4 mb-4">
-                            <form action="" method="POST">
-                                <table class="w-full">
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Mã đơn hàng</label>
-                                                <input type="text" name="" id="" class="form-control mb-2"
-                                                    value="#DH012" disabled>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Ngày đặt</label>
-                                                <input type="text" name="" id="" class="form-control mb-2"
-                                                    value="23-10-2024" disabled>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Tên món (gói tiệc)</label>
-                                                <div class="flex items-center border-b pb-4 mb-4">
-                                                    <img alt="Blue T-shirt" class="w-20 h-20 object-cover rounded" height="100"
-                                                        src="images/dish/burgerbo.png" width="100" />
-                                                    <div class="ml-4 flex-1">
-                                                        <h3 class="text-lg font-semibold">Burger bò</h3>
-                                                        <div class="flex items-center mt-2">
-                                                            <span class="text-gray-500"></span>
-                                                            <div class="flex items-center border rounded">
-                                                                <button type="button" class="px-2 py-1" onclick="increase()">-</button>
-                                                                <span class="px-2" id="quantityCart">2</span>
-                                                                <button type="button" class="px-2 py-1" onclick="decrease()">+</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="text-right">
-                                                        <p class="text-lg font-semibold">60,000 đ</p>
-                                                        <div class="mt-2">
-                                                            <button class="btn btn-secondary w-full">
-                                                                <i class="far fa-trash-alt"></i>Xóa
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="flex items-center border-b pb-4 mb-4">
-                                                    <img alt="Blue T-shirt" class="w-20 h-20 object-cover rounded" height="100"
-                                                        src="images/dish/burgerbo.png" width="100" />
-                                                    <div class="ml-4 flex-1">
-                                                        <h3 class="text-lg font-semibold">Mì ý</h3>
-                                                        <div class="flex items-center mt-2">
-                                                            <span class="text-gray-500"></span>
-                                                            <div class="flex items-center border rounded">
-                                                                <button type="button" class="px-2 py-1" onclick="increase()">-</button>
-                                                                <span class="px-2" id="quantityCart">2</span>
-                                                                <button type="button" class="px-2 py-1" onclick="decrease()">+</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="text-right">
-                                                        <p class="text-lg font-semibold">40,000 đ</p>
-                                                        <div class="mt-2">
-                                                            <button class="btn btn-secondary w-full">
-                                                                <i class="far fa-trash-alt"></i>Xóa
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                </div>
+    if (isset($_POST["HuyDonHang"])) {
+        $ctrl = new cOrders;
+        if ($ctrl->cUpdateStatusOrder($_SESSION["orderIDD"], 4) == 0) {
+            echo "<script>alert('Hủy đơn hàng không thành công')</script>";
+        } else {
+            echo "<script>alert('Hủy đơn hàng thành công')</script>";
+        }
+    }
 
-                                            </td>
-                                        </tr>
+    ?>
 
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Tổng tiền</label>
-                                                <input type="text" name="" id="" class="form-control mb-2"
-                                                    value="100,000" disabled>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Ghi chú</label>
-                                                <input type="text" name="" id="" class="form-control mb-2">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Trạng thái</label>
-                                                <input type="text" name="" id="" class="form-control mb-2"
-                                                    value="Chờ chế biến" disabled>
-                                            </td>
-                                        </tr>
+    <?php if (isset($orderDetails)): ?>
 
-                                    </tbody>
-                                </table>
-                            </form>
+
+        <div class="modal modalFollowDetail" id="followDetailModal" tabindex="-1" aria-labelledby="followDetailModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form action="" method="POST">
+                        <div class="modal-header flex justify-center">
+                            <h2 class="modal-title fs-5 font-bold text-3xl" id="followDetailModalLabel"
+                                style="color: #E67E22;">Thông tin đơn hàng</h2>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
-                            data-bs-target="#checkoutModal">Lưu</button>
-                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
-                            data-bs-target="#refund">Lưu</button>
-                    </div>
-                </form>
+                        <div class=" modal-body">
+                            <div class="w-full border-b pb-4 mb-4">
+                                <form method="POST">
+                                    <input onclick='return confirm(" Bạn có chắc muốn hủy đơn hàng không?")'
+                                        name="HuyDonHang" type="submit" value="Hủy đơn hàng" class="btn btn-danger">
+                                    <table class="w-full">
+                                        <tbody>
+                                            <tr>
+                                                <td>
+                                                    <label for="" class="font-bold mb-2">Mã đơn hàng</label>
+                                                    <input type="text" name="" id="" class="form-control mb-2"
+                                                        value="#Order0<?php echo $_SESSION["orderIDD"]; ?>" disabled>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="" class="font-bold mb-2">Ngày đặt</label>
+                                                    <input type="text" name="" id="" class="form-control mb-2"
+                                                        value="<?php echo date('d-m-Y', strtotime($orderDate)); ?>"
+                                                        disabled>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <?php if ($orderDetails['type'] == 'dishes'): ?>
+                                                        <label for="" class="font-bold mb-2">Tên món ăn</label>
+                                                        <?php
+                                                        $ctrl = new cOrders;
+                                                        $result = $ctrl->cGetAllOrderDishByID($orderID);
+                                                        $tongtien = 0;
+                                                        while ($row = $result->fetch_assoc()) {
+                                                            echo '<div class="flex items-center border-b pb-4 mb-4">
+                                                        <img alt="Blue T-shirt" class="w-20 h-20 object-cover rounded"
+                                                            height="100" src="images/dish/' . $row["image"] . '" width="100" />
+                                                        <div class="ml-4 flex-1">
+                                                            <h3 class="text-lg font-semibold">' . $row["dishName"] . '</h3>
+                                                            <div class="flex items-center mt-2">
+                                                                <span class="text-gray-500"></span>
+                                                                <div class="flex items-center border rounded">
+                                                                        <input min="1" type="number" value="' . $row["quantity"] . '" 
+                                                                        class="form-control w-20 quantity-input" 
+                                                                        data-unit-price="' . $row["unitPrice"] . '"
+                                                                        onchange="updateTotal(this)">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="text-right">
+                                                            <p class="text-lg font-semibold">' . number_format($row["unitPrice"], 0, ',', '.') . 'đ</p>
+                                                        </div>
+                                                    </div>
+                                                        
+                                                        ';
+                                                            $tongtien += $row['quantity'] * $row['unitPrice'];
+
+
+                                                            echo '<input type="hidden" name="currentTotal" id="currentTotal" value= "' . $row["total"] . '">';
+                                                        }
+                                                        echo '<input type="hidden" name="updateTotal" id="updateTotal" value= "' . $tongtien . '">';
+                                                        ?>
+                                                    <?php elseif ($orderDetails['type'] == 'package'): ?>
+                                                        <label for="" class="font-bold mb-2">Tên gói tiệc</label>
+                                                        <?php
+                                                        $ctrl = new cOrders;
+                                                        $result = $ctrl->cGetAllOrderPackageByID($orderID);
+                                                        $tongtien = 0;
+                                                        while ($row = $result->fetch_assoc()) {
+                                                            echo '<div class="flex items-center border-b pb-4 mb-4">
+                                                        <img alt="Blue T-shirt" class="w-20 h-20 object-cover rounded"
+                                                            height="100" src="images/party/' . $row["image"] . '" width="100" />
+                                                        <div class="ml-4 flex-1">
+                                                            <h3 class="text-lg font-semibold">' . $row["partyPackageName"] . '</h3>
+                                                            <div class="flex items-center mt-2">
+                                                                <span class="text-gray-500"></span>
+                                                                <div class="flex items-center border rounded">
+                                                                        <input type="number" value="1" 
+                                                                        class="form-control w-20 quantity-input" 
+                                                                        disabled
+                                                                        onchange="updateTotal(this)">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="text-right">
+                                                            <p class="text-lg font-semibold">' . number_format($row["price"], 0, ',', '.') . 'đ</p>
+                                                        </div>
+                                                    </div>
+                                                        
+                                                        ';
+                                                            $tongtien += $row['price'];
+                                                            echo '<input type="hidden" name="currentTotal" id="currentTotal" value= "' . $row["total"] . '">';
+                                                        }
+                                                        echo '<input type="hidden" name="updateTotal" id="updateTotal" value= "' . $tongtien . '">';
+                                                        ?>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+
+                                            <tr>
+                                                <td>
+                                                    <label for="" class="font-bold mb-2">Tổng tiền</label>
+                                                    <input id="tongTienCheck" type="text" name="" id=""
+                                                        class="form-control mb-2"
+                                                        value="<?php echo number_format($tongtien, 0, ',', '.') ?>đ"
+                                                        disabled>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="" class="font-bold mb-2">Ghi chú</label>
+                                                    <textarea name="" id=""
+                                                        class="form-control"><?php echo $note; ?></textarea>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <label for="" class="font-bold mb-2">Trạng thái</label>
+                                                    <input type="text" name="" id="" class="form-control mb-2" value="<?php switch ($status) {
+                                                        case 0:
+                                                            echo "Chờ nhận đơn";
+                                                            break;
+                                                        case 1:
+                                                            echo "Đang chế biến";
+                                                            break;
+                                                        case 2:
+                                                            echo "Chế biến xong";
+                                                            break;
+                                                        case 3:
+                                                            echo "Hoàn thành";
+                                                            break;
+                                                        case 4:
+                                                            echo "Đã hủy";
+                                                            break;
+                                                        default:
+                                                            echo "Trạng thái không hợp lệ";
+                                                            break;
+                                                    } ?>" disabled>
+                                                </td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="button" class="btn btn-danger" name="btnLuuThongTin"
+                                id="btnLuuThongTin">Lưu</button>
+                            <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
+                                data-bs-target="#refund">Lưu</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
-    </div>
+    <?php endif; ?>
 
     <div class="modal modalParty z-50" id="partyModal" tabindex="-1" aria-labelledby="partyModalLabel"
         aria-hidden="true">
@@ -524,8 +613,8 @@
             <div class="modal-content">
                 <form action="" method="POST">
                     <div class="modal-header flex justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="partyModalLabel"
-                            style="color: #E67E22;">Thông tin đặt tiệc</h2>
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="partyModalLabel" style="color: #E67E22;">
+                            Thông tin đặt tiệc</h2>
                     </div>
                     <div class=" modal-body">
                         <div class="w-full border-b pb-4 mb-4">
@@ -598,8 +687,8 @@
     <div class="banner w-full flex items-center relative">
         <div id="carousel" class="carousel slide w-full" data-bs-ride="carousel">
             <div class="carousel-indicators" id="ci">
-                <button type="button" data-bs-target="#carousel" data-bs-slide-to="0" class="active"
-                    aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carousel" data-bs-slide-to="0" class="active" aria-current="true"
+                    aria-label="Slide 1"></button>
                 <button type="button" data-bs-target="#carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
                 <button type="button" data-bs-target="#carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
             </div>

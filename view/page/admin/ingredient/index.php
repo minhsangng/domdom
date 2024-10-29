@@ -41,11 +41,14 @@ if (isset($_POST["btnsuanl"])) {
 }
 
 if (isset($_POST["btnkhoa"])) {
-    echo "<script>
-            document.addEventListener('DOMContentLoaded', function() {
-                confirm('Bạn có chắc chắn khóa nguyên liệu này?');
-            });
-          </script>";
+            $ingredientID = $_POST["btnkhoa"];
+           $ctrl = new cIngredients;
+           $table = $ctrl->cGetIngredientById($ingredientID);
+                  $status= $table["status"];
+        
+            $newStatus = ($status == 1) ? 0 : 1;
+        
+            $ctrl->cLockIngredient($newStatus, $ingredientID);
 }
 ?>
 
@@ -80,8 +83,21 @@ if (isset($_POST["btnkhoa"])) {
                     <tbody>
                         <?php
                         $ctrl = new cIngredients;
-                        if ($ctrl->cGetAllIngredient() != 0) {
-                            $result = $ctrl->cGetAllIngredient();
+                        $productsPerPage = 6;
+                        // Xác định trang hiện tại
+                        if (isset($_GET['page_num']) && is_numeric($_GET['page_num'])) {
+                            $currentPage = intval($_GET['page_num']);
+                        } else {
+                            $currentPage = 1;
+                        }
+                        // Tính toán vị trí bắt đầu lấy dữ liệu từ cơ sở dữ liệu
+                        $startFrom = ($currentPage - 1) * $productsPerPage;
+                        // Tổng số sản phẩm
+                        $totalProducts = $table->num_rows;
+                        // Tính toán số trang
+                        $totalPages = ceil($totalProducts / $productsPerPage);
+                        $result = $ctrl->cGetAllIngredientLimit($startFrom, $productsPerPage);
+                        if ($ctrl->cGetAllIngredientLimit($startFrom, $productsPerPage) != 0) {
                             while ($row = $result->fetch_assoc()) {
                                 echo "
                         <tr>
@@ -92,8 +108,8 @@ if (isset($_POST["btnkhoa"])) {
                             <td class='py-2 border-2'>" . $row["typeIngredient"] . "</td>
                             <td class='py-2 border-2'><span class='bg-" . ($row["status"] == 1 ? "green" : "red") . "-100 text-" . ($row["status"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["status"] == 1 ? "Đang dùng" : "Ngưng dùng") . "</span></td>
                             <td class='py-2 border-2 flex justify-center items-center'>
-                                <button class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["ingredientID"] . "'>Cập nhật</button>
-                                <button class='btn btn-danger ml-1' name='btnkhoa'>" . ($row["status"] == 1 ? "Khóa" : "Mở") . "</button>
+                                <button class='btn btn-primary mr-1' name='btncapnhat' value='" . $row["ingredientID"] . "'>Cập nhật</button>
+                                <button  value='" . $row["ingredientID"] . "' class='btn btn-danger ml-1' name='btnkhoa' onclick='return confirm(\" Bạn có chắc muốn " . ($row["status"] == 1 ? "khóa" : "mở khóa") . " không? \")'>" . ($row["status"] == 1 ? "Khóa" : "Mở") . "</button>
                             </td>
                         </tr>";
                             }
@@ -102,6 +118,19 @@ if (isset($_POST["btnkhoa"])) {
                     </tbody>
                 </table>
             </form>
+            <?php
+            $ctrl = new cIngredients;
+            echo '<div class="pagination">';
+            $totalPages = ceil($ctrl->cGetTotalIngredient() / $productsPerPage);
+            for ($i = 1; $i <= $totalPages; $i++) {
+                echo "<a href='index.php?i=ingredient&page_num=$i'";
+                if ($i == $currentPage) {
+                    echo " class='active'";
+                }
+                echo ">$i</a>";
+            }
+            echo '</div>';
+            ?>
         </div>
     </div>
 
@@ -125,8 +154,8 @@ if (isset($_POST["btnkhoa"])) {
                                     <label for="typeIngre" class="w-full py-2"><b>Loại NL <span class="text-red-500">*</span></b></label>
                                     <select name="typeIngre" class="w-full form-control">
                                         <?php
-                                        $sql = "SELECT * FROM ingredient GROUP BY typeIngredient ORDER BY typeIngredient DESC";
-                                        $result = $conn->query($sql);
+                                        $ctrl = new cIngredients;
+                                        $result = $ctrl->cGetTypeIngredient();
 
                                         while ($row = $result->fetch_assoc()) {
                                             echo "<option value='" . $row["typeIngredient"] . "'>" . $row["typeIngredient"] . "</option>";
@@ -138,22 +167,20 @@ if (isset($_POST["btnkhoa"])) {
                             <tr>
                                 <td>
                                     <label for="price" class="w-full py-2"><b>Giá mua <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="price" required>
+                                    <input type="number" class="w-full form-control" name="price" required>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="unit" class="w-full py-2"><b>Đơn vị tính <span class="text-red-500">*</span></b></label>
-                                    <select name="ingredient" id="cate" class="w-full form-control">
+                                    <select name="unit" class="w-full form-control">
                                     <?php
                                         $ctrl = new cIngredients;
-                                            
-                                        if ($ctrl->cGetAllIngredient() !=  0) {
-                                            $result = $ctrl->cGetAllIngredient();
+                                            $result = $ctrl->cGetUnit();
                                             
                                             while ($row = $result->fetch_assoc())
-                                                echo "<option value='".$row["ingredientID"]."'>".$row["unitOfcalculaton"]."</option>";
-                                        }
+                                                echo "<option value='".$row["unitOfcalculaton"]."'>".$row["unitOfcalculaton"]."</option>";
+                                        
                                     ?>
                                     </select>
                                 </td>
@@ -214,21 +241,21 @@ if (isset($_POST["btnkhoa"])) {
                             <tr>
                                 <td>
                                     <label for="unit" class="w-full py-2"><b>Đơn vị tính</b></label>
-                                    <select name="ingredient" id="cate" class="w-full form-control">
+                                    <select name="unit" class="w-full form-control">
                                     <?php
                                         $ctrl = new cIngredients;
                                         
                                         if ($ctrl->cGetIngredientById($_SESSION["ingreID"]) != 0) {
                                             $row = $ctrl->cGetIngredientById($_SESSION["ingreID"]);
                                             
-                                            echo "<option value='".$row["ingredientID"]."'>".$row["unitOfcalculaton"]."</option>";
+                                            echo "<option value='".$row["unitOfcalculaton"]."'>".$row["unitOfcalculaton"]."</option>";
                                         }
                                             
                                         if ($ctrl->cGetIngredientNotUnit($_SESSION["unit"]) !=  0) {
                                             $result = $ctrl->cGetIngredientNotUnit($_SESSION["unit"]);
                                             
                                             while ($row = $result->fetch_assoc())
-                                                echo "<option value='".$row["ingredientID"]."'>".$row["unitOfcalculaton"]."</option>";
+                                                echo "<option value='".$row["unitOfcalculaton"]."'>".$row["unitOfcalculaton"]."</option>";
                                         }
                                     ?>
                                     </select>

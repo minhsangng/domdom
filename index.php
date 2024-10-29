@@ -6,6 +6,7 @@ require_once("model/connect.php");
 require_once("controller/cPromotions.php");
 require_once("controller/cPartyPackages.php");
 require_once("controller/cDishes.php");
+require_once("controller/cOrders.php");
 
 $db = new Database();
 $conn = $db->connect();

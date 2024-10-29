@@ -38,6 +38,15 @@ class cDishes extends mDishes
         } return 0;
     }
 
+    public function cGetAllDishLimit($startFrom, $productsPerPage)
+    {
+        if ($this->mGetAllDishLimit($startFrom, $productsPerPage) != 0) {
+            $result = $this->mGetAllDishLimit($startFrom, $productsPerPage);
+            
+            return $result;
+        } return 0;
+    }
+
     public function cGetDishById($dishID)
     {
         if ($this->mGetDishById($dishID) != 0) {
@@ -63,11 +72,19 @@ class cDishes extends mDishes
         } return 0;
     }
 
-    public function cInsertDish($dishName, $dishCategory, $price, $prepare, $image)
+    public function cInsertDish($dishName, $dishCategory, $price, $prepare, $image, $description, $ingredient, $quantity)
     {
-        if ($this->mInsertDish($dishName, $dishCategory, $price, $prepare, $image) != 0) {
-            echo "<script>alert('Thêm món ăn thành công!')</script>";
-        } else echo "<script>alert('Thêm món ăn thất bại!')</script>";
+        $dishId = $this->mInsertDish($dishName, $dishCategory, $price, $prepare, $image, $description);
+            if ($dishId != -1) {
+                if($this->mInsertDishIngredients($dishId, $ingredient, $quantity)){
+                    echo "<script>alert('Thêm món ăn thành công')</script>";
+                }else {
+                    echo "<script>alert('Thêm món ăn thất bại')</script>";
+                }
+            }
+            else
+                return 0;
+            
     }
 
     public function cUpdateDish($dishName, $dishCategory, $price, $prepare, $image, $dishID)
@@ -89,5 +106,13 @@ class cDishes extends mDishes
         if ($this->mLockDish($status, $dishID) != 0) {
             echo "<script>alert('" . ($status == 1 ? "Mở khóa" : "Khóa") . " món ăn thành công!')</script>";
         }
+    }
+
+    public function cGetTotalDish() {
+        if ($this->mGetTotalDish() != 0) {
+            $result = $this->mGetTotalDish();
+           
+            return $result;
+        } return 0;
     }
 }

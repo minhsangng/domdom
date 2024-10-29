@@ -126,6 +126,7 @@ if (isset($_POST["btndn"])) {
         $row = $result->fetch_assoc();
 
         if ($result->num_rows > 0) {
+            $_SESSION["userID"] = $row['userID'];
             $_SESSION["userName"] = $row["userName"];
             $_SESSION["login"] = 1;
 

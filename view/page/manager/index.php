@@ -23,7 +23,8 @@
     <script src="../../js/tailwindcss.js"></script>
 
     <!-- jQuery -->
-    <script src="../../js/jquery.min.js"></script>
+    <script src="../../js/jquery-3.7.1.min.js"></script>
+
 
     <!-- Chart -->
     <script src="../../js/chart.js"></script>
@@ -36,6 +37,8 @@
     
     <!-- Sweet Alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../../js/main.js"></script>
+
 
     <style>
         .activeAd {
@@ -144,6 +147,7 @@ include("../../../controller/cDishes.php");
 include("../../../controller/cIngredients.php");
 include("../../../controller/cOrders.php");
 include("../../../controller/cMessage.php");
+include("../../../controller/cImportOrder.php");
 
 /* Xử lý đăng nhập */
 if (!isset($_SESSION["login"]))

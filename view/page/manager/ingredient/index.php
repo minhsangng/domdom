@@ -1,20 +1,15 @@
 <?php
-if (isset($_POST["btnmo"])) {
+if (isset($_POST["btnLuuNL"])) {
+    $totalQuantity = $_POST["TotalQuantity"];
+    $ingredient = $_POST["Ingre"];
+    $userID = $_SESSION["userID"];
 
-    echo "<script>
-        document.addEventListener('DOMContentLoaded', function() {
-                var modalIngredient = new bootstrap.Modal(document.getElementById('ingredientModal')); 
-                modalIngredient.show();
-            });
-        </script>";
+    $ctrl = new cImportOrder;
+   if( $ctrl->cInsertNeedIngredient($userID, $ingredient, $totalQuantity)) {
+    header("Location:index.php?i=ingredient");
+   }
 }
-
-if (isset($_POST["btnnl"])) {
-    echo "<script>alert('Đã lưu nguyên liệu cần mua');</script>";
-}
-
 ?>
-
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
     <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
         <div class="flex justify-between items-center mb-4">
@@ -27,7 +22,7 @@ if (isset($_POST["btnnl"])) {
             </div>
         </div>
         <div class="h-fit bg-gray-100 rounded-lg p-6">
-            <form action="" method="POST">
+            <form action="index.php?i=estimatedResults" method="POST" id="tinhtoannlform">
                 <table class="text-base w-full text-center">
                     <thead>
                         <tr>
@@ -38,95 +33,23 @@ if (isset($_POST["btnnl"])) {
                     </thead>
                     <tbody>
                         <?php
-                        $productsPerPage = 5;
-                        // Xác định trang hiện tại
-                        if (isset($_GET['page_num']) && is_numeric($_GET['page_num'])) {
-                            $currentPage = intval($_GET['page_num']);
-                        } else {
-                            $currentPage = 1;
-                        }
-                        // Tính toán vị trí bắt đầu lấy dữ liệu từ cơ sở dữ liệu
-                        $startFrom = ($currentPage - 1) * $productsPerPage;
-                        // Tổng số sản phẩm
-                        $totalProducts = $table->num_rows;
-                        // Tính toán số trang
-                        $totalPages = ceil($totalProducts / $productsPerPage);
-                        
-                        $sql = "SELECT * FROM dish LIMIT $startFrom, $productsPerPage";
-                        $result = $conn->query($sql);
-
+                       $ctrl = new cDishes;
+                       $result = $ctrl->cGetAllDish();
                         while ($row = $result->fetch_assoc()) {
                             echo "<tr>
                                     <td class='py-2 border-2'>#MA0" . $row["dishID"] . "</td>
                                     <td class='py-2 border-2'>" . $row["dishName"] . "</td>
-                                    <td class='py-2 border-2'><input type='number' value='0' class='w-16 py-1 px-3 rounded-md'></td>
+                                    <td class='py-2 border-2'><input type='number' name='tinhtoannlinput[]' value='0' class='tinhtoannlinput w-16 py-1 px-3 rounded-md' id='tinhtoannlinput-" . $row["dishID"] . "'></td>
                                 </tr>";
-                        }
+                            }
                         ?>
                         <tr>
                             <td colspan="2"></td>
-                            <td class='py-2'><button type='submit' class='btn btn-danger' name='btnmo' value='" . $row["dishID"] . "'>Xác nhận</button></td>
+                            <td class='py-2'><button type='submit' class='btn btn-danger' name='btnTinhNL' >Xác nhận</button></td>
                         </tr>
                     </tbody>
                 </table>
             </form>
-            <?php
-            $ctrl = new cIngredients;
-            echo '<div class="pagination">';
-            $totalPages = ceil($ctrl->cGetTotalIngredient() / $productsPerPage);
-            for ($i = 1; $i <= $totalPages; $i++) {
-                echo "<a href='index.php?i=ingredient&paging=product_list&page_num=$i'";
-                if ($i == $currentPage) {
-                    echo " class='active'";
-                }
-                echo ">$i</a>";
-            }
-            echo '</div>';
-            ?>
-        </div>
-    </div>
-
-    <div class="modal modalIngredient fade" id="ingredientModal" tabindex="-1" aria-labelledby="ingredientModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="" class="form-container w-full" method="POST">
-                    <div class="modal-header">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="ingredientModalLabel" style="color: #E67E22;">Tính toán nguyên liệu</h2>
-                    </div>
-                    <div class="modal-body">
-                        <table class="w-full">
-                            <tr>
-                                <td>
-                                    <label for="ingreName" class="w-full py-2"><b>Tên NL <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="ingreName" required>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="price" class="w-full py-2"><b>Giá mua <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="price" required>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="unit" class="w-full py-2"><b>Đơn vị tính <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="unit" required>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="unit" class="w-full py-2"><b>Số lượng cần mua <span class="text-red-500">*</span></b></label>
-                                    <input type="number" class="w-full form-control" name="unit" required>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="submit" class="btn btn-primary" name="btnnl">Thêm</button>
-                    </div>
-                </form>
-            </div>
         </div>
     </div>
 </div>

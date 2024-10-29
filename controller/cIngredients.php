@@ -18,6 +18,42 @@ class cIngredients extends mIngredients
             return $result;
         } return 0;
     }
+
+    public function cGetAllIngredientLimit($startFrom, $productsPerPage)
+    {
+        if ($this->mGetAllIngredient() != 0) {
+            $result = $this->mGetAllIngredientLimit($startFrom, $productsPerPage);
+            
+            return $result;
+        } return 0;
+    }
+
+    public function cGetTypeIngredient()
+    {
+        if ($this->mGetTypeIngre() != 0) {
+            $result = $this->mGetTypeIngre();
+            
+            return $result;
+        } return 0;
+    }
+
+    public function cGetQuantityFreshIngredient($quantities)
+    {
+        if ($this->mGetQuantityFreshIngredient($quantities) != 0) {
+            $result = $this->mGetQuantityFreshIngredient($quantities);
+            
+            return $result;
+        } return 0;
+    }
+
+    public function cGetUnit()
+    {
+        if ($this->mGetUnit() != 0) {
+            $result = $this->mGetUnit();
+            
+            return $result;
+        } return 0;
+    }
     
     public function cGetIngredientNotType($type) {
         if ($this->mGetIngredientNotType($type) != 0) {
@@ -43,6 +79,14 @@ class cIngredients extends mIngredients
         } return 0;
     }
 
+    public function cGetUnitByIngredient($ingredient) {
+        if ($this->mGetUnitByIngredient($ingredient) != 0) {
+            $result = $this->mGetUnitByIngredient($ingredient);
+            
+            return $result;
+        } return 0;
+    }
+
     public function cGetTotalIngredient() {
         if ($this->mGetTotalIngredient() != 0) {
             $result = $this->mGetTotalIngredient();
@@ -61,6 +105,13 @@ class cIngredients extends mIngredients
     public function cUpdateIngredient($ingreName, $unit, $price, $type, $ingreID) {
         if ($this->mUpdateIngredient($ingreName, $unit, $price, $type, $ingreID) != 0) {
             echo "<script>alert('Cập nhật nguyên liệu thành công!')</script>";
+        }
+    }
+
+    public function cLockIngredient($status, $ingredientID)
+    {
+        if ($this->mLockIngredient($status, $ingredientID) != 0) {
+            echo "<script>alert('" . ($status == 1 ? "Mở khóa" : "Khóa") . " nguyên liệu thành công!')</script>";
         }
     }
 }
