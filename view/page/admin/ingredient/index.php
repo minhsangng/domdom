@@ -88,7 +88,11 @@ if (isset($_POST["btnsuanl"])) {
     $price = $_POST["price"];
     $type = $_POST["typeIngre"];
 
-    $ctrl->mUpdateIngredient($ingreName, $unit, $price, $type, $ingreID);
+    if($ctrl->cUpdateIngredient($ingreName, $unit, $price, $type, $ingreID)) {
+        echo "<script>alert('Cập nhật thông tin nguyên liệu thành công')</script>";
+    }else {
+        echo "<script>alert('Cập nhật thông tin nguyên liệu thất bại')</script>";
+    }
 }
 
 if (isset($_POST["btnkhoa"])) {

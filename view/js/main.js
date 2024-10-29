@@ -559,6 +559,7 @@ $(document).ready(function () {
   })
 
   $("#uIngredientPrice").blur(function () {
+    console.log(1)
     ktuIngredientPrice()
   })
 
@@ -574,14 +575,6 @@ $(document).ready(function () {
   });
 
   // REGEX TINH TOAN NGUYEN LIEU
-  function ktuIngredientPrice() {
-    let soLuongMon = $(".tinhtoannlinput").val()
-    soLuongMon.each(function (index) {
-      if ($(".tinhtoannlinput")[index].va1() != 0) {
-
-      }
-    })
-  }
 
   $("#tinhtoannlform").on("submit", function (event) {
     let isValid = false;
@@ -602,5 +595,26 @@ $(document).ready(function () {
 
     }
   });
+
+  // REGEX Kết quả ước lượng
+  function ktQuantityNeed(index) {
+    let quantity = $("#tinhtoannlinputt-" + index).val();
+    if (quantity === "") {
+      alert("Số lượng không được rỗng");
+      return false;
+    } else if (Number(quantity) <= 0) {
+      alert("Số lượng phải lớn hơn 0");
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  for (let i = 0; i <= $(".tinhtoannlinputcls").length; i++) {
+    $("#tinhtoannlinputt-" + i).blur(function () {
+      console.log(i)
+      ktQuantityNeed(i);
+    });
+  }
 
 });

@@ -80,7 +80,7 @@ if (isset($_POST["btnTinhNL"])) {
                                     <td class='py-2 border-2'>" . $row["ingredientName"] . "</td>
                                     <td class='py-2 border-2'><input readonly style='border: none; background: none;' type='number' name='' value='" . $row["TotalQuantity"] . "' class='w-20 py-1 px-3 rounded-md' id='tinhtoannlinput-" . $row["dishID"] . "'></td>";
                                 if ($row["TotalQuantity"] - $row["quantityInStock"] > 0) {
-                                    echo "<td class='py-2 border-2'><input type='number' name='' value='" . $row["TotalQuantity"] - $row["quantityInStock"] . "' class='w-20 py-1 px-3 rounded-md' id='tinhtoannlinput-" . $row["dishID"] . "'></td>";
+                                    echo "<td class='py-2 border-2'><input type='number' name='' value='" . $row["TotalQuantity"] - $row["quantityInStock"] . "' class='w-20 py-1 px-3 rounded-md tinhtoannlinputcls' id='tinhtoannlinputt-" . $row["dishID"] . "'></td>";
                                 } else {
                                     echo "<td class='py-2 border-2'>Đã đủ</td>";
                                 }

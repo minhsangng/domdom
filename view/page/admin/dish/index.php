@@ -109,9 +109,9 @@ if (isset($_POST["btnsuamonan"])) {
             }
         } else {
             if ($ctrl->cUpdateDish($dishName, $category, $price, $prepare, $imgName, $dishID, $image["name"], $description, $ingredient, $_SESSION["ingredient"], $quantity)) {
-                echo "<script>alert('Cập nhật món ăn thành công!')</script>";
+                echo "<script>alert('Cập nhật thông tin món ăn thành công!')</script>";
             } else {
-                echo "<script>alert('Cập nhật món ăn thất bại!')</script>";
+                echo "<script>alert('Cập nhật thông tin món ăn thất bại!')</script>";
             }
         }
     } else

@@ -156,7 +156,9 @@ class cIngredients extends mIngredients
     public function cUpdateIngredient($ingreName, $unit, $price, $type, $ingreID)
     {
         if ($this->mUpdateIngredient($ingreName, $unit, $price, $type, $ingreID) != 0) {
-            echo "<script>alert('Cập nhật nguyên liệu thành công!')</script>";
+            return true;
+        }else {
+            return false;
         }
     }
 
