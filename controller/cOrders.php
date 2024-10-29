@@ -77,6 +77,22 @@ class cOrders extends mOrders
         }else 
         return 0;
     }
+
+    public function cUpdateOrderDish($orderID, $quantityUpdate, $notes, $total, $dishID) {
+        if ($this->mUpdateOrderDish($orderID, $quantityUpdate, $notes, $total, $dishID)) {
+            return true;
+        }else 
+        return false;
+    }
+
+    public function cUpdateOrderPartyPackage($orderID, $notes) {
+        if ($this->mUpdateOrderPartyPackage($orderID, $notes)) {
+            $result = $this->mUpdateOrderPartyPackage($orderID, $notes);
+            
+            return true;
+        }else 
+        return false;
+    }
     
     public function cGetAllOrderFully() {
         if ($this->mGetAllOrderFully() != 0) {

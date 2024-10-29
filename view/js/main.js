@@ -107,53 +107,78 @@ $(document).ready(function () {
     });
 
 
-    let total = 0;
     // Cập nhật tổng tiền
-    function updateTotal(input) {
-        const unitPrice = parseFloat($(input).data('unit-price'));
-        const quantity = parseInt($(input).val()) || 0;
+    function updateTotal() {
+        let total = 0;
         const quantities = $(".quantity-input");
         quantities.each(function () {
             const price = parseFloat($(this).data('unit-price'));
             const qty = parseInt($(this).val()) || 0;
             total += price * qty;
         });
-        updatedTotal = total;
+        updatedTotal = parseFloat(total);
         $("#tongTienCheck").val(total.toLocaleString('vi-VN') + 'đ');
+        $("#tongTienCheck").attr("value", total);
     }
-
     $(".quantity-input").on("change", function () {
-        updateTotal(this);
+        updateTotal();
+        console.log( $("#tongTienCheck").val())
+
     });
 
     // Ngăn nhập số nhỏ hơn 1 khi gõ từ bàn phím
     $('.quantity-input').on('keypress', function (e) {
-        const char = String.fromCharCode(e.which); 
-        if (!/^[1-9]$/.test(char)) { 
-            e.preventDefault(); 
+        const char = String.fromCharCode(e.which);
+        if (!/^[1-9]$/.test(char)) {
+            e.preventDefault();
         }
     });
-
-    $('.quantity-input').on('input', function () {
-        if ($(this).val() < 1) {
-            $(this).val(1); 
-        }
-    });
-
     // lưu thông tin theo dõi đơn hàng
-    let currentTotal = $('#currentTotal').val(); 
-    let updatedTotal; 
+    let currentTotal = parseFloat($('#currentTotal').val());
+    let updatedTotal;
     if (updatedTotal === undefined) {
         updatedTotal = currentTotal;
     }
-    $("#btnLuuThongTin").on('click', function () {
 
-        if (updatedTotal > currentTotal) {
-            $('#followDetailModal').modal("hide");
-            $('#checkoutModal').modal('show');
-        } else if (updatedTotal < currentTotal) {
-            alert("Chúng tôi sẽ hoàn trả số tiền dư vào tài khoản của bạn trong vòng 24 giờ.");
+    $('.quantity-input').on('input', function () {
+        if ($(this).val() < 1) {
+            $(this).val(1);
         }
+
+    });
+
+
+
+    $("#btnLuuThongTin").on('click', function () {
+        console.log(updatedTotal, currentTotal)
+        if (updatedTotal > currentTotal) {
+            $(".thanhtoanthem").html(`Bạn cần thanh toán thêm ${(updatedTotal - currentTotal).toLocaleString('vi-VN')}đ`)
+            if($("#statusOrder0").val() == 0) {
+                $('#followDetailModal').modal("hide");
+                $('#checkoutModal1').modal('show');
+                $("#btnThanhToan1").on('click', function () {
+                    $("#infoOrder").submit();
+                })
+            }else if($("#statusOrder1").val() == 1) {
+                $("#infoOrder").submit();
+                $('#followDetailModal').modal("show");
+            }
+
+        } else if (updatedTotal < currentTotal) {
+            if($("#statusOrder0").val() == 0) {
+                setTimeout(function () {
+                    $("#infoOrder").submit();
+                }, 3000);
+                alert(`Chúng tôi sẽ hoàn trả số tiền dư ${Math.abs(updatedTotal - currentTotal).toLocaleString('vi-VN')}đ vào tài khoản của bạn trong vòng 24 giờ.`);
+            }else if($("#statusOrder1").val() == 1) {
+                $("#infoOrder").submit();
+                $('#followDetailModal').modal("show");
+            }
+
+        }else {
+            $("#infoOrder").submit();
+        }
+       
     });
 
 })

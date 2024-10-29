@@ -1,3 +1,6 @@
+<?php
+$_SESSION["currentTotal"] = 0;
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -360,7 +363,8 @@
         </div>
     </div>
 
-    <div class="modal modalCheckout" id="refund" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+    <div class="modal modalCheckout" id="checkoutModal1" tabindex="-1" aria-labelledby="checkoutModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" method="POST">
@@ -369,12 +373,21 @@
                             Thông tin thanh toán</h2>
                     </div>
                     <div class=" modal-body">
-                        <b>Chúng tôi sẽ hoàn trả số tiền dư vào tài khoản của bạn trong vòng 24 giờ.</b>
+                        <div class="flex items-center border-b pb-4 mb-4">
+                            <p class="thanhtoanthem"></p>
+                        </div>
+                        <div class="border-b pb-4 mb-4">
+                            <label for="" class="font-bold w-full mb-2">Phương thức thanh toán</label>
+                            <ul class="w-full">
+                                <li><input type="radio" name="" id="" class="mr-2">Ví điện tử</li>
+                                <li><input type="radio" name="" id="" class="mr-2">Thẻ ngân hàng</li>
+                            </ul>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
-                            data-bs-target="#payModal">Thanh toán</button>
+                        <button type="button" class="btn btn-danger" name="btnThanhToan1" id="btnThanhToan1">Thanh
+                            toán</button>
                     </div>
                 </form>
             </div>
@@ -406,9 +419,9 @@
     <?php
     $orderDetails = null;
     $orderID = $_POST["txtMaDonHang"];
+    $ctrl = new cOrders;
+    $orderDetails = $ctrl->cGetAllOrderByID($orderID);
     if (isset($_POST['btntt'])) {
-        $ctrl = new cOrders;
-        $orderDetails = $ctrl->cGetAllOrderByID($orderID);
         if ($orderDetails == 0) {
             echo "<script>alert('Không tìm thấy đơn hàng')</script>";
         } else {
@@ -428,6 +441,29 @@
         }
     }
 
+    if (isset($_POST["statusOrder0"]) && !isset($_POST["HuyDonHang"])) {
+        if (isset($_POST["dishName"])) {
+            $quantityUpdate = $_POST["quantityUpdate"];
+            $notes = $_POST["notes"];
+            $tongTienCheck = $_POST["tongTienCheck"];
+            $dishID = $_POST["dishID"];
+            if ($ctrl->cUpdateOrderDish($_SESSION["orderIDD"], $quantityUpdate, $notes, $tongTienCheck, $dishID)) {
+                echo "<script>alert('Thay đổi đơn hàng thành công')</script>";
+            } else {
+                echo "<script>alert('Thay đổi đơn hàng thất bại')</script>";
+            }
+        } else if (isset($_POST["partyPackageName"])) {
+            $notes = $_POST["notes"];
+            if ($ctrl->cUpdateOrderPartyPackage($_SESSION["orderIDD"], $notes)) {
+                echo "<script>alert('Thay đổi đơn hàng thành công')</script>";
+            } else {
+                echo "<script>alert('Thay đổi đơn hàng thất bại')</script>";
+            }
+        }
+    } else if (isset($_POST["statusOrder1"]) && !isset($_POST["HuyDonHang"])) {
+        echo "<script>alert('Không được phép chỉnh sửa');</script>";
+    }
+
     if (isset($_POST["HuyDonHang"])) {
         $ctrl = new cOrders;
         if ($ctrl->cUpdateStatusOrder($_SESSION["orderIDD"], 4) == 0) {
@@ -436,53 +472,52 @@
             echo "<script>alert('Hủy đơn hàng thành công')</script>";
         }
     }
-
     ?>
 
     <?php if (isset($orderDetails)): ?>
-
-
-        <div class="modal modalFollowDetail" id="followDetailModal" tabindex="-1" aria-labelledby="followDetailModalLabel"
-            aria-hidden="true">
+        <div class="modal modalFollowDetail modal-lg" id="followDetailModal" tabindex="-1"
+            aria-labelledby="followDetailModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <form action="" method="POST">
+                    <form action="" method="POST" id="infoOrder">
                         <div class="modal-header flex justify-center">
                             <h2 class="modal-title fs-5 font-bold text-3xl" id="followDetailModalLabel"
                                 style="color: #E67E22;">Thông tin đơn hàng</h2>
                         </div>
                         <div class=" modal-body">
                             <div class="w-full border-b pb-4 mb-4">
-                                <form method="POST">
-                                    <input onclick='return confirm(" Bạn có chắc muốn hủy đơn hàng không?")'
-                                        name="HuyDonHang" type="submit" value="Hủy đơn hàng" class="btn btn-danger">
-                                    <table class="w-full">
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    <label for="" class="font-bold mb-2">Mã đơn hàng</label>
-                                                    <input type="text" name="" id="" class="form-control mb-2"
-                                                        value="#Order0<?php echo $_SESSION["orderIDD"]; ?>" disabled>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <label for="" class="font-bold mb-2">Ngày đặt</label>
-                                                    <input type="text" name="" id="" class="form-control mb-2"
-                                                        value="<?php echo date('d-m-Y', strtotime($orderDate)); ?>"
-                                                        disabled>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <?php if ($orderDetails['type'] == 'dishes'): ?>
-                                                        <label for="" class="font-bold mb-2">Tên món ăn</label>
-                                                        <?php
-                                                        $ctrl = new cOrders;
-                                                        $result = $ctrl->cGetAllOrderDishByID($orderID);
-                                                        $tongtien = 0;
-                                                        while ($row = $result->fetch_assoc()) {
-                                                            echo '<div class="flex items-center border-b pb-4 mb-4">
+
+                                <input onclick='return confirm(" Bạn có chắc muốn hủy đơn hàng không?")' name="HuyDonHang"
+                                    type="submit" value="Hủy đơn hàng" class="btn btn-danger">
+                                <table class="w-full">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Mã đơn hàng</label>
+                                                <input type="text" name="" id=""
+                                                    class="form-control mb-2 bg-secondary-subtle"
+                                                    value="#Order0<?php echo $_SESSION["orderIDD"]; ?>" readonly>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Ngày đặt</label>
+                                                <input type="text" name="" id=""
+                                                    class="form-control mb-2 bg-secondary-subtle"
+                                                    value="<?php echo date('d-m-Y', strtotime($orderDate)); ?>" readonly>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <?php if ($orderDetails['type'] == 'dishes'): ?>
+                                                    <label for="" class="font-bold mb-2">Tên món ăn</label>
+                                                    <?php
+                                                    $ctrl = new cOrders;
+                                                    $result = $ctrl->cGetAllOrderDishByID($orderID);
+                                                    $tongtien = 0;
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        echo '<input type="hidden" name="dishID[]" value= "' . $row["dishID"] . '">';
+                                                        echo '<div class="flex items-center border-b pb-4 mb-4">
                                                         <img alt="Blue T-shirt" class="w-20 h-20 object-cover rounded"
                                                             height="100" src="images/dish/' . $row["image"] . '" width="100" />
                                                         <div class="ml-4 flex-1">
@@ -490,11 +525,10 @@
                                                             <div class="flex items-center mt-2">
                                                                 <span class="text-gray-500"></span>
                                                                 <div class="flex items-center border rounded">
-                                                                        <input min="1" type="number" value="' . $row["quantity"] . '" 
+                                                                <input name="quantityUpdate[]" min="1" type="number" value="' . $row["quantity"] . '" 
                                                                         class="form-control w-20 quantity-input" 
                                                                         data-unit-price="' . $row["unitPrice"] . '"
-                                                                        onchange="updateTotal(this)">
-                                                                </div>
+                                                                       ></div>
                                                             </div>
                                                         </div>
                                                         <div class="text-right">
@@ -503,21 +537,28 @@
                                                     </div>
                                                         
                                                         ';
-                                                            $tongtien += $row['quantity'] * $row['unitPrice'];
+                                                        $tongtien += $row['quantity'] * $row['unitPrice'];
 
 
-                                                            echo '<input type="hidden" name="currentTotal" id="currentTotal" value= "' . $row["total"] . '">';
+                                                        echo '<input type="hidden" name="currentTotal" id="currentTotal" value= "' . $row["total"] . '">';
+                                                        echo '<input type="hidden" name="dishName" value= "' . $row["dishName"] . '">';
+                                                        if ($status == 0) {
+                                                            echo '<input type="hidden" name="statusOrder0" id="statusOrder0" value= "0">';
+                                                        } else {
+                                                            echo '<input type="hidden" name="statusOrder1" id="statusOrder1" value= "1">';
                                                         }
-                                                        echo '<input type="hidden" name="updateTotal" id="updateTotal" value= "' . $tongtien . '">';
-                                                        ?>
-                                                    <?php elseif ($orderDetails['type'] == 'package'): ?>
-                                                        <label for="" class="font-bold mb-2">Tên gói tiệc</label>
-                                                        <?php
-                                                        $ctrl = new cOrders;
-                                                        $result = $ctrl->cGetAllOrderPackageByID($orderID);
-                                                        $tongtien = 0;
-                                                        while ($row = $result->fetch_assoc()) {
-                                                            echo '<div class="flex items-center border-b pb-4 mb-4">
+                                                    }
+
+
+                                                    ?>
+                                                <?php elseif ($orderDetails['type'] == 'package'): ?>
+                                                    <label for="" class="font-bold mb-2">Tên gói tiệc</label>
+                                                    <?php
+                                                    $ctrl = new cOrders;
+                                                    $result = $ctrl->cGetAllOrderPackageByID($orderID);
+                                                    $tongtien = 0;
+                                                    while ($row = $result->fetch_assoc()) {
+                                                        echo '<div class="flex items-center border-b pb-4 mb-4">
                                                         <img alt="Blue T-shirt" class="w-20 h-20 object-cover rounded"
                                                             height="100" src="images/party/' . $row["image"] . '" width="100" />
                                                         <div class="ml-4 flex-1">
@@ -525,10 +566,10 @@
                                                             <div class="flex items-center mt-2">
                                                                 <span class="text-gray-500"></span>
                                                                 <div class="flex items-center border rounded">
-                                                                        <input type="number" value="1" 
+                                                                        <input name="quantityUpdate" type="number" value="1" 
                                                                         class="form-control w-20 quantity-input" 
                                                                         disabled
-                                                                        onchange="updateTotal(this)">
+                                                                      >
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -538,35 +579,40 @@
                                                     </div>
                                                         
                                                         ';
-                                                            $tongtien += $row['price'];
-                                                            echo '<input type="hidden" name="currentTotal" id="currentTotal" value= "' . $row["total"] . '">';
+                                                        $tongtien += $row['price'];
+                                                        echo '<input type="hidden" name="currentTotal" id="currentTotal" value= "' . $row["total"] . '">';
+                                                        echo '<input type="hidden" name="partyPackageName" value= "' . $row["partyPackageName"] . '">';
+                                                        if ($status == 0) {
+                                                            echo '<input type="hidden" name="statusOrder0" id="statusOrder0" value= "0">';
+                                                        } else {
+                                                            echo '<input type="hidden" name="statusOrder1" id="statusOrder1" value= "1">';
                                                         }
-                                                        echo '<input type="hidden" name="updateTotal" id="updateTotal" value= "' . $tongtien . '">';
-                                                        ?>
-                                                    <?php endif; ?>
-                                                </td>
-                                            </tr>
+                                                    }
+                                                    ?>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
 
-                                            <tr>
-                                                <td>
-                                                    <label for="" class="font-bold mb-2">Tổng tiền</label>
-                                                    <input id="tongTienCheck" type="text" name="" id=""
-                                                        class="form-control mb-2"
-                                                        value="<?php echo number_format($tongtien, 0, ',', '.') ?>đ"
-                                                        disabled>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <label for="" class="font-bold mb-2">Ghi chú</label>
-                                                    <textarea name="" id=""
-                                                        class="form-control"><?php echo $note; ?></textarea>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <label for="" class="font-bold mb-2">Trạng thái</label>
-                                                    <input type="text" name="" id="" class="form-control mb-2" value="<?php switch ($status) {
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Tổng tiền</label>
+                                                <input id="tongTienCheck" type="text" name="tongTienCheck"
+                                                    class="form-control mb-2 bg-secondary-subtle"
+                                                    value="<?php echo number_format($tongtien, 0, ',', '.') ?>đ" readonly>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Ghi chú</label>
+                                                <textarea name="notes" id=""
+                                                    class="form-control"><?php echo $note; ?></textarea>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="" class="font-bold mb-2">Trạng thái</label>
+                                                <input type="text" name="" id=""
+                                                    class="form-control mb-2 bg-secondary-subtle" value="<?php switch ($status) {
                                                         case 0:
                                                             echo "Chờ nhận đơn";
                                                             break;
@@ -585,28 +631,27 @@
                                                         default:
                                                             echo "Trạng thái không hợp lệ";
                                                             break;
-                                                    } ?>" disabled>
-                                                </td>
-                                            </tr>
+                                                    } ?>" readonly>
+                                            </td>
+                                        </tr>
 
-                                        </tbody>
-                                    </table>
-                                </form>
+                                    </tbody>
+                                </table>
+
                             </div>
                         </div>
                         <div class="modal-footer">
+                            <input onclick='return confirm(" Bạn có chắc muốn hủy đơn hàng không?")' name="HuyDonHang"
+                                type="button" value="Hủy đơn hàng" class="btn btn-danger">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
                             <button type="button" class="btn btn-danger" name="btnLuuThongTin"
                                 id="btnLuuThongTin">Lưu</button>
-                            <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
-                                data-bs-target="#refund">Lưu</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     <?php endif; ?>
-
     <div class="modal modalParty z-50" id="partyModal" tabindex="-1" aria-labelledby="partyModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
