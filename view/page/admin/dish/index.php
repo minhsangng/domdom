@@ -111,9 +111,9 @@ if (isset($_POST["btnsuamonan"])) {
     if ($image["type"] == "image/png" || $image["type"] == "image/jpeg" || $image["type"] == "image/jpg") {
         if (move_uploaded_file($image["tmp_name"], "../../../images/dish/" . $filename_new)) {
             if ($ctrl->cUpdateDish($dishName, $category, $price, $prepare, $imgName, $dishID, $filename_new, $description, $ingredient, $_SESSION["ingredient"], $quantity)) {
-                echo "<script>alert('Cập nhật món ăn thành công!')</script>";
+                echo "<script>alert('Cập nhật thông tin món ăn thành công!')</script>";
             } else {
-                echo "<script>alert('Cập nhật món ăn thất bại!')</script>";
+                echo "<script>alert('Cập nhật thông tin món ăn thất bại!')</script>";
             }
         } else {
             echo "<script>alert('Upload ảnh thất bại')</script>";
