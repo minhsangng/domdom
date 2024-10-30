@@ -18,9 +18,9 @@
 
     <!-- Style CSS -->
     <link rel="stylesheet" href="view/css/style.css">
-    
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-    
+
     <!-- Tailwind CSS -->
     <script src="view/js/tailwindcss.js"></script>
 
@@ -35,7 +35,7 @@
 
     <!-- Bootstrap JS (bundle includes Popper.js) -->
     <script src="view/js/bootstrap.bundle.min.js"></script>
-    
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
@@ -150,14 +150,13 @@
                         <div class="dropdown-menu">
                             <?php
                             $ctrl = new cDishes;
-                            
+
                             if ($ctrl->cGetAllCategory() != 0) {
                                 $result = $ctrl->cGetAllCategory();
                                 while ($row = $result->fetch_assoc()) {
-                                    echo "<a class='dropdown-item' href='index.php?p=dish&c=".$row["dishCategory"]."&#ci'>" . $row["dishCategory"] . "</a>";
+                                    echo "<a class='dropdown-item' href='index.php?p=dish&c=" . $row["dishCategory"] . "&#ci'>" . $row["dishCategory"] . "</a>";
                                 }
-                            }
-                            else echo "Không có dữ liệu!";
+                            } else echo "Không có dữ liệu!";
                             ?>
                         </div>
                     </li>
@@ -185,11 +184,13 @@
             <div class="modal-content">
                 <form action="" method="POST">
                     <div class="modal-header flex justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="cartModalLabel" style="color: #E67E22;">Giỏ hàng</h2>
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="cartModalLabel" style="color: #E67E22;">
+                            Giỏ hàng</h2>
                     </div>
                     <div class=" modal-body">
                         <div class="flex items-center border-b pb-4 mb-4">
-                            <img alt="Blue T-shirt" class="w-20 h-20 object-cover rounded" height="100" src="images/dish/burgerbo.png" width="100" />
+                            <img alt="Blue T-shirt" class="w-20 h-20 object-cover rounded" height="100"
+                                src="images/dish/burgerbo.png" width="100" />
                             <div class="ml-4 flex-1">
                                 <h3 class="text-lg font-semibold">Burger bò</h3>
                                 <div class="flex items-center mt-2">
@@ -213,19 +214,21 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal" data-bs-target="#payModal">Đặt món</button>
+                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
+                            data-bs-target="#payModal">Đặt món</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    
+
     <div class="modal modalPay" id="payModal" tabindex="-1" aria-labelledby="payModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" method="POST">
                     <div class="modal-header flex justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="payModalLabel" style="color: #E67E22;">Thông tin đơn hàng</h2>
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="payModalLabel" style="color: #E67E22;">
+                            Thông tin đơn hàng</h2>
                     </div>
                     <div class=" modal-body">
                         <div class="flex items-center border-b pb-4 mb-4">
@@ -261,7 +264,8 @@
                             </form>
                         </div>
                         <div class="flex items-center border-b pb-4 mb-4">
-                            <img alt="Blue T-shirt" class="w-20 h-20 object-cover rounded" height="100" src="images/dish/burgerbo.png" width="100" />
+                            <img alt="Blue T-shirt" class="w-20 h-20 object-cover rounded" height="100"
+                                src="images/dish/burgerbo.png" width="100" />
                             <div class="ml-4 flex-1">
                                 <h3 class="text-lg font-semibold">Burger bò</h3>
                                 <div class="flex items-center mt-2">
@@ -295,23 +299,27 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal" data-bs-target="#checkoutModal">Xác nhận</button>
+                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
+                            data-bs-target="#checkoutModal">Xác nhận</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    
-    <div class="modal modalCheckout" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+
+    <div class="modal modalCheckout" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" method="POST">
                     <div class="modal-header flex justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="checkoutModalLabel" style="color: #E67E22;">Thông tin thanh toán</h2>
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="checkoutModalLabel"
+                            style="color: #E67E22;">Thông tin thanh toán</h2>
                     </div>
                     <div class=" modal-body">
                         <div class="flex items-center border-b pb-4 mb-4">
-                            <img alt="" class="w-20 h-20 object-cover rounded" height="100" src="images/dish/burgerbo.png" width="100" />
+                            <img alt="" class="w-20 h-20 object-cover rounded" height="100"
+                                src="images/dish/burgerbo.png" width="100" />
                             <div class="ml-4 flex justify-between items-center w-full">
                                 <h3 class="text-lg font-semibold">Burger bò</h3>
                                 <p class="px-2" id="quantityCart">x2</p>
@@ -336,19 +344,44 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal" data-bs-target="#payModal">Thanh toán</button>
+                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
+                            data-bs-target="#payModal">Thanh toán</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    
-    <div class="modal modalFollow" id="followModal" tabindex="-1" aria-labelledby="followModalLabel" aria-hidden="true">
+
+    <div class="modal modalCheckout" id="refund" tabindex="-1" aria-labelledby="checkoutModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" method="POST">
                     <div class="modal-header flex justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="followModalLabel" style="color: #E67E22;">Theo dõi đơn hàng</h2>
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="checkoutModalLabel"
+                            style="color: #E67E22;">Thông tin thanh toán</h2>
+                    </div>
+                    <div class=" modal-body">
+                        <b>Chúng tôi sẽ hoàn trả số tiền dư vào tài khoản của bạn trong vòng 24 giờ.</b>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
+                            data-bs-target="#payModal">Thanh toán</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal modalFollow" id="followModal" tabindex="-1" aria-labelledby="followModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form action="" method="POST">
+                    <div class="modal-header flex justify-center">
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="followModalLabel"
+                            style="color: #E67E22;">Theo dõi đơn hàng</h2>
                     </div>
                     <div class=" modal-body">
                         <div class="w-full border-b pb-4 mb-4">
@@ -358,19 +391,22 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal" data-bs-target="#followDetailModal">Xác nhận</button>
+                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
+                            data-bs-target="#followDetailModal">Xác nhận</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    
-    <div class="modal modalFollowDetail" id="followDetailModal" tabindex="-1" aria-labelledby="followDetailModalLabel" aria-hidden="true">
+
+    <div class="modal modalFollowDetail" id="followDetailModal" tabindex="-1"
+        aria-labelledby="followDetailModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" method="POST">
                     <div class="modal-header flex justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="followDetailModalLabel" style="color: #E67E22;">Thông tin đơn hàng</h2>
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="followDetailModalLabel"
+                            style="color: #E67E22;">Thông tin đơn hàng</h2>
                     </div>
                     <div class=" modal-body">
                         <div class="w-full border-b pb-4 mb-4">
@@ -380,31 +416,75 @@
                                         <tr>
                                             <td>
                                                 <label for="" class="font-bold mb-2">Mã đơn hàng</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="#DH012">
+                                                <input type="text" name="" id="" class="form-control mb-2"
+                                                    value="#DH012" disabled>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <label for="" class="font-bold mb-2">Ngày đặt</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="23-10-2024">
+                                                <input type="text" name="" id="" class="form-control mb-2"
+                                                    value="23-10-2024" disabled>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <label for="" class="font-bold mb-2">Tên món (gói tiệc)</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="Burger bò">
+                                                <div class="flex items-center border-b pb-4 mb-4">
+                                                    <img alt="Blue T-shirt" class="w-20 h-20 object-cover rounded" height="100"
+                                                        src="images/dish/burgerbo.png" width="100" />
+                                                    <div class="ml-4 flex-1">
+                                                        <h3 class="text-lg font-semibold">Burger bò</h3>
+                                                        <div class="flex items-center mt-2">
+                                                            <span class="text-gray-500"></span>
+                                                            <div class="flex items-center border rounded">
+                                                                <button type="button" class="px-2 py-1" onclick="increase()">-</button>
+                                                                <span class="px-2" id="quantityCart">2</span>
+                                                                <button type="button" class="px-2 py-1" onclick="decrease()">+</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-right">
+                                                        <p class="text-lg font-semibold">60,000 đ</p>
+                                                        <div class="mt-2">
+                                                            <button class="btn btn-secondary w-full">
+                                                                <i class="far fa-trash-alt"></i>Xóa
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center border-b pb-4 mb-4">
+                                                    <img alt="Blue T-shirt" class="w-20 h-20 object-cover rounded" height="100"
+                                                        src="images/dish/burgerbo.png" width="100" />
+                                                    <div class="ml-4 flex-1">
+                                                        <h3 class="text-lg font-semibold">Mì ý</h3>
+                                                        <div class="flex items-center mt-2">
+                                                            <span class="text-gray-500"></span>
+                                                            <div class="flex items-center border rounded">
+                                                                <button type="button" class="px-2 py-1" onclick="increase()">-</button>
+                                                                <span class="px-2" id="quantityCart">2</span>
+                                                                <button type="button" class="px-2 py-1" onclick="decrease()">+</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-right">
+                                                        <p class="text-lg font-semibold">40,000 đ</p>
+                                                        <div class="mt-2">
+                                                            <button class="btn btn-secondary w-full">
+                                                                <i class="far fa-trash-alt"></i>Xóa
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Số lượng</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="2">
-                                            </td>
-                                        </tr>
+
                                         <tr>
                                             <td>
                                                 <label for="" class="font-bold mb-2">Tổng tiền</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="60,000">
+                                                <input type="text" name="" id="" class="form-control mb-2"
+                                                    value="100,000" disabled>
                                             </td>
                                         </tr>
                                         <tr>
@@ -416,12 +496,11 @@
                                         <tr>
                                             <td>
                                                 <label for="" class="font-bold mb-2">Trạng thái</label>
-                                                <select type="text" name="" id="" class="form-control mb-2">
-                                                    <option value="">Chờ chế biến</option>
-                                                </select>
+                                                <input type="text" name="" id="" class="form-control mb-2"
+                                                    value="Chờ chế biến" disabled>
                                             </td>
                                         </tr>
-                                        
+
                                     </tbody>
                                 </table>
                             </form>
@@ -429,19 +508,24 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal" data-bs-target="#payModal">Lưu</button>
+                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
+                            data-bs-target="#checkoutModal">Lưu</button>
+                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
+                            data-bs-target="#refund">Lưu</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <div class="modal modalParty z-50" id="partyModal" tabindex="-1" aria-labelledby="partyModalLabel" aria-hidden="true">
+    <div class="modal modalParty z-50" id="partyModal" tabindex="-1" aria-labelledby="partyModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <form action="" method="POST">
                     <div class="modal-header flex justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="partyModalLabel" style="color: #E67E22;">Thông tin đặt tiệc</h2>
+                        <h2 class="modal-title fs-5 font-bold text-3xl" id="partyModalLabel"
+                            style="color: #E67E22;">Thông tin đặt tiệc</h2>
                     </div>
                     <div class=" modal-body">
                         <div class="w-full border-b pb-4 mb-4">
@@ -451,31 +535,36 @@
                                         <tr>
                                             <td>
                                                 <label for="" class="font-bold mb-2">Họ tên</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="Nguyễn Minh Sang">
+                                                <input type="text" name="" id="" class="form-control mb-2"
+                                                    value="Nguyễn Minh Sang">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <label for="" class="font-bold mb-2">Số điện thoại</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="0926458232">
+                                                <input type="text" name="" id="" class="form-control mb-2"
+                                                    value="0926458232">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <label for="" class="font-bold mb-2">Email</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="sang@gmail.com">
+                                                <input type="text" name="" id="" class="form-control mb-2"
+                                                    value="sang@gmail.com">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <label for="" class="font-bold mb-2">Ngày diễn ra</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="26-10-2024">
+                                                <input type="text" name="" id="" class="form-control mb-2"
+                                                    value="26-10-2024">
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <label for="" class="font-bold mb-2">Giờ diễn ra</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="14:00">
+                                                <input type="text" name="" id="" class="form-control mb-2"
+                                                    value="14:00">
                                             </td>
                                         </tr>
                                         <tr>
@@ -498,17 +587,19 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal" data-bs-target="#payModal">Xác nhận</button>
+                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
+                            data-bs-target="#payModal">Xác nhận</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-    
+
     <div class="banner w-full flex items-center relative">
         <div id="carousel" class="carousel slide w-full" data-bs-ride="carousel">
             <div class="carousel-indicators" id="ci">
-                <button type="button" data-bs-target="#carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carousel" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
                 <button type="button" data-bs-target="#carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
                 <button type="button" data-bs-target="#carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
             </div>

@@ -229,6 +229,9 @@
     if (window.location.search.includes("dish"))
         idActive = "dish";
 
+    if (window.location.search.includes("discount"))
+        idActive = "discount";
+
     window.addEventListener("load", () => {
         navlinks.forEach(function(item) {
             if (item.id == idActive) item.classList.add("active");
