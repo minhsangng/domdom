@@ -68,10 +68,10 @@
     const promotions = [
         "Giảm 10% cho đơn hàng đầu tiên!",
         "Mua 1 tặng 1 cho món ăn bất kỳ!",
-        "Giảm 20% cho combo!",
+        "Giảm 20% cho 1 nước uống bất kỳ!",
         "Tặng nước ngọt khi mua burger!",
         "Giảm 15% cho đơn hàng trên 200k!",
-        "Tặng 1 phần khoai tây chiên!",
+        "Nhận miễn phí 1 phần khoai tây chiên!",
         "Giảm 30% khi mua combo mì ý + coca!",
         "Giảm 25% cho đơn hàng online!",
         "Tặng voucher 50k cho lần mua tiếp theo!",

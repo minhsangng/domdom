@@ -36,7 +36,7 @@
                         while ($row = $result->fetch_assoc()) {
                             $revenue += $row["total"];
                         }
-                        echo str_replace(".00", "", number_format($revenue, "2", ".", ","))." đ";
+                        echo str_replace(".00", "", number_format($revenue, "2", ".", ",")) . " đ";
                         ?></p>
                 </div>
             </div>
@@ -86,7 +86,7 @@
             $result = $conn->query($sql);
             $revenue = 0;
             $data = [];
-            
+
             while ($row = $result->fetch_assoc()) {
                 $data[] = [$row["date"], (float)$row["totalOrder"]];
                 $revenue += $row["totalOrder"];
@@ -172,7 +172,7 @@
             <h2 class="text-lg font-semibold mb-4">Đơn hàng trong tuần</h2>
 
             <?php
-            $sql = "SELECT * FROM `order` WHERE orderDate>= '$startW' AND orderDate <= '$endW' ORDER BY orderDate DESC";
+            $sql = "SELECT * FROM `order` WHERE orderDate>= '$startW' AND orderDate <= '$endW' GROUP BY customerID ORDER BY orderDate DESC";
             $result = $conn->query($sql);
 
             if ($result->num_rows != 0) {
@@ -197,11 +197,28 @@
                         <tbody>
                         ";
                 while ($row = $result->fetch_assoc()) {
+                    switch ($row["status"]) {
+                        case 0:
+                            $status = "Chờ nhận đơn";
+                            break;
+                        case 1:
+                            $status = "Đang chế biến";
+                            break;
+                        case 2:
+                            $status = "Chế biến xong";
+                            break;
+                        case 3:
+                            $status = "Hoàn thành";
+                            break;
+                        case 4:
+                            $status = "Đã hủy";
+                            break;
+                    }
                     $amount = str_replace(".00", "", number_format($row["total"], "2", ".", ","));
                     echo "
                         <tr>
                             <td class='py-2 border-2'>
-                                #HD0" . ($row['orderID'] < 10 ? "0".$row['orderID'] : $row['orderID']) . "
+                                #HD0" . ($row['orderID'] < 10 ? "0" . $row['orderID'] : $row['orderID']) . "
                             </td>
                             <td class='py-2 border-2'>
                                 " . $row['orderDate'] . "
@@ -210,8 +227,8 @@
                                 " . $amount . " đ
                             </td>
                             <td class='py-2 border-2'>
-                                <span class='bg-" . ($row["status"] == 'Hoàn thành' ? 'green' : 'blue') . "-100 text-" . ($row["status"] == 'Hoàn thành' ? 'green' : 'blue') . "-500 py-1 px-2 rounded-lg'>
-                                    " . $row['status'] . "
+                                <span class='bg-" . ($row["status"] != 4 ? 'green' : 'blue') . "-100 text-" . ($row["status"] != 4 ? 'green' : 'blue') . "-500 py-1 px-2 rounded-lg'>
+                                    " . $status . "
                                 </span>
                             </td>
                         </tr>

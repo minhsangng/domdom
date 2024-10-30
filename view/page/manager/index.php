@@ -84,11 +84,38 @@
             padding: 20px;
             margin-top: 20px;
         }
+
+        .pagination {
+            margin-left: 40%;
+            margin-bottom: 8%;
+        }
+
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            text-align: center;
+            border: 1px solid #DDD;
+            border-radius: 5px;
+            margin-right: 4px;
+        }
+
+        .pagination a.active {
+            background-color: rgb(200,200,200);
+            color: white;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <?php
 error_reporting(1);
 session_start();
+
 include("../../../model/connect.php");
 include("../../../controller/cCategories.php");
 include("../../../controller/cPromotions.php");
@@ -128,7 +155,7 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
             </div>
             <nav class="mt-10">
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="admin" href="index.php">
-                    <i class="fas fa-tachometer-alt mr-3"></i>Tổng quan
+                    <i class="fas fa-home mr-3"></i>Trang chủ
                 </a>
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="employee" href="index.php?i=employee">
                     <i class="fa-solid fa-users-gear mr-3"></i></i>Xem thông tin NV
@@ -157,9 +184,6 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                     <button type="submit" class="btn btn-primary ml-2 px-3">Tìm</button>
                 </div>
                 <div class="flex items-center hover:cursor-pointer">
-                    <div class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
-                        <i class="fa-regular fa-envelope"></i>
-                    </div>
                     <div class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
                         <i class="fa-regular fa-bell"></i>
                     </div>
@@ -192,11 +216,11 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
             } else {
                 require("home/index.php");
             }
-            
+
             if (isset($_GET["m"])) {
                 unset($_SESSION["userName"]);
                 unset($_SESSION["login"]);
-                echo "<script>window.location.href = '../login/'</script>";
+                echo "<script> if(confirm('Chắc chắn đăng xuất?') == true) window.location.href = '../login/'</script>";
             }
             ?>
         </div>
@@ -213,11 +237,11 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 rightSession.style.height = "100vh";
             }
         }
-        
+
         window.onload = adjustContentHeight;
 
         window.onresize = adjustContentHeight;
-        
+
         const navAd = document.querySelectorAll(".adnav");
         let idActiveAd = "admin";
 
@@ -229,6 +253,9 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
 
         if (window.location.search != "")
             idActiveAd = window.location.search.slice(3);
+            
+        if (window.location.search.includes("ingredient"))
+            idActiveAd = "ingredient";
 
         window.addEventListener("load", () => {
             navAd.forEach(function(item) {

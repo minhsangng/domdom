@@ -15,24 +15,8 @@ class cIngredients extends mIngredients
         if ($this->mGetAllIngredient() != 0) {
             $result = $this->mGetAllIngredient();
             
-            if ($result->num_rows > 0)
-                while ($row = $result->fetch_assoc()) {
-                    echo "
-                        <tr>
-                            <td class='py-2 border-2'>#NL0" . ($row["ingredientID"] < 10 ? "0".$row["ingredientID"] : $row["ingredientID"]) . "</td>
-                            <td class='py-2 border-2'>" . $row["ingredientName"] . "</td>
-                            <td class='py-2 border-2'>" . $row["unitOfcalculaton"] . "</td>
-                            <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
-                            <td class='py-2 border-2'>" . $row["typeIngredient"] . "</td>
-                            <td class='py-2 border-2'><span class='bg-" . ($row["status"] == 1 ? "green" : "red") . "-100 text-" . ($row["status"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["status"] == 1 ? "Đang dùng" : "Ngưng dùng") . "</span></td>
-                            <td class='py-2 border-2 flex justify-center items-center'>
-                                <button class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["ingredientID"] . "'>Cập nhật</button>
-                                <button class='btn btn-danger ml-1' name='btnkhoa'>" . ($row["status"] == 1 ? "Khóa" : "Mở") . "</button>
-                            </td>
-                        </tr>";
-                }
-            else echo "<tr><td colspan='7' class='text-center pt-2'>Chưa có dữ liệu!</td></tr>";
-        }
+            return $result;
+        } return 0;
     }
     
     public function cGetIngredientNotType($type) {
@@ -40,7 +24,7 @@ class cIngredients extends mIngredients
             $result = $this->mGetIngredientNotType($type);
             
             return $result;
-        }
+        } return 0;
     }
     
     public function cGetIngredientById($ingreID) {
@@ -48,7 +32,23 @@ class cIngredients extends mIngredients
             $result = $this->mGetIngredientById($ingreID);
             
             return $result->fetch_assoc();
-        }
+        } return 0;
+    }
+    
+    public function cGetIngredientNotUnit($unit) {
+        if ($this->mGetIngredientNotUnit($unit) != 0) {
+            $result = $this->mGetIngredientNotUnit($unit);
+            
+            return $result;
+        } return 0;
+    }
+
+    public function cGetTotalIngredient() {
+        if ($this->mGetTotalIngredient() != 0) {
+            $result = $this->mGetTotalIngredient();
+           
+            return $result;
+        } return 0;
     }
     
     public function cInsertIngredient($ingreName, $unit, $price, $type)

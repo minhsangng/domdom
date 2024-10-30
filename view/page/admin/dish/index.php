@@ -57,8 +57,10 @@ if (isset($_POST["btncapnhat"])) {
     </script>";
 
     $dishID = $_POST["btncapnhat"];
-
-    $row = $ctrl->cGetDishById($dishID);
+    
+    if ($ctrl->cGetDishById($dishID) != 0) {
+    $result = $ctrl->cGetDishById($dishID);
+    $row = $result->fetch_assoc();
 
     $_SESSION["dishID"] = $row["dishID"];
     $_SESSION["dishName"] = $row["dishName"];
@@ -66,6 +68,7 @@ if (isset($_POST["btncapnhat"])) {
     $_SESSION["price"] = $row["price"];
     $_SESSION["prepare"] = $row["preparationProcess"];
     $_SESSION["img"] = $row["image"];
+    }
 }
 
 if (isset($_POST["btnsuamon"])) {
@@ -293,13 +296,35 @@ if (isset($_POST["btnkhoa"])) {
                             <tr>
                                 <td>
                                     <label for="ingredient" class="w-full py-2"><b>Nguyên liệu <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="ingredient" required>
+                                    <select name="ingredient" id="cate" class="w-full form-control">
+                                    <?php
+                                        $ctrl = new cIngredients;
+                                            
+                                        if ($ctrl->cGetAllIngredient() !=  0) {
+                                            $result = $ctrl->cGetAllIngredient();
+                                            
+                                            while ($row = $result->fetch_assoc())
+                                                echo "<option value='".$row["ingredientID"]."'>".$row["ingredientName"]."</option>";
+                                        }
+                                    ?>
+                                    </select>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="unit" class="w-full py-2"><b>Đơn vị tính <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="unit" required>
+                                    <select class="w-full form-control">
+                                        <?php
+                                            $ctrl = new cIngredients;
+                                            
+                                            if ($ctrl->cGetAllIngredient() !=  0) {
+                                                $result = $ctrl->cGetAllIngredient();
+                                                
+                                                while ($row = $result->fetch_assoc())
+                                                    echo "<option value='".$row["ingredientID"]."'>".$row["unitOfcalculaton"]."</option>";
+                                            }
+                                        ?>
+                                    </select>
                                 </td>
                             </tr>
                             <tr>

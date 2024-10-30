@@ -38,6 +38,7 @@ if (isset($_POST["btncc"])) {
                             $sql = "SELECT * FROM `user` AS U JOIN `role` AS R ON U.roleID = R.roleID JOIN employee_shift AS ES ON ES.userID = U.userID JOIN shift AS S ON S.shiftID = ES.shiftID WHERE ES.date = CURDATE()";
                             $result = $conn->query($sql);
 
+                            if ($result->num_rows > 0)
                             while ($row = $result->fetch_assoc()) {
                                 if ($row["roleID"] == 3 || $row["roleID"] == 4) {
                                     echo "
@@ -51,6 +52,7 @@ if (isset($_POST["btncc"])) {
                                     ";
                                 }
                             }
+                            else echo "<tr><td class='py-2' colspan='5'>Không có dữ liệu!</td></tr>";
                             ?>
                         </tbody>
                     </table>

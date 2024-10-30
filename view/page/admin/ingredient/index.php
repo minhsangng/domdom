@@ -20,7 +20,7 @@ if (isset($_POST["btncapnhat"])) {
         </script>";
 
     $ingreID = $_POST["btncapnhat"];
-    
+
     $row = $ctrl->cGetIngredientById($ingreID);
 
     $_SESSION["ingreID"] = $row["ingredientID"];
@@ -80,7 +80,24 @@ if (isset($_POST["btnkhoa"])) {
                     <tbody>
                         <?php
                         $ctrl = new cIngredients;
-                        $ctrl->cGetAllIngredient();
+                        if ($ctrl->cGetAllIngredient() != 0) {
+                            $result = $ctrl->cGetAllIngredient();
+                            while ($row = $result->fetch_assoc()) {
+                                echo "
+                        <tr>
+                            <td class='py-2 border-2'>#NL0" . ($row["ingredientID"] < 10 ? "0" . $row["ingredientID"] : $row["ingredientID"]) . "</td>
+                            <td class='py-2 border-2'>" . $row["ingredientName"] . "</td>
+                            <td class='py-2 border-2'>" . $row["unitOfcalculaton"] . "</td>
+                            <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
+                            <td class='py-2 border-2'>" . $row["typeIngredient"] . "</td>
+                            <td class='py-2 border-2'><span class='bg-" . ($row["status"] == 1 ? "green" : "red") . "-100 text-" . ($row["status"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["status"] == 1 ? "Đang dùng" : "Ngưng dùng") . "</span></td>
+                            <td class='py-2 border-2 flex justify-center items-center'>
+                                <button class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["ingredientID"] . "'>Cập nhật</button>
+                                <button class='btn btn-danger ml-1' name='btnkhoa'>" . ($row["status"] == 1 ? "Khóa" : "Mở") . "</button>
+                            </td>
+                        </tr>";
+                            }
+                        } else echo "<tr><td colspan='7' class='text-center pt-2'>Chưa có dữ liệu!</td></tr>";
                         ?>
                     </tbody>
                 </table>
@@ -107,13 +124,13 @@ if (isset($_POST["btnkhoa"])) {
                                 <td>
                                     <label for="typeIngre" class="w-full py-2"><b>Loại NL <span class="text-red-500">*</span></b></label>
                                     <select name="typeIngre" class="w-full form-control">
-                                        <?php 
-                                            $sql = "SELECT * FROM ingredient GROUP BY typeIngredient ORDER BY typeIngredient DESC";
-                                            $result = $conn->query($sql);
-                                            
-                                            while ($row = $result->fetch_assoc()) {
-                                                echo "<option value='".$row["typeIngredient"]."'>".$row["typeIngredient"]."</option>";
-                                            }
+                                        <?php
+                                        $sql = "SELECT * FROM ingredient GROUP BY typeIngredient ORDER BY typeIngredient DESC";
+                                        $result = $conn->query($sql);
+
+                                        while ($row = $result->fetch_assoc()) {
+                                            echo "<option value='" . $row["typeIngredient"] . "'>" . $row["typeIngredient"] . "</option>";
+                                        }
                                         ?>
                                     </select>
                                 </td>
@@ -127,7 +144,18 @@ if (isset($_POST["btnkhoa"])) {
                             <tr>
                                 <td>
                                     <label for="unit" class="w-full py-2"><b>Đơn vị tính <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="unit" required>
+                                    <select name="ingredient" id="cate" class="w-full form-control">
+                                    <?php
+                                        $ctrl = new cIngredients;
+                                            
+                                        if ($ctrl->cGetAllIngredient() !=  0) {
+                                            $result = $ctrl->cGetAllIngredient();
+                                            
+                                            while ($row = $result->fetch_assoc())
+                                                echo "<option value='".$row["ingredientID"]."'>".$row["unitOfcalculaton"]."</option>";
+                                        }
+                                    ?>
+                                    </select>
                                 </td>
                             </tr>
                             <tr>
@@ -166,13 +194,13 @@ if (isset($_POST["btnkhoa"])) {
                                     <label for="typeIngre" class="w-full py-2"><b>Loại nguyên liệu</b></label>
                                     <select name="typeIngre" class="w-full form-control">
                                         <?php
-                                            $type = $_SESSION["type"];
-                                            echo "<option value='" . $type . "' selected>" . $type . "</option>";
+                                        $type = $_SESSION["type"];
+                                        echo "<option value='" . $type . "' selected>" . $type . "</option>";
 
-                                            $result = $ctrl->cGetIngredientNotType($type);
-                                            while ($row = $result->fetch_assoc()) {
-                                                echo "<option value='" . $row["typeIngredient"] . "'>" . $row["typeIngredient"] . "</option>";
-                                            }
+                                        $result = $ctrl->cGetIngredientNotType($type);
+                                        while ($row = $result->fetch_assoc()) {
+                                            echo "<option value='" . $row["typeIngredient"] . "'>" . $row["typeIngredient"] . "</option>";
+                                        }
                                         ?>
                                     </select>
                                 </td>
@@ -186,7 +214,24 @@ if (isset($_POST["btnkhoa"])) {
                             <tr>
                                 <td>
                                     <label for="unit" class="w-full py-2"><b>Đơn vị tính</b></label>
-                                    <input type="text" class="w-full form-control" name="unit" value="<?php echo $_SESSION["unit"]; ?>">
+                                    <select name="ingredient" id="cate" class="w-full form-control">
+                                    <?php
+                                        $ctrl = new cIngredients;
+                                        
+                                        if ($ctrl->cGetIngredientById($_SESSION["ingreID"]) != 0) {
+                                            $row = $ctrl->cGetIngredientById($_SESSION["ingreID"]);
+                                            
+                                            echo "<option value='".$row["ingredientID"]."'>".$row["unitOfcalculaton"]."</option>";
+                                        }
+                                            
+                                        if ($ctrl->cGetIngredientNotUnit($_SESSION["unit"]) !=  0) {
+                                            $result = $ctrl->cGetIngredientNotUnit($_SESSION["unit"]);
+                                            
+                                            while ($row = $result->fetch_assoc())
+                                                echo "<option value='".$row["ingredientID"]."'>".$row["unitOfcalculaton"]."</option>";
+                                        }
+                                    ?>
+                                    </select>
                                 </td>
                             </tr>
                         </table>

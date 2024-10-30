@@ -172,7 +172,7 @@ $conn = $db->connect();
             if (isset($_GET["m"])) {
                 unset($_SESSION["userName"]);
                 unset($_SESSION["login"]);
-                echo "<script>window.location.href = '../login/'</script>";
+                echo "<script> if(confirm('Chắc chắn đăng xuất?') == true) window.location.href = '../login/'</script>";
             }
             ?>
         </div>

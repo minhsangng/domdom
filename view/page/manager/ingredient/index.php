@@ -1,6 +1,4 @@
 <?php
-/* $ctrl = new cIngredients; */
-
 if (isset($_POST["btnmo"])) {
 
     echo "<script>
@@ -36,26 +34,55 @@ if (isset($_POST["btnnl"])) {
                             <th class="text-gray-600 border-2 py-2">Mã món</th>
                             <th class="text-gray-600 border-2 py-2">Tên món</th>
                             <th class="text-gray-600 border-2 py-2">Số lượng</th>
-                            <th class="text-gray-600 border-2 py-2">Chức năng</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php
-                        $sql = "SELECT * FROM dish";
+                        $productsPerPage = 5;
+                        // Xác định trang hiện tại
+                        if (isset($_GET['page_num']) && is_numeric($_GET['page_num'])) {
+                            $currentPage = intval($_GET['page_num']);
+                        } else {
+                            $currentPage = 1;
+                        }
+                        // Tính toán vị trí bắt đầu lấy dữ liệu từ cơ sở dữ liệu
+                        $startFrom = ($currentPage - 1) * $productsPerPage;
+                        // Tổng số sản phẩm
+                        $totalProducts = $table->num_rows;
+                        // Tính toán số trang
+                        $totalPages = ceil($totalProducts / $productsPerPage);
+                        
+                        $sql = "SELECT * FROM dish LIMIT $startFrom, $productsPerPage";
                         $result = $conn->query($sql);
 
                         while ($row = $result->fetch_assoc()) {
                             echo "<tr>
                                     <td class='py-2 border-2'>#MA0" . $row["dishID"] . "</td>
                                     <td class='py-2 border-2'>" . $row["dishName"] . "</td>
-                                    <td class='py-2 border-2'><input type='number' value='0' class='w-16 py-1 px-3'></td>
-                                    <td class='py-2 border-2'><button type='submit' class='btn btn-danger' name='btnmo' value='".$row["dishID"]."'>Xác nhận</button></td>
+                                    <td class='py-2 border-2'><input type='number' value='0' class='w-16 py-1 px-3 rounded-md'></td>
                                 </tr>";
                         }
                         ?>
+                        <tr>
+                            <td colspan="2"></td>
+                            <td class='py-2'><button type='submit' class='btn btn-danger' name='btnmo' value='" . $row["dishID"] . "'>Xác nhận</button></td>
+                        </tr>
                     </tbody>
                 </table>
             </form>
+            <?php
+            $ctrl = new cIngredients;
+            echo '<div class="pagination">';
+            $totalPages = ceil($ctrl->cGetTotalIngredient() / $productsPerPage);
+            for ($i = 1; $i <= $totalPages; $i++) {
+                echo "<a href='index.php?i=ingredient&paging=product_list&page_num=$i'";
+                if ($i == $currentPage) {
+                    echo " class='active'";
+                }
+                echo ">$i</a>";
+            }
+            echo '</div>';
+            ?>
         </div>
     </div>
 
