@@ -189,11 +189,11 @@ if (isset($_POST["btndattiec"])) {
         $result = $conn->query($sql);
 
         while ($row = $result->fetch_assoc()) {
-            echo "<div class='h-fit w-fit rounded-lg flex justify-center items-center bg-red-400 transition delay-200 ease-linear shadow-xl shadow-red-300'>
-                <form action='' method='POST' class='group'>
-                    <div class='relative flex flex-col justify-center items-center px-6 py-4'>
+            echo "<div class='h-72 w-full rounded-lg flex justify-center items-center bg-red-400 transition delay-200 ease-linear shadow-xl shadow-red-300'>
+                <form action='' method='POST' class='group h-72 w-full'>
+                    <div class='relative flex flex-col justify-center items-center px-6 py-4 h-full w-full'>
                         <div class='w-48 mb-2 z-10'>
-                            <img src='images/party/sinhnhat.png' class='w-full h-full rounded-lg'>
+                            <img src='images/party/".$row["image"]."' class='w-full h-full rounded-lg'>
                         </div>
                         <span class='absolute bg-green-200 bottom-0 left-0 w-6 h-4 rounded-tr-full group-hover:rounded-lg group-hover:w-full group-hover:h-full transition-all ease-linear delay-150'></span>
                         <div class='text-white z-10'>
