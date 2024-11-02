@@ -168,7 +168,7 @@ if (isset($_POST["btndattiec"])) {
 
 <div class="flex flex-col justify-center items-center absolute top-48 left-28">
     <h2 class="text font-bold uppercase text-center relative text-3xl">Sử dụng ngay<Br />các gói dịch vụ <br> của chúng tôi! <br>
-        <span class="text-sm italic">Tổ chức các bữa tiệc sẽ trở nên đơn giản</span< /h2>
+        <span class="text-sm italic">Tổ chức các bữa tiệc sẽ trở nên đơn giản</span< </h2>
             <!-- <div class="flex flex-col items-center absolute -bottom-36 left-52">
         <i class="fas fa-chevron-down arrow text-3xl text-gray-400 px-3 rounded-t-md" style="background-color: rgba(0, 0, 0, 0.3);"></i>
         <i class="fas fa-chevron-down arrow text-3xl text-gray-400 px-3" style="background-color: rgba(0, 0, 0, 0.3);"></i>
