@@ -192,6 +192,15 @@ $conn = $db->connect();
                 require("" . $_REQUEST["i"] . "/index.php");
             else if ($i == "home")
                 require("home/index.php");
+<<<<<<< HEAD
+=======
+
+            if (isset($_GET["m"])) {
+                unset($_SESSION["userName"]);
+                unset($_SESSION["login"]);
+                echo "<script> if(confirm('Chắc chắn đăng xuất?') == true) window.location.href = '../login/'</script>";
+            }
+>>>>>>> 87070c94e933ca899e1cb23cb5265b4e926fbbf4
             ?>
         </div>
     </div>

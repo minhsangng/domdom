@@ -113,6 +113,7 @@
             background-color: #ddd;
             border-radius: 5px;
         }
+<<<<<<< HEAD
         
         .swal2-icon {
             font-size: 1rem;
@@ -129,6 +130,8 @@
         .swal2-confirm {
             margin-left: 5px;
         }
+=======
+>>>>>>> 87070c94e933ca899e1cb23cb5265b4e926fbbf4
     </style>
 </head>
 <?php
@@ -137,7 +140,10 @@ ini_set("session.cookie_lifetime", 0);
 error_reporting(1);
 session_start();
 
+<<<<<<< HEAD
 /* Kết nói control */
+=======
+>>>>>>> 87070c94e933ca899e1cb23cb5265b4e926fbbf4
 include("../../../model/connect.php");
 include("../../../controller/cCategories.php");
 include("../../../controller/cPromotions.php");
@@ -245,6 +251,15 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
             } else {
                 require("home/index.php");
             }
+<<<<<<< HEAD
+=======
+
+            if (isset($_GET["m"])) {
+                unset($_SESSION["userName"]);
+                unset($_SESSION["login"]);
+                echo "<script> if(confirm('Chắc chắn đăng xuất?') == true) window.location.href = '../login/'</script>";
+            }
+>>>>>>> 87070c94e933ca899e1cb23cb5265b4e926fbbf4
             ?>
         </div>
     </div>
