@@ -1,3 +1,6 @@
+<?php
+include '../login/check_login.php';
+?>
 <html lang="en">
 
 <head>

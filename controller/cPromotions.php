@@ -40,17 +40,17 @@ class cPromotions extends mPromotions
         }
     }
     
-    public function cUpdatePromotion($proName, $des, $percent, $start, $end, $image, $status) {
-        if ($this->mInsertPromotion($proName, $des, $percent, $start, $end, $image, $status) != 0) {
+        public function cUpdatePromotion($proID, $proName, $des, $percent, $start, $end, $image, $status) {
+        if ($this->mUpdatePromotion($proID, $proName, $des, $percent, $start, $end, $image, $status) != 0) {
             echo "<script>alert('Cập nhật khuyến mãi thành công');</script>";
         }
     }
     
-    public function cLockPromotion($proID) {  
-        if ($this->mLockPromotion($proID) != 0) {
+    public function cdeletePromotion($proID) {  
+        if ($this->mdeletePromotion($proID) != 0) {
             echo "<script>
             document.addEventListener('DOMContentLoaded', function() {
-                confirm('Bạn có chắc chắn khóa tài khoản này?');
+                confirm('Bạn có chắc chắn xóa khuyến mãi này?');
             });
           </script>";
         }

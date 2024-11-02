@@ -1,34 +1,6 @@
 <?php
 $ctrl = new cPromotions;
 
-function removeVietnameseAccents($str)
-{
-    $unicode = array(
-        'a' => ['á', 'à', 'ả', 'ã', 'ạ', 'ă', 'ắ', 'ằ', 'ẳ', 'ẵ', 'ặ', 'â', 'ấ', 'ầ', 'ẩ', 'ẫ', 'ậ'],
-        'd' => ['đ'],
-        'e' => ['é', 'è', 'ẻ', 'ẽ', 'ẹ', 'ê', 'ế', 'ề', 'ể', 'ễ', 'ệ'],
-        'i' => ['í', 'ì', 'ỉ', 'ĩ', 'ị'],
-        'o' => ['ó', 'ò', 'ỏ', 'õ', 'ọ', 'ô', 'ố', 'ồ', 'ổ', 'ỗ', 'ộ', 'ơ', 'ớ', 'ờ', 'ở', 'ỡ', 'ợ'],
-        'u' => ['ú', 'ù', 'ủ', 'ũ', 'ụ', 'ư', 'ứ', 'ừ', 'ử', 'ữ', 'ự'],
-        'y' => ['ý', 'ỳ', 'ỷ', 'ỹ', 'ỵ'],
-        'A' => ['Á', 'À', 'Ả', 'Ã', 'Ạ', 'Ă', 'Ắ', 'Ằ', 'Ẳ', 'Ẵ', 'Ặ', 'Â', 'Ấ', 'Ầ', 'Ẩ', 'Ẫ', 'Ậ'],
-        'D' => ['Đ'],
-        'E' => ['É', 'È', 'Ẻ', 'Ẽ', 'Ẹ', 'Ê', 'Ế', 'Ề', 'Ể', 'Ễ', 'Ệ'],
-        'I' => ['Í', 'Ì', 'Ỉ', 'Ĩ', 'Ị'],
-        'O' => ['Ó', 'Ò', 'Ỏ', 'Õ', 'Ọ', 'Ô', 'Ố', 'Ồ', 'Ổ', 'Ỗ', 'Ộ', 'Ơ', 'Ớ', 'Ờ', 'Ở', 'Ỡ', 'Ợ'],
-        'U' => ['Ú', 'Ù', 'Ủ', 'Ũ', 'Ụ', 'Ư', 'Ứ', 'Ừ', 'Ử', 'Ữ', 'Ự'],
-        'Y' => ['Ý', 'Ỳ', 'Ỷ', 'Ỹ', 'Ỵ']
-    );
-
-    foreach ($unicode as $nonAccent => $accentedChars) {
-        $str = str_replace($accentedChars, $nonAccent, $str);
-    }
-
-    $str = str_replace(' ', '', $str);
-
-    return strtolower($str);
-}
-
 /* Css dè cho nav-link focus - lỗi từ php chưa thể fix */
 
 echo "<script>
@@ -44,17 +16,18 @@ if (isset($_POST["btnthemkm"])) {
     $start = $_POST["startDate"];
     $end = $_POST["endDate"];
     $image = $_FILES["image"];
-    $status = $_POST["status"];
+    $status = 1;
 
-    $imgName = removeVietnameseAccents(str: $proName) . ".png";
+    $imgName = '';
 
     if ($image["size"] > 0 && $image["error"] == 0) {
-        if ($image["type"] == "image/png" || $image["type"] == "image/jpg")
-            move_uploaded_file($image["tmp_name"], "../../../images/promotion/" . $imgName);
+        if ($image["type"] == "image/png" || $image["type"] == "image/jpeg")
+            move_uploaded_file($image["tmp_name"], "../../../images/promotion/".$imgage["name"]);
+            // $imgName=$imgage["name"];
         else echo "<script>alert('Không phải ảnh. Vui lòng chọn lại ảnh khác!')</script>";
     }
 
-    $ctrl->cInsertPromotion($proName, $des, $percent, $start, $end, $imgName, ($status == "Đang áp dụng" ? 1 : 0));
+    $ctrl->cInsertPromotion($proName, $des, $percent, $start, $end, $imgName, $status);
 }
 
 if (isset($_POST["btncapnhat"])) {
@@ -79,7 +52,7 @@ if (isset($_POST["btncapnhat"])) {
     $_SESSION["status"] = $row["status"];
 }
 
-if (isset($_POST["btnsuanl"])) {
+if (isset($_POST["btnsuakm"])) {
     $proID = $_SESSION["proID"];
     $proName = $_POST["proName"];
     $des = $_POST["description"];
@@ -89,19 +62,19 @@ if (isset($_POST["btnsuanl"])) {
     $image = $_FILES["image"];
     $status = $_POST["status"];
 
-    $imgName = removeVietnameseAccents($proName) . ".png";
+    $imgName = '';
 
     if ($image["size"] > 0 && $image["error"] == 0)
         if ($image["type"] == "image/png" || $image["type"] == "image/jpg")
-            move_uploaded_file($image["tmp_name"], "../../../images/promotion/" . $imgName);
+            move_uploaded_file($image["tmp_name"], "../../../images/promotion/".$imgName);
         else echo "<script>alert('Không phải ảnh. Vui lòng chọn lại ảnh khác!')</script>";
 
-    $ctrl->cUpdatePromotion($proName, $des, $percent, $start, $end, $imgName, $status);
+    $ctrl->cUpdatePromotion($proID, $proName, $des, $percent, $start, $end, $imgName, $status);
 }
 
-if (isset($_POST["btnkhoa"])) {
+if (isset($_POST["btnxoa"])) {
     $proID = $_SESSION["proID"];
-    $ctrl->cLockPromotion($proID);
+    $ctrl->cdeletePromotion($proID);
 }
 ?>
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
@@ -151,7 +124,7 @@ if (isset($_POST["btnkhoa"])) {
                             <td class='py-2 border-2 text-" . ($row["status"] == 1 ? "green" : "red") . "-500'>" . ($row["status"] == 1 ? "Đang áp dụng" : "Ngưng áp dụng") . "</td>
                             <td class='py-2 border-2 flex justify-center items-center h-28'>
                                 <button class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["promotionID"] . "'>Cập nhật</button>
-                                <button class='btn btn-danger ml-1' name='btnkhoa'>Xóa</button>
+                                <button class='btn btn-danger ml-1' name='btnxoa'>Xóa</button>
                             </td>
                         </tr>";
                             }
@@ -208,15 +181,8 @@ if (isset($_POST["btnkhoa"])) {
                                     <input type="file" class="w-full form-control" name="image" required>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>
-                                    <label for="status" class="w-full py-2"><b>Trạng thái<span class="text-red-500">*</span></b></label>
-                                    <select name="status" class="w-full form-control">
-                                        <option value="Đang áp dụng">Đang áp dụng</option>
-                                        <option value="Đã qua">Đã qua</option>
-                                    </select>
-                                </td>
-                            </tr>
+                            
+                           
                         </table>
                     </div>
                     <div class="modal-footer">
@@ -252,7 +218,7 @@ if (isset($_POST["btnkhoa"])) {
                             <tr>
                                 <td>
                                     <label for="percent" class="w-full py-2"><b>Phần trăm KM </b></label>
-                                    <input type="number" class="w-full form-control" name="price" value="<?php echo $_SESSION["percent"]; ?>">
+                                    <input type="number" class="w-full form-control" name="percent" value="<?php echo $_SESSION["percent"]; ?>">
                                 </td>
                             </tr>
                             <tr>

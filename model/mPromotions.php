@@ -42,20 +42,20 @@ class mPromotions
         return 0;
     }
     
-    public function mUpdatePromotion($proName, $des, $percent, $start, $end, $image, $status) {
+    public function mUpdatePromotion($proID, $proName, $des, $percent, $start, $end, $image, $status) {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "UPDATE promotion SET promotionName = '$proName', description = '$des', discountPercentage = $percent, startDate = '$start', endDate = '$end', image = '$image', status = '$status'";
+        $sql = "UPDATE promotion SET promotionName = '$proName', description = '$des', discountPercentage = '$percent', startDate = '$start', endDate = '$end', image = '$image', status = '$status' WHERE promotionID = '$proID'";
         
         if ($conn != null)
             return $conn->query($sql);
         return 0;
     }
     
-    public function mLockPromotion($proID) {
+    public function mdeletePromotion($proID) {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "UPDATE promotion SET status = 0 WHERE promotionID = $proID";
+        $sql = "DELETE FROM promotion WHERE promotionID = $proID";
         
         if ($conn != null)
             return $conn->query($sql);
