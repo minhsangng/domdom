@@ -79,6 +79,15 @@ class mDishes
         return 0;
     }
     
+    public function mUpdateDishAvailabilityStatus($availability, $dishID) {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "UPDATE dish SET availabilityStatus = $availability WHERE dishID = $dishID";
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+    
     public function mLockDish($status, $dishID) {
         $db = new Database;
         $conn = $db->connect();

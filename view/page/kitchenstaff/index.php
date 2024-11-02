@@ -33,6 +33,9 @@
 
     <!-- Bootstrap JS (bundle includes Popper.js) -->
     <script src="../../js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Sweet Alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         .activeAd {
@@ -48,7 +51,7 @@
             display: inline-block;
             width: 150px;
         }
-        
+
         #calendar {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -83,16 +86,47 @@
             padding: 20px;
             margin-top: 20px;
         }
+        
+        .swal2-icon {
+            font-size: 1rem;
+        }
+        
+        .swal2-title {
+            font-size: 1.5rem;
+        }
+        
+        .swal2-cancel {
+            margin-right: 5px;
+        }
+        
+        .swal2-confirm {
+            margin-left: 5px;
+        }
     </style>
 </head>
 <?php
+/* Điều kiện ban đầu */
+ini_set("session.cookie_lifetime", 0);
 error_reporting(1);
 session_start();
+
+/* Kết nối control */
 include("../../../model/connect.php");
 include("../../../controller/cPromotions.php");
 include("../../../controller/cDishes.php");
 include("../../../controller/cIngredients.php");
 
+/* Xử lý đăng nhập */
+if ($_SESSION["login"] != 1)
+    echo "<script>window.location.href = '../login/';</script>";
+
+/* Xóa session login sau 1p - ngăn chặn truy cập do user chưa đăng xuất */
+
+if (isset($_SESSION["LAST_ACTIVITY"]) && (time() - $_SESSION["LAST_ACTIVITY"] > $sessionTimeout)) {
+    unset($_SESSION["login"]);
+}
+
+/* Kết nối database */
 $db = new Database();
 $conn = $db->connect();
 ?>
@@ -115,11 +149,17 @@ $conn = $db->connect();
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="update" href="index.php?i=update">
                     <i class="fa-solid fa-pen-to-square mr-3"></i>Cập nhật đơn hàng
                 </a>
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="dish" href="index.php?i=dish">
+                    <i class="fa-solid fa-utensils mr-3"></i>Quản lý món ăn
+                </a>
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="shift" href="index.php?i=shift">
                     <i class="fa-regular fa-calendar-days mr-3"></i>Đăng ký ca làm
                 </a>
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="info" href="index.php?i=info">
                     <i class="fa-solid fa-lightbulb mr-3"></i>Xem TT công việc
+                </a>
+                <a href="#" onclick="logout()" class="flex items-center py-2 px-8 text-white border-y-2 bg-gray-700 border-gray-500 mt-4 hover:bg-gray-700 hover:text-white adnav">
+                    <i class="fa-solid fa-right-from-bracket mr-3"></i>Đăng xuất
                 </a>
             </nav>
         </div>
@@ -138,20 +178,16 @@ $conn = $db->connect();
                         <span class="text-xs font-bold ml-1">
                             <?php
                             echo $_SESSION["userName"];
-                            
+
                             $userName = $_SESSION["userName"];
-                            
+
                             $sql = "SELECT userID FROM user WHERE userName = '$userName'";
                             $result = $conn->query($sql);
                             $row = $result->fetch_assoc();
-                            
+
                             $_SESSION["userID"] = $row["userID"];
                             ?>
                         </span>
-
-                        <div class="subnav absolute top-11 right-0 bg-white rounded-lg bg-gray-500 h-fit p-2 text-center border-2">
-                            <a href="index.php?m=lgout">Đăng xuất <i class="fa-solid fa-right-from-bracket"></i></a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -168,12 +204,6 @@ $conn = $db->connect();
                 require("" . $_REQUEST["i"] . "/index.php");
             else if ($i == "home")
                 require("home/index.php");
-
-            if (isset($_GET["m"])) {
-                unset($_SESSION["userName"]);
-                unset($_SESSION["login"]);
-                echo "<script> if(confirm('Chắc chắn đăng xuất?') == true) window.location.href = '../login/'</script>";
-            }
             ?>
         </div>
     </div>
@@ -193,7 +223,7 @@ $conn = $db->connect();
         window.onload = adjustContentHeight;
 
         window.onresize = adjustContentHeight;
-    
+
         const navAd = document.querySelectorAll(".adnav");
         let idActiveAd = "home";
 
@@ -217,10 +247,25 @@ $conn = $db->connect();
         });
 
         function logout() {
-            <?php
-            unset($_SESSION["loginstaff"]);
-            unset($_SESSION["name"]);
-            ?>
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+            swalWithBootstrapButtons.fire({
+                title: "Bạn chắc chắn muốn đăng xuất?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Đồng ý",
+                cancelButtonText: "Hủy",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "../logout/";
+                }
+            });
         }
     </script>
 </body>

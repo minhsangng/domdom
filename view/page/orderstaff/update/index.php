@@ -1,21 +1,17 @@
 <?php
-    if (isset($_POST["btnsua"])) {
-        $id = $_POST["btnsua"];
-        $status = $_POST["status"];
-        switch ($status) {
-            case "Chờ nhận đơn": $st = 0;
-            break;
-            case "Đang chế biến": $st = 1;
-            break;
-            case "Chế biến xong": $st = 2;
-            break;
-            case "Hoàn thành": $st = 3;
-            break;
-        }
-        $sql = "UPDATE `order` SET status = $st WHERE orderID = $id";
+    if (isset($_POST["btnchuyen"])) {
+        $arr = explode("/", $_POST["btnchuyen"]);
+        $id = $arr[0];
+        $status = $arr[1];
+        
+        if ($status < 4)
+            $newStatus = $status + 1;
+        else 
+            $newStatus = 0;
+        
+        $sql = "UPDATE `order` SET status = $newStatus WHERE orderID = $id";
         $result = $conn->query($sql);
     }
-
 ?>
 
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
@@ -40,43 +36,40 @@
                         <th class='text-gray-600 border-2 py-2'>Ngày &amp; giờ</th>
                         <th class='text-gray-600 border-2 py-2'>Tổng giá trị</th>
                         <th class='text-gray-600 border-2 py-2'>Trạng thái</th>
-                        <th class='text-gray-600 border-2 py-2'>Chức năng</th>
                     </tr>
                 </thead>
             <tbody>
             ";
             while ($row = $result->fetch_assoc()) {
-                $amount = number_format($row["total"], 2, '.', ',');
+                $amount = str_replace(".00", "", number_format($row["total"], "2", ".", ","));
                 $orderID = $row["orderID"];
                 $cusName = $row["fulName"];
                 $orderName = $row["dishName"];
                 $orderQuantity = $row["quantity"];
                 $orderDate = $row["orderDate"];
-                $status = 0;
+                $status = $row["status"];
+                $newStatus = 0;
                 
-                switch ($row["status"]) {
-                    case 0: $status = "Chờ nhận đơn";
+                switch ($status) {
+                    case 0: $newStatus = "Chờ nhận đơn";
                     break;
-                    case 1: $status = "Đang chế biến";
+                    case 1: $newStatus = "Đang chế biến";
                     break;
-                    case 2: $status = "Chế biến xong";
+                    case 2: $newStatus = "Chế biến xong";
                     break;
-                    case 3: $status = "Hoàn thành";
+                    case 3: $newStatus = "Hoàn thành";
                     break;
-                    case 4: $status = "Đã hủy";
+                    case 4: $newStatus = "Đã hủy";
                     break;
                 }
 
                 echo "
-                <tr data-id='$orderID' data-cus='$cusName' data-name='$orderName' data-quan='$orderQuantity' data-date='$orderDate' data-amount='$amount' data-status='$status' class='cursor-pointer'>
-                    <td class='border-2 py-2'>#101" . $row["orderID"] . "</td>
+                <tr data-id='".$orderID."' data-cus='".$cusName."' data-name='".$orderName."' data-quan='".$orderQuantity."' data-date='".$orderDate."' data-amount='".$amount."' data-status='".$status."' class='cursor-pointer'>
+                    <td class='border-2 py-2'>#DH0" . ($row["orderID"] < 10 ? "0".$row["orderID"] : $row["orderID"] ) . "</td>
                     <td class='border-2 py-2'>" . $row["orderDate"] . "</td>
                     <td class='border-2 py-2'>" . $amount . "</td>
                     <td class='border-2 py-2'>
-                        <span class='bg-" . ($row["status"] == 4 ? "red" : "green") . "-100 text-" . ($row["status"] == 4 ? "red" : "green") . "-500 py-1 px-2 rounded-lg w-fit'>" . $status . "</span>
-                    </td>
-                    <td class='border-2 py-2'>
-                        <button class='btn btn-danger'>Chuyển</button>
+                        <span class='bg-" . ($status == 4 ? "red" : "green") . "-100 text-" . ($status == 4 ? "red" : "green") . "-500 py-1 px-2 rounded-lg w-fit'>" . $newStatus . "</span>
                     </td>
                 </tr>
             ";
@@ -121,37 +114,40 @@
                     const status = this.getAttribute("data-status");
                     let modalBody = document.querySelector("#orderModal .modal-body");
                     let modalFooter = document.querySelector("#orderModal .modal-footer");
-                    const arrStatus = ["Chờ nhận đơn", "Đang chế biến", "Chế biến xong", "Hoàn thành"];
-                    const arrNew = [];
+                    const arrStatus = ["Chờ nhận đơn", "Đang chế biến", "Chế biến xong", "Hoàn thành", "Đã hủy"];
+                    let newStatus = arrStatus[status];
 
-                    const index = arrStatus.indexOf(status);
-                    let j = 0;
-                    if (index != -1)
-                        for (let i = 0; i < arrStatus.length; i++) {
-                            if (i != index) {
-                                arrNew[j] = arrStatus[i];
-                                j++;
-                            }
-                        }
-
-                    document.getElementById("orderModalLabel").textContent = "Chi tiết đơn hàng #101" + orderID;
+                    document.getElementById("orderModalLabel").textContent = "Chi tiết đơn hàng #DH0" + (orderID < 10 ? "0" + orderID : orderID);
                     modalBody.innerHTML = `<form action="" class="form-container w-full">
-                        <table>
-                            <tr><td>Họ tên: ${cusName}</td></tr>
-                            <tr><td>Ngày &amp; giờ đặt: ${orderDate}</td></tr>
+                        <table class='w-full'>
                             <tr>
-                                <td>
-                                    Món: ${orderName} - Số lượng: ${orderQuantity}
+                                <td class='flex'>
+                                    <label class='font-bold mr-2'>Họ tên:</label>
+                                    <p>${cusName}</p>
                                 </td>
                             </tr>
-                            <tr><td>Tổng giá trị đơn: ${amount} VND</td></tr>
                             <tr>
-                                <td>
-                                    <select name="status" id="status" class="w-full form-control" required>
-                                        <option value="${status}">${status}</option>
-                                        <option value="${arrNew[0]}">${arrNew[0]}</option>
-                                        <option value="${arrNew[1]}">${arrNew[1]}</option>
-                                    </select>
+                                <td class='flex'>
+                                    <label class='font-bold mr-2'>Ngày &amp; giờ đặt:</label>
+                                    <p>${orderDate}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class='flex'>
+                                    <label class='font-bold mr-2'>Món:</label>
+                                    <p>${orderName} - Số lượng: ${orderQuantity}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class='flex'>
+                                    <label class='font-bold mr-2'>Tổng giá trị đơn:</label>
+                                    <p>${amount}</p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class='flex'>
+                                    <label class='font-bold mr-2'>Trạng thái:</label>
+                                    <p>${newStatus}</p>
                                 </td>
                             </tr>
                         </table>
@@ -159,7 +155,7 @@
 
                     modalFooter.innerHTML = `
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary" name="btnsua" value="${orderID}">Xác nhận</button>`;
+                    <button type="submit" class="btn btn-danger" name="btnchuyen" value="${orderID}/${status}">Chuyển</button>`;
 
                     const orderModal = new bootstrap.Modal(document.getElementById("orderModal"));
                     orderModal.show();

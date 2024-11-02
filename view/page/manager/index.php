@@ -33,6 +33,9 @@
 
     <!-- Bootstrap Bundle JS  -->
     <script src="../../js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Sweet Alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         .activeAd {
@@ -110,21 +113,48 @@
             background-color: #ddd;
             border-radius: 5px;
         }
+        
+        .swal2-icon {
+            font-size: 1rem;
+        }
+        
+        .swal2-title {
+            font-size: 1.5rem;
+        }
+        
+        .swal2-cancel {
+            margin-right: 5px;
+        }
+        
+        .swal2-confirm {
+            margin-left: 5px;
+        }
     </style>
 </head>
 <?php
+/* Xử lý ban đầu */
+ini_set("session.cookie_lifetime", 0);
 error_reporting(1);
 session_start();
 
+/* Kết nói control */
 include("../../../model/connect.php");
 include("../../../controller/cCategories.php");
 include("../../../controller/cPromotions.php");
 include("../../../controller/cDishes.php");
 include("../../../controller/cIngredients.php");
 
+/* Xử lý đăng nhập */
 if ($_SESSION["login"] != 1)
     echo "<script>window.location.href = '../login/';</script>";
+    
+/* Xóa session login sau 1p - ngăn chặn truy cập do user chưa đăng xuất */
 
+if (isset($_SESSION["LAST_ACTIVITY"]) && (time() - $_SESSION["LAST_ACTIVITY"] > $sessionTimeout)) {
+    unset($_SESSION["login"]);
+}
+
+/* Kết nối database */
 $db = new Database();
 $conn = $db->connect();
 
@@ -175,6 +205,9 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="proposal" href="index.php?i=proposal">
                     <i class="fa-solid fa-paper-plane mr-3"></i>Đề xuất
                 </a>
+                <a href="#" onclick="logout()" class="flex items-center py-2 px-8 text-white border-y-2 bg-gray-700 border-gray-500 mt-4 hover:bg-gray-700 hover:text-white adnav">
+                    <i class="fa-solid fa-right-from-bracket mr-3"></i>Đăng xuất
+                </a>
             </nav>
         </div>
         <div class="bg-gray-100 flex-1 p-6 h-fit pb-2 md:p-10" id="right">
@@ -194,10 +227,6 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                             echo $_SESSION["userName"];
                             ?>
                         </span>
-
-                        <div class="subnav absolute top-11 right-0 bg-white rounded-lg bg-gray-500 h-fit p-2 text-center border-2">
-                            <a href="index.php?m=logout">Đăng xuất <i class="fa-solid fa-right-from-bracket"></i></a>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -215,12 +244,6 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 require("" . $_REQUEST["i"] . "/index.php");
             } else {
                 require("home/index.php");
-            }
-
-            if (isset($_GET["m"])) {
-                unset($_SESSION["userName"]);
-                unset($_SESSION["login"]);
-                echo "<script> if(confirm('Chắc chắn đăng xuất?') == true) window.location.href = '../login/'</script>";
             }
             ?>
         </div>
@@ -263,6 +286,28 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 else item.classList.remove("activeAd");
             });
         });
+        
+        function logout() {
+            const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: "btn btn-success",
+                    cancelButton: "btn btn-danger"
+                },
+                buttonsStyling: false
+            });
+            swalWithBootstrapButtons.fire({
+                title: "Bạn chắc chắn muốn đăng xuất?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Đồng ý",
+                cancelButtonText: "Hủy",
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "../logout/";
+                }
+            });
+        }
     </script>
 </body>
 

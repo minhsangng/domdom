@@ -76,6 +76,13 @@ class cDishes extends mDishes
             echo "<script>alert('Cập nhật món ăn thành công!')</script>";
         }
     }
+    
+    public function cUpdateDishAvailabilityStatus($availability, $dishID)
+    {
+        if ($this->mUpdateDishAvailabilityStatus($availability, $dishID) != 0) {
+            echo "<script>alert('Cập nhật món ăn thành công!')</script>";
+        }
+    }
 
     public function cLockDish($status, $dishID)
     {
