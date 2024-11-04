@@ -97,7 +97,6 @@
 </head>
 <?php
 /* Xử lý ban đầu */
-ini_set("session.cookie_lifetime", 0);
 error_reporting(1);
 session_start();
 
@@ -108,15 +107,10 @@ include("../../../controller/cDishes.php");
 include("../../../controller/cIngredients.php");
 
 /* Xử lý đăng nhập */
-if ($_SESSION["login"] != 1)
+if (!isset($_SESSION["login"])) {
     echo "<script>window.location.href = '../login/';</script>";
-
-/* Xóa session login sau 1p - ngăn chặn truy cập do user chưa đăng xuất */
-
-if (isset($_SESSION["LAST_ACTIVITY"]) && (time() - $_SESSION["LAST_ACTIVITY"] > $sessionTimeout)) {
-    unset($_SESSION["login"]);
 }
- 
+
 /* Kết nối database */
 $db = new Database();
 $conn = $db->connect();
@@ -192,21 +186,32 @@ $conn = $db->connect();
                 require("" . $_REQUEST["i"] . "/index.php");
             else if ($i == "home")
                 require("home/index.php");
-<<<<<<< HEAD
-=======
-
-            if (isset($_GET["m"])) {
-                unset($_SESSION["userName"]);
-                unset($_SESSION["login"]);
-                echo "<script> if(confirm('Chắc chắn đăng xuất?') == true) window.location.href = '../login/'</script>";
-            }
->>>>>>> 87070c94e933ca899e1cb23cb5265b4e926fbbf4
             ?>
         </div>
     </div>
     </div>
 
     <script>
+        /* Nếu thoát khỏi trang sẽ xóa tất cả session - ngắn chặn truy cập khi chưa đăng nhập */
+        document.addEventListener("DOMContentLoaded", () => {
+            let targetUrl = "";
+            document.querySelectorAll("a").forEach(link => {
+                link.addEventListener("click", function(event) {
+                    targetUrl = event.currentTarget.href;
+                });
+            });
+            
+            window.onbeforeunload = function() {
+                const navigationEntries = performance.getEntriesByType("navigation");
+                if (navigationEntries.length > 0) {
+                    const navigationType = navigationEntries[0].type;
+                    if (navigationType !== "reload" && (!targetUrl || new URL(targetUrl).origin !== window.location.origin)) {
+                        navigator.sendBeacon("../logout/index.php");
+                    }
+                }
+            };
+        });
+
         function adjustContentHeight() {
             var rightSession = document.getElementById("right");
 

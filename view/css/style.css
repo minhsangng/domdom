@@ -6,12 +6,12 @@
     --fifth-color: #66BB6A;
 }
 
-@font-face {
+/* @font-face {
     font-family: "iCiel Stormtrooper";
     src: url("fonts/iCiel-Stormtrooper-Regular.otf") format("opentype");
     font-weight: normal;
     font-style: normal;
-}
+} */
 
 .nav-link {
     font-weight: 600 !important;
