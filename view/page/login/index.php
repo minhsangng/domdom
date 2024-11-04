@@ -78,6 +78,7 @@
 
 <?php
 session_start();
+
 include("../../../model/connect.php");
 $db = new Database;
 $conn = $db->connect();
@@ -150,9 +151,7 @@ if (isset($_POST["btndn"])) {
                             class="ml-6 mr-1 size-4 rounded-full peer/role4 accent-amber-700" /><label for="role4" 
                             class="text-gray-500 peer-checked/role4:text-amber-700">NVB</label>
                     </div> -->
-                    <button class="w-full text-white py-2 px-4 rounded-lg btn btn-primary" name="btndn">
-                        Đăng nhập
-                    </button>
+                    <button class="w-full text-white py-2 px-4 rounded-lg btn btn-primary" name="btndn">Đăng nhập</button>
                 </form>
             </div>
         </div>
