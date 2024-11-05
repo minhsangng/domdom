@@ -172,8 +172,8 @@
             <h2 class="text-lg font-semibold mb-4">Đơn hàng trong tuần</h2>
 
             <?php
-            $sql = "SELECT * FROM `order` WHERE orderDate>= '$startW' AND orderDate <= '$endW' GROUP BY customerID ORDER BY orderDate DESC";
-            $result = $conn->query($sql);
+            $ctrl = new cOrders;
+            $result = $ctrl->cGetAllOrderRangeOf($startW, $endW);
 
             if ($result->num_rows != 0) {
                 echo "

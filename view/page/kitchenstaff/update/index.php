@@ -9,8 +9,14 @@ if (isset($_POST["btnchuyen"])) {
     else
         $newStatus = 0;
 
-    $sql = "UPDATE `order` SET status = $newStatus WHERE orderID = $id";
-    $result = $conn->query($sql);
+    $ctrl = new cOrders;
+    $result = $ctrl->cUpdateStatusOrder($id, $newStatus);
+
+    $ctrlMessage = new cMessage;
+    if ($result != 0)
+        $ctrlMessage->successMessage("Cập nhật trạng thái");
+    else
+        $ctrlMessage->errorMessage("Cập nhật trạng thái");
 }
 ?>
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
@@ -30,26 +36,27 @@ if (isset($_POST["btnchuyen"])) {
                 $result = $conn->query($sql);
             }
 
-            $sql = "SELECT * FROM `order` AS O JOIN `customer` AS C ON O.customerID = C.customerID JOIN `order_dish` AS OD ON OD.orderID = O.orderID JOIN `dish` AS D ON D.dishID = OD.dishID";
-            $result = $conn->query($sql);
+            $ctrl = new cOrders;
 
-            if ($result->num_rows > 0) {
+            if ($ctrl->cGetAllOrderFully() != 0) {
+                $result = $ctrl->cGetAllOrderFully();
+
                 echo "
-            <table class='w-full text-base text-center'>
-                <thead>
-                    <tr>
-                        <th class='text-gray-600 border-2 py-2'>Mã đơn</th>
-                        <th class='text-gray-600 border-2 py-2'>Ngày &amp; giờ</th>
-                        <th class='text-gray-600 border-2 py-2'>Tổng giá trị</th>
-                        <th class='text-gray-600 border-2 py-2'>Trạng thái</th>
-                    </tr>
-                </thead>
-            <tbody>
-            ";
+                    <table class='w-full text-base text-center'>
+                        <thead>
+                            <tr>
+                                <th class='text-gray-600 border-2 py-2'>Mã đơn</th>
+                                <th class='text-gray-600 border-2 py-2'>Ngày &amp; giờ</th>
+                                <th class='text-gray-600 border-2 py-2'>Tổng giá trị</th>
+                                <th class='text-gray-600 border-2 py-2'>Trạng thái</th>
+                            </tr>
+                        </thead>
+                    <tbody>
+                    ";
                 while ($row = $result->fetch_assoc()) {
                     $amount = number_format($row["total"], 2, '.', ',');
                     $orderID = $row["orderID"];
-                    $cusName = $row["fulName"];
+                    $cusName = $row["fullName"];
                     $orderName = $row["dishName"];
                     $orderQuantity = $row["quantity"];
                     $orderDate = $row["orderDate"];
@@ -80,9 +87,6 @@ if (isset($_POST["btnchuyen"])) {
                     <td class='border-2 py-2'>" . $amount . "</td>
                     <td class='border-2 py-2'>
                         <span class='bg-" . ($status == 4 ? "red" : "green") . "-100 text-" . ($status == 4 ? "red" : "green") . "-500 py-1 px-2 rounded-lg w-fit'>" . $newStatus . "</span>
-                    </td>
-                    <td class='border-2 py-2'>
-                        <button class='btn btn-danger'>Chuyển</button>
                     </td>
                 </tr>
             ";
@@ -148,7 +152,7 @@ if (isset($_POST["btnchuyen"])) {
                             <tr>
                                 <td class='flex'>
                                     <label class='font-bold mr-2'>Món:</label>
-                                    <p>${orderName} - Số lượng: ${orderQuantity}</p>
+                                    <p>${orderName} (${orderQuantity})</p>
                                 </td>
                             </tr>
                             <tr>

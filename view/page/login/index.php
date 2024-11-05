@@ -35,6 +35,10 @@
 
     <!-- Bootstrap JS (bundle includes Popper.js) -->
     <script src="../../../view/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Sweet Alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
         body {
             font-family: "Playwrite DE Grund", cursive;
@@ -73,6 +77,24 @@
                 transform: translate(calc(100vw - 10px), calc(100vh - 10px));
             }
         }
+        
+        .swal2-modal {
+            width: 50%;
+            border-radius: 15px;
+        }
+        
+        .swal2-icon {
+            font-size: 0.8rem;
+        }
+        
+        .swal2-title {
+            font-size: 1.3rem;
+        }
+        
+        .swal2-confirm {
+            border-radius: 8px;
+            padding: 6px 20px;
+        }
     </style>
 </head>
 
@@ -87,33 +109,53 @@ if (isset($_POST["btndn"])) {
     $email = $_POST["email"];
     $psw = $_POST["psw"];
     if (empty($email) || empty($psw))
-        echo "<script>alert('Thông tin chưa hợp lệ. Vui lòng nhập lại!');</script>";
-    else
+        echo "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    title: 'Vui lòng nhập đầy đủ thông tin!',
+                    icon: 'warning',
+                    confirmButtonColor: 'red',
+                    confirmButtonText: 'Đồng ý'
+                });
+            });
+        </script>";
+    else {
         $sql = "SELECT * FROM user WHERE email = '$email' AND password = '$psw'";
-    
-    $result = $conn->query($sql);
+        $result = $conn->query($sql);
 
-    $row = $result->fetch_assoc();
+        $row = $result->fetch_assoc();
 
-    if ($result->num_rows > 0) {
-        $_SESSION["userName"] = $row["userName"];
-        $_SESSION["login"] = 1;
+        if ($result->num_rows > 0) {
+            $_SESSION["userName"] = $row["userName"];
+            $_SESSION["login"] = 1;
 
-        switch ($row["roleID"]) {
-            case 1:
-                echo "<script>window.location.href = '../admin/index.php'</script>";
-                break;
-            case 2:
-                echo "<script>window.location.href = '../manager/index.php'</script>";
-                break;
-            case 3:
-                echo "<script>window.location.href = '../orderstaff/index.php'</script>";
-                break;
-            case 4:
-                echo "<script>window.location.href = '../kitchenstaff/index.php'</script>";
-                break;
+            switch ($row["roleID"]) {
+                case 1:
+                    echo "<script>window.location.href = '../admin/index.php'</script>";
+                    break;
+                case 2:
+                    echo "<script>window.location.href = '../manager/index.php'</script>";
+                    break;
+                case 3:
+                    echo "<script>window.location.href = '../orderstaff/index.php'</script>";
+                    break;
+                case 4:
+                    echo "<script>window.location.href = '../kitchenstaff/index.php'</script>";
+                    break;
+            }
+        } else {
+            echo "<script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    Swal.fire({
+                        title: 'Thông tin đăng nhập không hợp lệ. Vui lòng nhập lại!',
+                        icon: 'warning',
+                        confirmButtonColor: 'red',
+                        confirmButtonText: 'Đồng ý'
+                    });
+                });
+            </script>";
         }
-    } else echo "<script>alert('Thông tin chưa hợp lệ. Vui lòng nhập lại!');</script>";
+    }
 }
 ?>
 

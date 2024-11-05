@@ -33,7 +33,7 @@
 
     <!-- Bootstrap JS (bundle includes Popper.js) -->
     <script src="../../js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Sweet Alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -86,21 +86,25 @@
             padding: 20px;
             margin-top: 20px;
         }
-        
+
         .swal2-icon {
             font-size: 1rem;
         }
-        
+
         .swal2-title {
             font-size: 1.5rem;
         }
-        
+
         .swal2-cancel {
             margin-right: 5px;
         }
-        
+
         .swal2-confirm {
             margin-left: 5px;
+        }
+
+        .swal2-top-end {
+            width: 26% !important;
         }
     </style>
 </head>
@@ -114,6 +118,8 @@ include("../../../model/connect.php");
 include("../../../controller/cPromotions.php");
 include("../../../controller/cDishes.php");
 include("../../../controller/cIngredients.php");
+include("../../../controller/cOrders.php");
+include("../../../controller/cMessage.php");
 
 /* Xử lý đăng nhập */
 if (!isset($_SESSION["login"]))
@@ -203,24 +209,38 @@ $conn = $db->connect();
     </div>
 
     <script>
-        /* Nếu thoát khỏi trang sẽ xóa tất cả session - ngắn chặn truy cập khi chưa đăng nhập */
+        /* Nếu thoát khỏi trang sẽ xóa tất cả session - ngăn chặn truy cập khi chưa đăng nhập */
         document.addEventListener("DOMContentLoaded", () => {
             let targetUrl = "";
+            let isFormSubmitting = false;
+
             document.querySelectorAll("a").forEach(link => {
                 link.addEventListener("click", function(event) {
                     targetUrl = event.currentTarget.href;
                 });
             });
-            
-            window.onbeforeunload = function() {
-                const navigationEntries = performance.getEntriesByType("navigation");
-                if (navigationEntries.length > 0) {
-                    const navigationType = navigationEntries[0].type;
-                    if (navigationType !== "reload" && (!targetUrl || new URL(targetUrl).origin !== window.location.origin)) {
+
+            document.querySelectorAll("form").forEach(form => {
+                form.addEventListener("submit", function(event) {
+                    isFormSubmitting = true;
+                });
+            });
+
+            let hasNavigatedAway = false;
+
+            document.addEventListener("visibilitychange", () => {
+                if (document.visibilityState === "hidden") {
+                    hasNavigatedAway = true;
+                }
+            });
+
+            window.addEventListener("beforeunload", (event) => {
+                if (!isFormSubmitting && hasNavigatedAway && (!targetUrl || new URL(targetUrl).origin !== window.location.origin)) {
+                    if (performance.navigation.type !== 1) {
                         navigator.sendBeacon("../logout/index.php");
                     }
                 }
-            };
+            });
         });
 
         function adjustContentHeight() {

@@ -118,6 +118,8 @@ include("../../../model/connect.php");
 include("../../../controller/cPromotions.php");
 include("../../../controller/cDishes.php");
 include("../../../controller/cIngredients.php");
+include("../../../controller/cOrders.php");
+include("../../../controller/cMessage.php");
 
 /* Kiểm soát truy cập */
 if (!isset($_SESSION["login"]))
@@ -224,24 +226,38 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
     </div>
 
     <script>
-        /* Nếu thoát khỏi trang sẽ xóa tất cả session - ngắn chặn truy cập khi chưa đăng nhập */
+        /* Nếu thoát khỏi trang sẽ xóa tất cả session - ngăn chặn truy cập khi chưa đăng nhập */
         document.addEventListener("DOMContentLoaded", () => {
             let targetUrl = "";
+            let isFormSubmitting = false;
+
             document.querySelectorAll("a").forEach(link => {
                 link.addEventListener("click", function(event) {
                     targetUrl = event.currentTarget.href;
                 });
             });
-            
-            window.onbeforeunload = function() {
-                const navigationEntries = performance.getEntriesByType("navigation");
-                if (navigationEntries.length > 0) {
-                    const navigationType = navigationEntries[0].type;
-                    if (navigationType !== "reload" && (!targetUrl || new URL(targetUrl).origin !== window.location.origin)) {
+
+            document.querySelectorAll("form").forEach(form => {
+                form.addEventListener("submit", function(event) {
+                    isFormSubmitting = true;
+                });
+            });
+
+            let hasNavigatedAway = false;
+
+            document.addEventListener("visibilitychange", () => {
+                if (document.visibilityState === "hidden") {
+                    hasNavigatedAway = true;
+                }
+            });
+
+            window.addEventListener("beforeunload", (event) => {
+                if (!isFormSubmitting && hasNavigatedAway && (!targetUrl || new URL(targetUrl).origin !== window.location.origin)) {
+                    if (performance.navigation.type !== 1) {
                         navigator.sendBeacon("../logout/index.php");
                     }
                 }
-            };
+            });
         });
 
         function adjustContentHeight() {
