@@ -11,6 +11,7 @@ class cMessage
                     position: 'top-end',
                     timer: 2000,
                     timerProgressBar: true,
+                    showConfirmButton: false,
                     didOpen: (toast) => {
                       toast.onmouseenter = Swal.stopTimer;
                       toast.onmouseleave = Swal.resumeTimer;
@@ -34,6 +35,7 @@ class cMessage
                     position: 'top-end',
                     timer: 2000,
                     timerProgressBar: true,
+                    showConfirmButton: false,
                     didOpen: (toast) => {
                       toast.onmouseenter = Swal.stopTimer;
                       toast.onmouseleave = Swal.resumeTimer;

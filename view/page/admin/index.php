@@ -110,6 +110,7 @@
 </head>
 <?php
 /* Điều kiện ban đầu */
+session_set_cookie_params(0);
 error_reporting(1);
 session_start();
 
@@ -253,7 +254,7 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
 
             window.addEventListener("beforeunload", (event) => {
                 if (!isFormSubmitting && hasNavigatedAway && (!targetUrl || new URL(targetUrl).origin !== window.location.origin)) {
-                    if (performance.navigation.type !== 1) {
+                    if (performance.navigation.type != 1) {
                         navigator.sendBeacon("../logout/index.php");
                     }
                 }

@@ -55,37 +55,9 @@
 
         #calendar {
             display: grid;
-            grid-template-columns: repeat(7, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 10px;
             margin: 20px 0;
-        }
-
-        .day {
-            border: 1px solid #ccc;
-            padding: 20px;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .dot {
-            width: 10px;
-            height: 10px;
-            background-color: orange;
-            border-radius: 50%;
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            display: none;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        #info {
-            border: 1px solid #ccc;
-            padding: 20px;
-            margin-top: 20px;
         }
 
         .pagination {
@@ -133,6 +105,7 @@
 </head>
 <?php
 /* Xử lý ban đầu */
+session_set_cookie_params(0);
 error_reporting(1);
 session_start();
 
@@ -143,6 +116,7 @@ include("../../../controller/cPromotions.php");
 include("../../../controller/cDishes.php");
 include("../../../controller/cIngredients.php");
 include("../../../controller/cOrders.php");
+include("../../../controller/cEmployees.php");
 include("../../../controller/cMessage.php");
 
 /* Xử lý đăng nhập */
@@ -219,7 +193,7 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                         <img alt="User Avatar" class="rounded-full mr-1 border-solid border-2" height="40" width="40" src="../../../images/user.png" />
                         <span class="text-xs font-bold ml-1">
                             <?php
-                            echo $_SESSION["userName"];
+                            echo $_SESSION["user"][0];
                             ?>
                         </span>
                     </div>
@@ -266,14 +240,14 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
             let hasNavigatedAway = false;
 
             document.addEventListener("visibilitychange", () => {
-                if (document.visibilityState === "hidden") {
+                if (document.visibilityState == "hidden") {
                     hasNavigatedAway = true;
                 }
             });
 
             window.addEventListener("beforeunload", (event) => {
-                if (!isFormSubmitting && hasNavigatedAway && (!targetUrl || new URL(targetUrl).origin !== window.location.origin)) {
-                    if (performance.navigation.type !== 1) {
+                if (!isFormSubmitting && hasNavigatedAway && (!targetUrl || new URL(targetUrl).origin != window.location.origin)) {
+                    if (performance.navigation.type != 1) {
                         navigator.sendBeacon("../logout/index.php");
                     }
                 }
