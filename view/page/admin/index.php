@@ -200,7 +200,15 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                         <img alt="User Avatar" class="rounded-full mr-1 border-solid border-2" height="40" width="40" src="../../../images/user.png" />
                         <span class="text-xs font-bold ml-1">
                             <?php
-                            echo $_SESSION["userName"];
+                            echo $_SESSION["user"][0];
+                            
+                            $userName = $_SESSION["user"][0];
+
+                            $sql = "SELECT userID FROM user WHERE userName = '$userName'";
+                            $result = $conn->query($sql);
+                            $row = $result->fetch_assoc();
+
+                            $_SESSION["user"][] = $row["userID"];
                             ?>
                         </span>
                     </div>

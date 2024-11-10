@@ -46,6 +46,8 @@
 
         .firefly {
             position: absolute;
+            top: 0;
+            left: 0;
             background-color: rgba(255, 223, 0, 0.6);
             border-radius: 50%;
             box-shadow: 0 0 8px rgba(255, 223, 0, 0.8);

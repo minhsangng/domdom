@@ -82,9 +82,9 @@ if (isset($_POST["btnchuyen"])) {
 
                     echo "
                 <tr data-id='$orderID' data-cus='$cusName' data-name='$orderName' data-quan='$orderQuantity' data-date='$orderDate' data-amount='$amount' data-status='$status' class='cursor-pointer'>
-                    <td class='border-2 py-2'>#101" . $row["orderID"] . "</td>
+                    <td class='border-2 py-2'>#DH0" . ($row["orderID"] < 10 ? "0" . $row["orderID"] : $row["orderID"]) . "</td>
                     <td class='border-2 py-2'>" . $row["orderDate"] . "</td>
-                    <td class='border-2 py-2'>" . $amount . "</td>
+                    <td class='border-2 py-2'>" . str_replace(".00", "", $amount) . "</td>
                     <td class='border-2 py-2'>
                         <span class='bg-" . ($status == 4 ? "red" : "green") . "-100 text-" . ($status == 4 ? "red" : "green") . "-500 py-1 px-2 rounded-lg w-fit'>" . $newStatus . "</span>
                     </td>

@@ -22,6 +22,26 @@ class mOrders
         return 0;
     }
     
+    public function mUpdateOrder($orderID)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "UPDATE `order` SET sumOfQuantity = (SELECT SUM(quantity) FROM `order_dish` GROUP BY orderID HAVING orderID = $orderID), total = (SELECT SUM(totalPrice) FROM `order_dish` GROUP BY orderID HAVING orderID = $orderID) WHERE orderID = $orderID";
+        if ($conn != null) 
+            return $conn->query($sql);
+        return 0;
+    }
+    
+    public function mUpdateOrderDish($orderID, $dishID)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "UPDATE `order_dish` SET totalPrice = (SELECT price FROM dish WHERE dishID = $dishID) * quantity WHERE orderID = $orderID";
+        if ($conn != null) 
+            return $conn->query($sql);
+        return 0;
+    }
+    
     public function mUpdateStatusOrder($orderID, $status) {
         $db = new Database;
         $conn = $db->connect();
@@ -29,6 +49,22 @@ class mOrders
         if ($conn != null)
             return $conn->query($sql);
         return 0;
+    }
+    
+    public function mInsertOrder($customerID, $paymentMethod) {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "INSERT INTO `order` (customerID, paymentMethod) VALUES ($customerID, '$paymentMethod')";
+        
+        return $conn->query($sql);
+    }
+    
+    public function mInsertOrderDish($orderID, $dishID, $quantity) {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "INSERT INTO `order_dish` (orderID, dishID, quantity) VALUES ($orderID, $dishID, $quantity)";
+        
+        return $conn->query($sql);
     }
     
     public function mGetAllOrderFully()

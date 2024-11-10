@@ -1,15 +1,7 @@
-<style>
-    #content {
-        height: 100% !important;
-    }
-</style>
-
 <?php
 echo "<script>document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('create').classList.add('activeAd');
     });</script>";
-
-/* session_destroy(); */
 
 if (!isset($_SESSION["product"])) {
     $_SESSION["product"] = [];
@@ -49,6 +41,17 @@ if (isset($_GET["p"])) {
         }
     }
 }
+
+if (isset($_POST["btntt"])) {
+    echo "<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            var modal = new bootstrap.Modal(document.querySelector('.modalPayment'));
+            modal.show();
+        });
+    </script>";
+}
+
+$_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
 
 ?>
 
@@ -112,40 +115,46 @@ if (isset($_GET["p"])) {
                 </div>
                 <div class="mb-8">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold">Best Sellers</h2>
+                        <h2 class="text-xl font-bold">Món ưa dùng</h2>
                     </div>
                     <div class="grid grid-cols-4 gap-4">
                         <?php
-                        $sql = "SELECT *, SUM(OD.quantity) AS MaxQuantity FROM `order` AS O JOIN `order_dish` AS OD ON O.orderID = OD.orderID JOIN `dish` AS D ON D.dishID = OD.dishID GROUP BY OD.dishID ORDER BY MaxQuantity DESC LIMIT 4";
-                        $result = $conn->query($sql);
+                        $ctrl = new cDishes;
+                        
+                        if ($ctrl->cGetDishTop() != 0) {
+                            $result = $ctrl->cGetDishTop();
 
-                        while ($row = $result->fetch_assoc()) {
-                            echo "<div class='card px-auto py-3 rounded'>
-                                <a href='index.php?i=create&p=" . $row["dishID"] . "' class='text-center flex flex-col items-center'>
-                                    <img alt='" . $row["dishName"] . "' class='mb-2 rounded-md size-28' src='../../../images/dish/" . $row["image"] . "'/>
-                                    <h2 class='text-base font-bold my-1'>" . $row["dishName"] . "</h2>
-                                    <p class='text-sm text-red-400'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . " đ</p>
-                                </a>
-                            </div>";
-                        }
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<div class='card px-auto py-3 rounded'>
+                                    <a href='index.php?i=create&p=" . $row["dishID"] . "' class='text-center flex flex-col items-center'>
+                                        <img alt='" . $row["dishName"] . "' class='mb-2 rounded-md size-28' src='../../../images/dish/" . $row["image"] . "'/>
+                                        <h2 class='text-base font-bold my-1'>" . $row["dishName"] . "</h2>
+                                        <p class='text-sm text-red-400'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . " đ</p>
+                                    </a>
+                                </div>";
+                            }
+                        } else echo "Không có dữ liệu!";
                         ?>
                     </div>
                 </div>
             </div>
             <div class="w-2/5 pl-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold">Thông tin đơn hàng</h2>
+                </div>
                 <div class="card p-4 rounded mb-8">
-                    <form action="" method="POST" class="formaway mb-0">
-                        <h2 class="text-xl font-bold pb-2 mb-3 border-b">Hình thức mua hàng</h2>
+                    <form action="" method="POST" class="formmethod mb-0">
+                        <h2 class="text-lg font-bold pb-2 mb-3 border-b">Hình thức mua hàng</h2>
                         <div class="flex items-center">
-                            <input class="mr-2 size-4" id="dinein" name="delivery" type="radio" />
+                            <input class="mr-2 size-4" id="dinein" value="1" name="delivery" <?php echo $_SESSION["delivery"] == 1 ? "checked" : ""; ?> type="radio" />
                             <label class="text-base" for="dinein">Tại quán</label>
-                            <input class="ml-4 mr-2 size-4" id="takeaway" name="delivery" type="radio" />
+                            <input class="ml-4 mr-2 size-4" id="takeaway" value="2" name="delivery" <?php echo $_SESSION["delivery"] == 2 ? "checked" : ""; ?> type="radio" />
                             <label class="text-base" for="takeaway">Mang đi</label>
                         </div>
                     </form>
                 </div>
                 <div class="card p-4 rounded">
-                    <h2 class="text-xl font-bold pb-2 mb-3 border-b">Thông tin đơn hàng</h2>
+                    <h2 class="text-lg font-bold pb-2 mb-3 border-b">Món ăn</h2>
                     <?php
                     $ctrl = new cDishes;
 
@@ -168,17 +177,20 @@ if (isset($_GET["p"])) {
                             $productID = (int)$product["id"];
                             $quantity = $product["quantity"];
 
-                            $sql = "SELECT * FROM `dish` WHERE dishID = $productID";
-                            $result = $conn->query($sql);
-                            $row = $result->fetch_assoc();
+                            $ctrl = new cDishes;
 
-                            echo "<div class='flex justify-between items-center mb-2'>
-                                    <span class='font-bold w-4/6'>" . $row["dishName"] . "</span>
-                                    <input type='number' name='quantity[" . $productID . "]' value='" . $quantity . "' class='w-1/6 text-center quantityInput mr-2' data-id='" . $productID . "' data-name='" . $row["dishName"] . "' data-price='" . $row["price"] . "'>
-                                    <button type='submit' name='btnxoa' value='" . $productID . "' class='btn btn-secondary w-1/6 ml-2'>Xóa</button>
-                                </div>";
+                            if ($ctrl->cGetDishById($productID) != 0) {
+                                $result = $ctrl->cGetDishById($productID);
+                                $row = $result->fetch_assoc();
 
-                            $total += $row["price"] * $quantity;
+                                echo "<div class='flex justify-between items-center mb-2'>
+                                        <span class='font-bold w-4/6'>" . $row["dishName"] . "</span>
+                                        <input type='number' name='quantity[" . $productID . "]' value='" . $quantity . "' class='w-1/6 text-center quantityInput mr-2' data-id='" . $productID . "' data-name='" . $row["dishName"] . "' data-price='" . $row["price"] . "'>
+                                        <button type='submit' name='btnxoa' value='" . $productID . "' class='btn btn-secondary w-1/6 ml-2'><i class='fa-solid fa-trash-can'></i></button>
+                                    </div>";
+
+                                $total += $row["price"] * $quantity;
+                            }
                         }
                         echo "</form>";
                     }
@@ -193,12 +205,90 @@ if (isset($_GET["p"])) {
                             <span class="text-lg font-bold">Tổng thanh toán:</span>
                             <span class="text-lg font-bold finalTotal"><?php echo str_replace(".00", "", number_format($total, "2", ".", ",")) . " đ"; ?></span>
                         </div>
-                        <button class="btn btn-danger w-full p-2 rounded" type="submit">Thanh toán</button>
+                        <button class="btn btn-danger w-full p-2 rounded" name="btntt" type="submit">Thanh toán</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<div class="modal modalPayment fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="min-width: 50%;">
+        <div class="modal-content h-full">
+            <form action="" method="POST">
+                <div class="modal-header justify-center">
+                    <h2 class="modal-title fs-5 font-bold text-3xl text-[#E67E22]" id="paymentModalLabel">Thông tin thanh toán</h2>
+                </div>
+                <div class="modal-body flex">
+                    <div class="w-2/3 mr-2 p-2 border rounded-lg">
+                        <table class="w-full">
+                            <tbody>
+                                <tr>
+                                    <th colspan="2" class=" text-[#EF5350]">Hình thức thanh toán</th>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold pl-3 py-1 w-32 flex items-start">Tiền mặt</td>
+                                    <td class="divMoney"><input type="text" class="form-control m-0 pr-3" name="money" id="" placeholder="Số tiền thanh toán"></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold pl-3 py-1 w-32 flex items-start">Ví điện tử</td>
+                                    <td class="divMoney"><input type="text" class="form-control m-0 pr-3" name="money" id="" placeholder="Số tiền thanh toán"></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold pl-3 py-1 w-32 flex items-start">Ngân hàng</td>
+                                    <td class="divMoney"><input type="text" class="form-control m-0 pr-3" name="money" id="" placeholder="Số tiền thanh toán"></td>
+                                </tr>
+
+                                <tr>
+                                    <th colspan="2" class="mt-4 text-[#EF5350]">Áp dụng khuyến mãi</th>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="py-1"><input type="text" class="form-control m-0" name="promotionID" id="" value="" placeholder="Nhập mã khuyến mãi (nếu có)">
+                                        <p class="promotionID text-gray-500 italic text-sm mt-2"></p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="w-1/3 ml-2 p-2 border rounded-lg">
+                        <table class="w-full">
+                            <tbody>
+                                <tr>
+                                    <th colspan="2" class=" text-[#EF5350]">Thanh toán</th>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold pl-3 py-1">Tổng đơn</td>
+                                    <td><span class="totalOrder"><?php echo str_replace(".00", "", number_format($total, "2", ".", ",")) . " đ"; ?></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold pl-3 py-1">Khuyến mãi</td>
+                                    <td><span class="promotion">0%</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold pl-3 py-1">Phải trả</td>
+                                    <td><span class="total"><?php echo str_replace(".00", "", number_format($total, "2", ".", ",")) . " đ"; ?></span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold pl-3 py-1">Khách trả</td>
+                                    <td><span class="customerPay">0</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold pl-3 py-1">Tiền thối</td>
+                                    <td><span class="change">0</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-danger" name="btnxn">Xác nhận</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 </div>
 
 <script>
@@ -228,4 +318,166 @@ if (isset($_GET["p"])) {
         if (input)
             input.focus();
     }
+
+    var formmethod = document.querySelector(".formmethod");
+    var radioBtn = document.querySelectorAll('input[type="radio"][name="delivery"]');
+
+    radioBtn.forEach(btn => {
+        btn.addEventListener("change", (event) => {
+            if (event.target.checked) {
+                formmethod.submit();
+            }
+        });
+    });
+
+    let inputMoney = document.querySelectorAll('input[type="text"][name="money"]');
+    let totalOrder = document.querySelector(".totalOrder");
+    let total = document.querySelector(".total");
+    let promotion = document.querySelector(".promotion");
+    let change = document.querySelector(".change");
+    let customerPay = document.querySelector(".customerPay");
+
+    totalOrderValue = parseInt(totalOrder.outerText.replace(/,/g, "").replace(/ đ/g, ""));
+    totalOrder.textContent = totalOrderValue.toLocaleString("vi-VN", {
+        style: "currency",
+        currency: "VND"
+    });
+
+    totalValue = parseInt(total.outerText.replace(/,/g, "").replace(/ đ/g, ""));
+    total.textContent = totalValue.toLocaleString("vi-VN", {
+        style: "currency",
+        currency: "VND"
+    });
+
+    customerPayValue = parseInt(customerPay.outerText.replace(/,/g, "").replace(/ đ/g, ""));
+    customerPay.textContent = customerPayValue.toLocaleString("vi-VN", {
+        style: "currency",
+        currency: "VND"
+    });
+
+    changeValue = parseInt(change.outerText.replace(/,/g, "").replace(/ đ/g, ""));
+    change.textContent = changeValue.toLocaleString("vi-VN", {
+        style: "currency",
+        currency: "VND"
+    });
+
+    let promotionID = document.querySelector('input[type="text"][name="promotionID"]');
+
+    promotionID.addEventListener("change", () => {
+        let proID = parseInt(promotionID.value);
+        <?php
+        $ctrl = new cPromotions;
+
+        if ($ctrl->cGetAllPromotion() != 0) {
+            $result = $ctrl->cGetAllPromotion();
+            $arr = [];
+            while ($row = $result->fetch_assoc()) {
+                $arr[] = ["id" => $row["promotionID"], "value" => $row["discountPercentage"], "name" => $row["promotionName"]];
+            }
+        }
+        ?>
+        let arr = <?php echo json_encode($arr); ?>;
+        let found = false;
+
+        for (let i = 0; i < arr.length; i++) {
+            if (proID == arr[i].id) {
+                totalOrderValue = parseInt(totalOrder.outerText.replace(/,/g, "").replace(/ đ/g, ""));
+                promotionValue = parseFloat(arr[i].value);
+                promotion.textContent = promotionValue + "%";
+
+                totalValue = (totalOrderValue - (totalOrderValue * promotionValue / 100)) * 1000;
+                total.textContent = totalValue.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND"
+                });
+                found = true;
+            } else
+                promotion.textContent = "0%";
+
+            if (found) {
+                document.querySelector(".promotionID").innerHTML = `<span class="text-red-500">*</span>` + " Áp dụng thành công ưu đãi: " + arr[i].name;
+                break;
+            } else {
+
+            }
+        }
+
+        if (!found)
+            document.querySelector(".promotionID").innerHTML = `<span class="text-red-500">*</span>` + " Mã giảm giá không hợp lệ. Vui lòng nhập mã khác!";
+    });
+
+    inputMoney.forEach(input => {
+        input.addEventListener("focus", () => {
+            inputMoney.forEach(i => {
+                i.value = "";
+            });
+
+            const existingSuggestion = document.querySelector(".suggestion-container");
+            if (existingSuggestion) {
+                existingSuggestion.remove();
+            }
+
+            const divContainer = document.createElement("div");
+            divContainer.classList.add("suggestion-container", "w-full", "h-fit", "mt-2");
+
+            const prices = [1, 2, 5, 10, 20, 50, 100, 200, 500];
+
+            prices.forEach(price => {
+                const priceButton = document.createElement("button");
+                priceButton.classList.add("btn", "btn-light", "m-1", "rounded");
+                priceButton.setAttribute("type", "button");
+                priceButton.textContent = price;
+
+                priceButton.addEventListener("click", () => {
+                    let inputPrice = parseFloat(input.value) || 0;
+                    inputPrice += price;
+                    input.value = inputPrice;
+                    customerPay.textContent = (inputPrice * 1000).toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND"
+                    });
+
+                    let inputTotal = parseFloat(total.outerText.replace(/,/g, "").replace(/ đ/g, "")) * 1000;
+                    let inputCus = parseFloat(customerPay.outerText.replace(/,/g, "").replace(/ đ/g, "")) * 1000;
+                    let inputChange = 0;
+
+                    if (inputCus >= inputTotal) {
+                        inputChange = (inputCus - inputTotal);
+                    } else inputChange = 0;
+
+                    change.textContent = inputChange.toLocaleString("vi-VN", {
+                        style: "currency",
+                        currency: "VND"
+                    });
+                });
+
+                divContainer.appendChild(priceButton);
+            });
+
+            const deleteButton = document.createElement("button");
+            deleteButton.classList.add("btn", "btn-light", "m-1", "rounded");
+            deleteButton.setAttribute("type", "button");
+            deleteButton.textContent = "Nhập lại";
+            divContainer.appendChild(deleteButton);
+
+            deleteButton.addEventListener("click", () => {
+                input.value = "";
+                customerPayValue = parseInt(0);
+                customerPay.textContent = customerPayValue.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND"
+                });
+                changeValue = parseInt(0);
+                change.textContent = changeValue.toLocaleString("vi-VN", {
+                    style: "currency",
+                    currency: "VND"
+                });
+            });
+
+            const inputContainer = input.parentNode;
+            if (!inputContainer.querySelector(".suggestion-container")) {
+                inputContainer.appendChild(divContainer);
+            }
+        });
+    });
 </script>

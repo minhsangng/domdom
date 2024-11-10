@@ -120,6 +120,7 @@ include("../../../controller/cPromotions.php");
 include("../../../controller/cDishes.php");
 include("../../../controller/cIngredients.php");
 include("../../../controller/cOrders.php");
+include("../../../controller/cEmployees.php");
 include("../../../controller/cMessage.php");
 
 /* Xử lý đăng nhập */
@@ -177,15 +178,15 @@ $conn = $db->connect();
                         <img alt="User Avatar" class="rounded-full mr-1 border-solid border-2" height="40" width="40" src="../../../images/user.png" />
                         <span class="text-xs font-bold ml-1">
                             <?php
-                            echo $_SESSION["userName"];
-
-                            $userName = $_SESSION["userName"];
+                            echo $_SESSION["user"][0];
+                            
+                            $userName = $_SESSION["user"][0];
 
                             $sql = "SELECT userID FROM user WHERE userName = '$userName'";
                             $result = $conn->query($sql);
                             $row = $result->fetch_assoc();
 
-                            $_SESSION["userID"] = $row["userID"];
+                            $_SESSION["user"][] = $row["userID"];
                             ?>
                         </span>
                     </div>

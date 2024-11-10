@@ -22,38 +22,38 @@
                         <?php
                         $startW = date("Y-m-d", strtotime("monday this week"));
                         $endW = date("Y-m-d", strtotime("sunday this week"));
-                        
-                        $userID = $_SESSION["userID"];
-                        $sql = "SELECT U.userName, S.shiftName, S.startTime, S.endTime, ES.date FROM employee_shift AS ES JOIN user AS U ON ES.userID = U.userID JOIN shift AS S ON ES.shiftID = S.shiftID WHERE U.userID = $userID AND ES.date >= '$startW' AND ES.date <= '$endW' ORDER BY ES.date, S.startTime";
 
-                        $result = $conn->query($sql);
-                        $totalHours = 0;
-                        $salary = 0;
+                        $userID = $_SESSION["user"][2];
+                        $ctrl = new cEmployees;
 
-                        if ($result->num_rows > 0) {
+                        if ($ctrl->cGetEmployeeShiftInfo($userID, $startW, $endW) != 0) {
+
+                            $result = $ctrl->cGetEmployeeShiftInfo($userID, $startW, $endW);
+                            $totalHours = 0;
+                            $salary = 0;
+
                             echo "<td class='border-2 py-2'>";
                             while ($row = $result->fetch_assoc()) {
                                 $startTime = DateTime::createFromFormat("H:i:s", $row["startTime"]);
                                 $endTime = DateTime::createFromFormat("H:i:s", $row["endTime"]);
-        
+
                                 $interval = $startTime->diff($endTime);
-                                $hoursWorked = $interval->h + ($interval->i / 60); 
+                                $hoursWorked = $interval->h + ($interval->i / 60);
 
                                 $totalHours += $hoursWorked;
-                                
+
                                 $salary = $totalHours * 23000;
-                                
+
                                 $start = $row["startTime"];
                                 $end = $row["endTime"];
-                                
+
                                 echo "<p class='mb-1'>Ngày: " . date("d-m-Y", strtotime($row["date"])) . ": " . $row["shiftName"] . " (" . substr($row["startTime"], 0, -3) . " - " . substr($row["endTime"], 0, -3) . ")</p>";
                             }
                             echo "</td>";
-                            echo "<td class='border-2 py-2'>".$totalHours."</td>";
-                            echo "<td class='border-2 py-2'>".number_format($salary, "0", "", ",")."</td>";
-                        } else {
+                            echo "<td class='border-2 py-2'>" . $totalHours . "</td>";
+                            echo "<td class='border-2 py-2'>" . number_format($salary, "0", "", ",") . "</td>";
+                        } else
                             echo "<tr><td colspan='3' class='pt-2'>Hiện tại chưa có lịch làm việc</td></tr>";
-                        }
                         ?>
                     </tbody>
                 </table>

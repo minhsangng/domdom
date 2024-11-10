@@ -26,6 +26,22 @@ class cOrders extends mOrders
         } return 0;
     }
     
+    public function cUpdateOrder($orderID) {
+        if ($this->mUpdateOrder($orderID) != 0) {
+            $result = $this->mUpdateOrder($orderID);
+            
+            return $result;
+        } return 0;
+    }
+    
+    public function cUpdateOrderDish($orderID, $dishID) {
+        if ($this->mUpdateOrderDish($orderID, $dishID) != 0) {
+            $result = $this->mUpdateOrderDish($orderID, $dishID);
+            
+            return $result;
+        } return 0;
+    }
+    
     public function cUpdateStatusOrder($orderID, $status) {
         if ($this->mUpdateStatusOrder($orderID, $status) != 0) {
             $result = $this->mUpdateStatusOrder($orderID, $status);
@@ -34,11 +50,19 @@ class cOrders extends mOrders
         } return 0;
     }
     
+    public function cInsertOrder($customerID, $paymentMethod) {
+        return $this->mInsertOrder($customerID, $paymentMethod);
+    }
+    
+    public function cInsertOrderDish($orderID, $dishID, $quantity) {
+        return $this->mInsertOrderDish($orderID, $dishID, $quantity);
+    }
+    
     public function cGetAllOrderFully() {
         if ($this->mGetAllOrderFully() != 0) {
             $result = $this->mGetAllOrderFully();
             
             return $result;
         } return 0;
-    }
+    }    
 }

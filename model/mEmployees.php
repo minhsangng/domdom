@@ -56,7 +56,7 @@ class mEmployees
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "DELETE FROM `employee_shift` AS ES JOIN `shift` AS S ON ES.shiftID = S.shiftID WHERE userID = $userID AND date = '$date' AND shiftTime = '$time'";
+        $sql = "DELETE FROM `employee_shift` AS ES JOIN `shift` AS S ON ES.shiftID = S.shiftID WHERE ES.userID = $userID AND ES.date = '$date' AND S.shiftTime = '$time'";
         if ($conn != null) 
             return $conn->query($sql);
         return 0;
@@ -67,6 +67,15 @@ class mEmployees
         $db = new Database;
         $conn = $db->connect();
         $sql = "INSERT INTO employee_shift(shiftID, userID, date) VALUES ($shiftID, $userID, '$date')";
+        
+        return $conn->query($sql);
+    }
+    
+    public function mGetEmployeeShiftInfo($userID, $start, $end)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT * FROM `employee_shift` AS ES JOIN `user` AS U ON ES.userID = U.userID JOIN `shift` AS S ON ES.shiftID = S.shiftID WHERE U.userID = $userID AND ES.date >= '$start' AND ES.date <= '$end' ORDER BY ES.date, S.startTime";
         if ($conn != null) 
             return $conn->query($sql);
         return 0;

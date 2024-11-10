@@ -31,6 +31,16 @@ class mDishes
         return 0;
     }
     
+    public function mGetDishTop()
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT *, SUM(OD.quantity) AS MaxQuantity FROM `order` AS O JOIN `order_dish` AS OD ON O.orderID = OD.orderID JOIN `dish` AS D ON D.dishID = OD.dishID GROUP BY OD.dishID ORDER BY MaxQuantity DESC LIMIT 4";
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+    
     public function mGetDishById($dishID)
     {
         $db = new Database;
@@ -65,9 +75,8 @@ class mDishes
         $db = new Database;
         $conn = $db->connect();
         $sql = "INSERT INTO dish (dishName, dishCategory, price, preparationProcess, image) VALUES ('$dishName', '$dishCategory', $price, '$prepare', '$image')";
-        if ($conn != null)
-            return $conn->query($sql);
-        return 0;
+        
+        return $conn->query($sql);
     }
     
     public function mUpdateDish($dishName, $dishCategory, $price, $prepare, $image, $dishID) {

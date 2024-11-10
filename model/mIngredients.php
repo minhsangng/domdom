@@ -64,9 +64,7 @@ class mIngredients
         $conn = $db->connect();
         $sql = "INSERT INTO ingredient (ingredientName, unitOfcalculaton, price, typeIngredient) VALUES ('$ingreName', '$unit', $price, '$type')";
 
-        if ($conn != null)
-            return $conn->query($sql);
-        return 0;
+        return $conn->query($sql);
     }
 
     public function mUpdateIngredient($ingreName, $unit, $price, $type, $ingreID)

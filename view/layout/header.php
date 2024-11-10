@@ -164,7 +164,7 @@
                         <a class="nav-link" href="index.php?p=partypackage" id="partypackage">Dịch vụ</a>
                     </li>
                     <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4">
-                        <a class="nav-link" href="index.php?p=discount" id="discount">Khuyến mãi</a>
+                        <a class="nav-link" href="index.php?p=promotion" id="promotion">Khuyến mãi</a>
                     </li>
                 </ul>
                 <ul class="nav ml-auto py-4 py-md-0">
@@ -512,83 +512,6 @@
                             data-bs-target="#checkoutModal">Lưu</button>
                         <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
                             data-bs-target="#refund">Lưu</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal modalParty z-50" id="partyModal" tabindex="-1" aria-labelledby="partyModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="" method="POST">
-                    <div class="modal-header flex justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="partyModalLabel"
-                            style="color: #E67E22;">Thông tin đặt tiệc</h2>
-                    </div>
-                    <div class=" modal-body">
-                        <div class="w-full border-b pb-4 mb-4">
-                            <form action="" method="POST">
-                                <table class="w-full">
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Họ tên</label>
-                                                <input type="text" name="" id="" class="form-control mb-2"
-                                                    value="Nguyễn Minh Sang">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Số điện thoại</label>
-                                                <input type="text" name="" id="" class="form-control mb-2"
-                                                    value="0926458232">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Email</label>
-                                                <input type="text" name="" id="" class="form-control mb-2"
-                                                    value="sang@gmail.com">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Ngày diễn ra</label>
-                                                <input type="text" name="" id="" class="form-control mb-2"
-                                                    value="26-10-2024">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Giờ diễn ra</label>
-                                                <input type="text" name="" id="" class="form-control mb-2"
-                                                    value="14:00">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Yêu cầu khác</label>
-                                                <input type="text" name="" id="" class="form-control mb-2">
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </form>
-                        </div>
-                        <div class="border-b pb-4 mb-4">
-                            <label for="" class="font-bold w-full mb-2">Phương thức thanh toán</label>
-                            <ul class="w-full">
-                                <li><input type="radio" name="" id="" class="mr-2">Ví điện tử</li>
-                                <li><input type="radio" name="" id="" class="mr-2">Thẻ ngân hàng</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal"
-                            data-bs-target="#payModal">Xác nhận</button>
                     </div>
                 </form>
             </div>

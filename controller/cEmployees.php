@@ -54,17 +54,21 @@ class cEmployees extends mEmployees
         return 0;
     }
     
-    public function cDeleteEmployeeShift($userID, $date) {
-        if ($this->mDeleteEmployeeShift($userID, $date) != 0) {
-            $result = $this->mDeleteEmployeeShift($userID, $date); 
+    public function cDeleteEmployeeShift($userID, $date, $time) {
+        if ($this->mDeleteEmployeeShift($userID, $date,$time) != 0) {
+            $result = $this->mDeleteEmployeeShift($userID, $date,$time); 
             return $result;
         }
         return 0;
     }
     
     public function cInsertEmployeeShift($shiftID, $userID, $date) {
-        if ($this->mInsertEmployeeShift($shiftID, $userID, $date) != 0) {
-            $result = $this->mInsertEmployeeShift($shiftID, $userID, $date); 
+        return $this->mInsertEmployeeShift($shiftID, $userID, $date); 
+    }
+    
+    public function cGetEmployeeShiftInfo($userID, $start, $end) {
+        if ($this->mGetEmployeeShiftInfo($userID, $start, $end) != 0) {
+            $result = $this->mGetEmployeeShiftInfo($userID, $start, $end); 
             return $result;
         }
         return 0;

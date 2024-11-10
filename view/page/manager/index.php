@@ -194,6 +194,14 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                         <span class="text-xs font-bold ml-1">
                             <?php
                             echo $_SESSION["user"][0];
+                            
+                            $userName = $_SESSION["user"][0];
+
+                            $sql = "SELECT userID FROM user WHERE userName = '$userName'";
+                            $result = $conn->query($sql);
+                            $row = $result->fetch_assoc();
+
+                            $_SESSION["user"][] = $row["userID"];
                             ?>
                         </span>
                     </div>

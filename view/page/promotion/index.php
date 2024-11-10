@@ -22,13 +22,23 @@
     .swal2-html-container {
         color: red !important;
     }
+    
+    #arrow {
+        position: absolute;
+        top: 49%;
+        left: 49%;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-bottom: 15px solid white;
+    }
 </style>
 
 <div class="flex flex-col justify-center items-center absolute top-44 left-28">
     <h1 class="font-bold text-3xl mb-4">🎉 Chương Trình Khuyến Mãi 🎉</h1>
     <p class="italic text-lg">Quay để nhận ngay ưu đãi hấp dẫn!</p>
     <div id="wheel" class="wheel size-72 rounded-full mx-auto my-4 border-red-600 border-8 shadow shadow-red-500"></div>
-    <img src="images/logo.png" alt="Logo" class="absolute size-10 rounded-full" style="top: 14.8rem; right: 14.3rem;">
+    <img src="images/logo.png" alt="Logo" class="absolute size-10 rounded-full" style="top: 14.8rem; right: 14.3rem;" id="img">
+    <span id="arrow"></span>
     <button id="spinButton" class="btn btn-danger px-4 py-2 rounded-xl">Quay Ngay!</button>
 </div>
 

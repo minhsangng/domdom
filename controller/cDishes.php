@@ -37,6 +37,15 @@ class cDishes extends mDishes
             return $result;
         } return 0;
     }
+    
+    public function cGetDishTop()
+    {
+        if ($this->mGetDishTop() != 0) {
+            $result = $this->mGetDishTop();
+            
+            return $result;
+        } return 0;
+    }
 
     public function cGetDishById($dishID)
     {

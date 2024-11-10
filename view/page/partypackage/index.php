@@ -110,104 +110,151 @@
             transform: translatey(0px);
         }
     }
-    
-    .swal2-confirm {
-        width: 24rem !important;
-        padding: 10px auto !important;
-        border-radius: 12px;
-    }
 </style>
 
 <?php
+$ctrlParty = new cPartyPackages;
+$ctrlCustomer = new cCustomers;
+$ctrlOrder = new cOrders;
+$ctrlMessage = new cMessage;
+
 if (isset($_POST["btndattiec"])) {
-    $id = $_POST["btndattiec"];
+    $_SESSION["ppID"] = $_POST["btndattiec"];
 
     echo "<script>
-    Swal.fire({
-        title: 'Thông tin đặt tiệc',
-        html: `
-        <div class='w-full flex flex-col justify-center items-center w-96 mx-auto'>
-            <input type='text' id='swal-input1' class='swal2-input form-control w-full' placeholder='Họ và tên...'>
-            <input type='text' id='swal-input2' class='swal2-input form-control w-full' placeholder='Số điện thoại...'>
-            <input type='email' id='swal-input3' class='swal2-input form-control w-full' placeholder='Email...'>
-            <input type='date' id='swal-input4' class='swal2-input form-control w-full' placeholder='Ngày diễn ra...'>
-            <input type='time' id='swal-input5' class='swal2-input form-control w-full' placeholder='Giờ diễn ra...'>
-            <input type='text' id='swal-input6' class='swal2-input form-control w-full' placeholder='Yêu cầu khác...'>
-        </div>
-        <div class='flex flex-col items-start mt-3 w-96 h-fit mx-auto'>
-            <h2 style='font-weight: 700; margin-bottom: 8px;'>Phương thức thanh toán</h2>
-            <ol class='p-0 m-0'>
-                <li class='flex justify-center items-center w-fit'>
-                    <input type='radio' name='method' id='swal-input7' class='swal2-input m-0' style='height: 1.5rem !important;'>
-                    <label for='swal-input7' class='ml-2'>Ví diện tử</label>
-                </li>
-                <li class='flex justify-center items-center w-fit'>
-                    <input type='radio' name='method' id='swal-input8' class='swal2-input m-0' style='height: 1.5rem !important;'>
-                    <label for='swal-input8' class='ml-2'>Ngân hàng</label>
-                </li>
-            </ol>
-        </div>
-    `,
-        focusConfirm: false,
-        preConfirm: () => {
-            return [
-                document.getElementById('swal-input1').value,
-                document.getElementById('swal-input2').value,
-                document.getElementById('swal-input3').value,
-                document.getElementById('swal-input4').value,
-                document.getElementById('swal-input5').value,
-                document.getElementById('swal-input6').value,
-                document.getElementById('swal-input7').value,
-                document.getElementById('swal-input8').value
-            ];
+        document.addEventListener('DOMContentLoaded', function() {
+            var modalParty = new bootstrap.Modal(document.getElementById('partyModal')); 
+            modalParty.show();
+        });
+    </script>";    
+}
+
+if (isset($_POST["btnxn"])) {
+    $ppID = $_SESSION["ppID"];
+    $phone = $_POST["phone"];
+    $name = $_POST["name"];
+    $address = $_POST["address"];
+    $email = $_POST["email"];
+    $paymentMethod = $_POST["method"];
+    
+    /* $sql = "INSERT INTO customer(phoneNumber, fullName, address, email) VALUES ('$phone', '$name', '$address', '$email')";
+    $result = $conn->query($sql); */
+    
+    $ctrlCustomer->cInsertCustomer($phone, $name, $address, $email);
+    $sql1 = "SELECT customerID FROM `customer` ORDER BY customerID DESC LIMIT 1";
+    $row1 = $conn->query($sql1)->fetch_assoc();
+    $customerID = $row1["customerID"];
+    
+    $ctrlOrder->cInsertOrder($customerID, $paymentMethod);
+    
+    $sql2 = "SELECT orderID FROM `order` ORDER BY orderID DESC LIMIT 1";
+    $row2 = $conn->query($sql2)->fetch_assoc();
+    $orderID = $row2["orderID"];
+    
+    if ($ctrlParty->cGetDishFromPartyPacakge($ppID) != 0) {
+        $resultParty = $ctrlParty->cGetDishFromPartyPacakge($ppID);    
+        
+        while($row3 = $resultParty->fetch_assoc()) {
+            $dishID = $row3["dishID"];
+            $quantity = $row3["quantity"];
+            
+            $ctrlOrder->cInsertOrderDish($orderID, $dishID, $quantity);
+            $ctrlOrder->cUpdateOrderDish($orderID, $dishID);
         }
-    });
-    </script>";
+            $ctrlOrder->cUpdateOrder($orderID);
+    } else $ctrlMessage->errorMessage("Đặt tiệc");
+    
+    $ctrlMessage->successMessage("Đặt tiệc");
 }
 ?>
 
 <div class="flex flex-col justify-center items-center absolute top-48 left-28">
-    <h2 class="text font-bold uppercase text-center relative text-3xl">Sử dụng ngay<Br />các gói dịch vụ <br> của chúng tôi! <br>
+    <h2 class="text font-bold uppercase text-center relative text-3xl">Sử dụng ngay<br />các gói dịch vụ <br> của chúng tôi! <br>
         <span class="text-sm italic">Tổ chức các bữa tiệc sẽ trở nên đơn giản</span< </h2>
-            <!-- <div class="flex flex-col items-center absolute -bottom-36 left-52">
-        <i class="fas fa-chevron-down arrow text-3xl text-gray-400 px-3 rounded-t-md" style="background-color: rgba(0, 0, 0, 0.3);"></i>
-        <i class="fas fa-chevron-down arrow text-3xl text-gray-400 px-3" style="background-color: rgba(0, 0, 0, 0.3);"></i>
-        <i class="fas fa-chevron-down arrow text-3xl text-gray-400 px-3 rounded-b-md" style="background-color: rgba(0, 0, 0, 0.3);"></i>
-    </div> -->
 </div>
 
 <div class="w-full py-20 ">
     <div class="grid grid-cols-4 md:grid-cols-2 lg:grid-cols-3 gap-8 mx-14 flex justify-center gap-10 px-4 py-6 rounded-md">
         <?php
-        /* $ctrl = new cPartyPackages;
+        $ctrl = new cPartyPackages;
 
         if ($ctrl->cGetAllPartyPackage() != 0) {
-            $result = $ctrl->cGetAllPartyPackage(); */
+            $result = $ctrl->cGetAllPartyPackage();
 
-        $sql = "SELECT *, PP.image, GROUP_CONCAT(CONCAT(D.dishName) SEPARATOR ', ') AS Name FROM partypackage AS PP JOIN partypackage_dish AS PPD ON PP.partyPackageID = PPD.partyPackageID JOIN dish AS D ON D.dishID = PPD.dishID GROUP BY PPD.partyPackageID";
-
-        $result = $conn->query($sql);
-
-        while ($row = $result->fetch_assoc()) {
-            echo "<div class='h-72 w-full rounded-lg flex justify-center items-center bg-red-400 transition delay-200 ease-linear shadow-xl shadow-red-300'>
-                <form action='' method='POST' class='group h-72 w-full'>
-                    <div class='relative flex flex-col justify-center items-center px-6 py-4 h-full w-full'>
-                        <div class='w-48 mb-2 z-10'>
-                            <img src='images/party/".$row["image"]."' class='w-full h-full rounded-lg'>
+            while ($row = $result->fetch_assoc()) {
+                echo "<div class='h-72 w-full rounded-lg flex justify-center items-center bg-red-400 transition delay-200 ease-linear shadow-xl shadow-red-300'>
+                    <form action='' method='POST' class='group w-full'>
+                        <div class='relative flex flex-col justify-center items-center px-6 py-4 h-72 w-full'>
+                            <div class='mb-2 z-10'>
+                                <img src='images/party/" . $row["image"] . "' class='w-48 h-28 rounded-lg'>
+                            </div>
+                            <span class='absolute bg-green-200 bottom-0 left-0 w-6 h-4 rounded-tr-full group-hover:rounded-lg group-hover:w-full group-hover:h-full transition-all ease-linear delay-150'></span>
+                            <div class='text-white z-10'>
+                                <h3 class='font-bold text-center text-xl group-hover:text-amber-500 delay-200'>" . $row["partyPackageName"] . "</h3>
+                                <p class='text-wrap font-bold group-hover:text-gray-900 h-14'>Combo: <span class='text-gray-bold font-thin'>" . $row["Name"] . "</span></p>
+                            </div>
                         </div>
-                        <span class='absolute bg-green-200 bottom-0 left-0 w-6 h-4 rounded-tr-full group-hover:rounded-lg group-hover:w-full group-hover:h-full transition-all ease-linear delay-150'></span>
-                        <div class='text-white z-10'>
-                            <h3 class='font-bold text-center text-xl group-hover:text-amber-500 delay-200'>" . $row["partyPackageName"] . "</h3>
-                            <p class='text-wrap font-bold group-hover:text-gray-900'>Combo: <span class='text-gray-bold font-thin'>" . $row["Name"] . "</span></p>
+                        <div class='translate-y-16 -translate-x-16 absolute opacity-[0.01] group-hover:opacity-100 group-hover:-translate-y-48 group-hover:translate-x-[170px] transition delay-100 z-10'>
+                                <button class='btn btn-danger' name='btndattiec' value='" . $row["partyPackageID"] . "' id='btn'>Đặt ngay</button>
                         </div>
-                    </div>
-                    <div class='translate-y-16 -translate-x-16 absolute opacity-[0.01] group-hover:opacity-100 group-hover:-translate-y-40 group-hover:translate-x-[170px] transition delay-100 z-10'>
-                            <button class='btn btn-danger' name='btndattiec' value='" . $row["partyPackageID"] . " id='btn'>Đặt ngay</button>
-                    </div>
-                </form>
-            </div>";
+                    </form>
+                </div>";
+            }
         }
-        /* } */
         ?>
+    </div>
+</div>
+
+<div class="modal modalParty" id="partyModal" tabindex="-1" aria-labelledby="partyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="" method="POST">
+                <div class="modal-header flex justify-center">
+                    <h2 class="modal-title fs-5 font-bold text-3xl text-[#E67E22]" id="partyModalLabel">Thông tin đặt tiệc</h2>
+                </div>
+                <div class=" modal-body">
+                    <table class="w-full">
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <h2 class="text-[#EF5350] font-bold mb-2">Thông tin cá nhân</h2>
+                                    <input type="text" id="" name="name" class="form-control w-full mb-3" placeholder="Họ và tên...">
+                                    <input type="text" id="" name="phone" class="form-control w-full mb-3" placeholder="Số điện thoại...">
+                                    <input type="email" id="" name="email" class="form-control w-full mb-3" placeholder="Email...">
+                                    <input type="text" id="" name="address" class="form-control w-full mb-3" placeholder="Địa chỉ...">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h2 class="text-[#EF5350] font-bold mb-2">Thông tin tiệc</h2>
+                                    <input type="date" id="" class="form-control w-full mb-3" placeholder="Ngày diễn ra...">
+                                    <input type="time" id="" class="form-control w-full mb-3" placeholder="Giờ diễn ra...">
+                                    <input type="text" id="" class="form-control w-full mb-3" placeholder="Yêu cầu khác...">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <h2 class="text-[#EF5350] font-bold mb-2">Phương thức thanh toán</h2>
+                                    <ol class="p-0 m-0">
+                                        <li class="flex justify-center items-center w-fit">
+                                            <input type="radio" name="method" id="momo" value="Ví điện tử">
+                                            <label for="momo" class="ml-2">Ví diện tử</label>
+                                        </li>
+                                        <li class="flex justify-center items-center w-fit">
+                                            <input type="radio" name="method" id="bank" value="Ngân hàng">
+                                            <label for="bank" class="ml-2">Ngân hàng</label>
+                                        </li>
+                                    </ol>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-danger" name="btnxn">Xác nhận</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
