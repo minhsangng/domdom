@@ -3,7 +3,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     $proposalID = $_POST['proposalID'];
     $status = $_POST['status'];
-    $sql = "UPDATE proposal SET statusP = $status WHERE proposalID = $proposalID";
+    $sql = "UPDATE proposal SET status = $status WHERE proposalID = $proposalID";
 
     if ($conn->query($sql) === TRUE) {
         echo "<script>alert('Cập nhật trạng thái thành công');</script>";
@@ -36,14 +36,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </thead>
                     <tbody>
     <?php
-    $sql = "SELECT * FROM proposal AS P JOIN user AS U ON P.userID = U.userID";
+    $sql = "SELECT *,P.status FROM proposal AS P JOIN user AS U ON P.userID = U.userID";
     $result = $conn->query($sql);
 
     while ($row = $result->fetch_assoc()) {
-        if ($row["statusP"] == 1) {
+        if ($row["status"] == 1) {
             $statusLabel = "Đã duyệt";
             $statusClass = "bg-green-100 text-green-500";
-        } elseif ($row["statusP"] == 2) {
+        } elseif ($row["status"] == 2) {
             $statusLabel = "Từ chối";
             $statusClass = "bg-yellow-100 text-yellow-500"; 
         } else {
@@ -64,13 +64,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <form action='' method='POST' style='display: inline-block;'>
                         <input type='hidden' name='proposalID' value='".$row["proposalID"]."'>
                         <input type='hidden' name='status' value='2'> <!-- Từ chối -->
-                        <button type='submit' class='btn btn-secondary mr-1' " . ($row["statusP"] != 0 ? "disabled" : "") . ">Từ chối</button>
+                        <button type='submit' class='btn btn-secondary mr-1' " . ($row["status"] != 0 ? "disabled" : "") . ">Từ chối</button>
                     </form>
                     <!-- Form Duyệt -->
                     <form action='' method='POST' style='display: inline-block;'>
                         <input type='hidden' name='proposalID' value='".$row["proposalID"]."'>
                         <input type='hidden' name='status' value='1'> <!-- Duyệt -->
-                        <button type='submit' class='btn btn-danger ml-1' " . ($row["statusP"] != 0 ? "disabled" : "") . ">Duyệt</button>
+                        <button type='submit' class='btn btn-danger ml-1' " . ($row["status"] != 0 ? "disabled" : "") . ">Duyệt</button>
                     </form>
                 </td>
             </tr>";

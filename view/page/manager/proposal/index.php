@@ -10,7 +10,7 @@ $userID=$_SESSION["userID"];
     } else {
         $type = mysqli_real_escape_string($conn, $type);
         $content = mysqli_real_escape_string($conn, $content);
-        $sql = "INSERT INTO proposal (typeOfProposal, content, statusP, userID) 
+        $sql = "INSERT INTO proposal (typeOfProposal, content, status, userID) 
                 VALUES ('$type', '$content', 0, '$userID')"; 
 
         if ($conn->query($sql) === TRUE) {
@@ -48,14 +48,14 @@ $userID=$_SESSION["userID"];
                 </thead>
                 <tbody>
     <?php
-    $sql = "SELECT * FROM proposal AS P JOIN user AS U ON P.userID = U.userID";
+    $sql = "SELECT *,P.status FROM proposal AS P JOIN user AS U ON P.userID = U.userID";
     $result = $conn->query($sql);
 
     while ($row = $result->fetch_assoc()) {
-        if ($row["statusP"] == 1) {
+        if ($row["status"] == 1) {
             $statusLabel = "Đã duyệt";
             $statusClass = "bg-green-100 text-green-500"; 
-        } elseif ($row["statusP"] == 2) {
+        } elseif ($row["status"] == 2) {
             $statusLabel = "Từ chối";
             $statusClass = "bg-yellow-100 text-yellow-500"; 
         } else {
