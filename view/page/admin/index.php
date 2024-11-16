@@ -197,18 +197,26 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                         <i class="fa-regular fa-bell"></i>
                     </div>
                     <div class="ml-4 flex items-center relative user-container">
-                        <img alt="User Avatar" class="rounded-full mr-1 border-solid border-2" height="40" width="40" src="../../../images/user.png" />
-                        <span class="text-xs font-bold ml-1">
+                        <div class="rounded-full mr-1 border-solid bg-gray-400 text-white font-bold border-2 w-10 h-10 flex justify-center items-center">
                             <?php
-                            echo $_SESSION["user"][0];
-                            
                             $userName = $_SESSION["user"][0];
 
-                            $sql = "SELECT userID FROM user WHERE userName = '$userName'";
+                            $sql = "SELECT userID, userName FROM user WHERE userName = '$userName'";
                             $result = $conn->query($sql);
                             $row = $result->fetch_assoc();
 
                             $_SESSION["user"][] = $row["userID"];
+
+                            $fullName = $row["userName"];
+                            $name = end(explode(" ", $fullName));
+                            $firstLetter = substr($name, 0, 1);
+
+                            echo $firstLetter;
+                            ?>
+                        </div>
+                        <span class="text-xs font-bold ml-1"> Hello,
+                            <?php
+                            echo $name;
                             ?>
                         </span>
                     </div>

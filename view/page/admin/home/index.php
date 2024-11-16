@@ -10,7 +10,7 @@
                     <p class="text-gray-600 mb-2">Khách hàng</p>
                     <p class="text-xl font-semibold">
                         <?php
-                        $sql = "SELECT * FROM customer";
+                        $sql = "SELECT * FROM `customer` AS C JOIN `order` AS O ON C.customerID = O.customerID WHERE O.orderDate >= '$startM' AND O.orderDate <= '$endM' GROUP BY O.customerID";
                         $result = $conn->query($sql);
                         $count = $result->num_rows;
 

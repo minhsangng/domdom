@@ -46,27 +46,26 @@ class mEmployees
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT * FROM `user` AS U JOIN `role` AS R ON U.roleID = R.roleID JOIN `employee_shift` AS ES ON ES.userID = U.userID JOIN `shift` AS S ON S.shiftID = ES.shiftID WHERE U.roleID IN (3, 4) AND U.storeID = $storeID AND ES.date = CURRENT_DATE";
+        $sql = "SELECT * FROM `user` AS U JOIN `role` AS R ON U.roleID = R.roleID JOIN `employee_shift` AS ES ON ES.userID = U.userID JOIN `shift` AS S ON S.shiftID = ES.shiftID JOIN `store` AS ST ON U.storeID = ST.storeID WHERE U.roleID IN (3, 4) AND U.storeID = $storeID AND ES.date = CURRENT_DATE";
         if ($conn != null) 
             return $conn->query($sql);
         return 0;
     }
     
-    public function mDeleteEmployeeShift($userID, $date, $time)
+    public function mDeleteEmployeeShift($ESID)
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "DELETE FROM `employee_shift` AS ES JOIN `shift` AS S ON ES.shiftID = S.shiftID WHERE ES.userID = $userID AND ES.date = '$date' AND S.shiftTime = '$time'";
-        if ($conn != null) 
-            return $conn->query($sql);
-        return 0;
+        $sql = "DELETE FROM `employee_shift` WHERE employeeshiftID = $ESID";
+        
+        return $conn->query($sql);
     }
     
     public function mInsertEmployeeShift($shiftID, $userID, $date)
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "INSERT INTO employee_shift(shiftID, userID, date) VALUES ($shiftID, $userID, '$date')";
+        $sql = "INSERT INTO `employee_shift` (shiftID, userID, date) VALUES ($shiftID, $userID, '$date')";
         
         return $conn->query($sql);
     }

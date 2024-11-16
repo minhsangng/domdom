@@ -8,21 +8,14 @@ if (isset($_POST["staff"]))
     $staff = $_POST["staff"];
 
 if (isset($_POST["btnxoa"])) {
-    $employee = explode("/", $_POST["btnxoa"]);
-    $name = $employee[0];
-    $time = $employee[1];
-    $date = $employee[2];
-
-    if ($ctrl->cGetEmployeeIDByName($name) != 0) {
-        $result = $ctrl->cGetEmployeeIDByName($name);
-        $row = $result->fetch_assoc();
-        $userID = $row["userID"];
-
-        if ($ctrl->cDeleteEmployeeShift($userID, $date) != 0) {
-            $ctrl->cDeleteEmployeeShift($userID, $date);
-            $ctrlMessage->successMessage("Xóa ca làm");
-        } else $ctrlMessage->errorMessage("Xóa ca làm");
-    }
+    $arrE = explode("/", $_POST["btnxoa"]);
+    $ESID = $arrE[0];
+    $name = $arrE[1];
+    $shiftName = $arrE[2];
+    $date = $arrE[3];
+    
+    $ctrl->cDeleteEmployeeShift($ESID);
+    $ctrlMessage->successMessage("Xóa ca làm nhân viên ");
 }
 
 if (isset($_POST["btnthemnv"])) {
@@ -30,12 +23,8 @@ if (isset($_POST["btnthemnv"])) {
     $shiftID = (int)$_POST["shift"];
     $date = $_POST["btnthemnv"];
 
-    /* if ($ctrl->cInsertEmployeeShift($shiftID, $userID, $date) != 0) { */
-        $ctrl->cInsertEmployeeShift($shiftID, $userID, $date);
-        $ctrlMessage->successMessage("Thêm ca làm");
-    /* } else $ctrlMessage->errorMessage("Thêm ca làm"); */
-    
-    /* print($reuslt = $ctrl->cInsertEmployeeShift($shiftID, $userID, $date)); */
+    $ctrl->cInsertEmployeeShift($shiftID, $userID, $date);
+    $ctrlMessage->successMessage("Thêm ca làm");    
 }
 ?>
 
@@ -83,8 +72,10 @@ if (isset($_POST["btnthemnv"])) {
 
             while ($row = $result->fetch_assoc()) {
                 $workShifts[$row["date"]][] = [
-                    "employee" => $row["userName"],
-                    "time" => $row["shiftName"]
+                    "ESID" => $row["employeeshiftID"],
+                    "name" => $row["userName"],
+                    "shiftName" => $row["shiftName"],
+                    "date" => $row["date"]
                 ];
             }
 
@@ -158,10 +149,10 @@ if (isset($_POST["btnthemnv"])) {
                         const shiftInfo = document.createElement("div");
                         shiftInfo.classList.add("flex", "items-center", "mb-2");
                         shiftInfo.innerHTML = `<form method='POST' class='m-0 w-full'>
-                        <button type='submit' name='btnxoa' value='${shift.employee}/${shift.time}/${dateString}' class='bg-gray-300 p-1 text-center mr-2 rounded-full'>
+                        <button type='submit' name='btnxoa' value='${shift.ESID}/${shift.name}/${shift.shiftName}/${shift.date}' class='bg-gray-300 p-1 text-center mr-2 rounded-full'>
                             <i class="fa-solid fa-minus"></i>
                         </button>
-                        <span>${shift.employee} (${shift.time})</span>
+                        <span>${shift.name} (${shift.shiftName})</span>
                     </form>`;
                         detailsDiv.appendChild(shiftInfo);
                     });

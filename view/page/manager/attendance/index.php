@@ -16,13 +16,13 @@ if (isset($_POST["btndd"])) {
                 Danh sách nhân viên
             </h2>
             <div class="flex items-center">
-                <button class="btn bg-green-100 text-green-500 py-2 px-4 rounded-lg mr-1 hover:bg-green-500 hover:text-white">Xuất <i class="fa-solid fa-table"></i></button>
-                <button class="btn bg-blue-100 text-blue-500 py-2 px-4 rounded-lg ml-1 hover:bg-blue-500 hover:text-white">In <i class="fa-solid fa-print"></i></button>
+                <button class="btn bg-green-100 text-green-500 py-2 px-4 rounded-lg mr-1 hover:bg-green-500 hover:text-white" id="export">Xuất <i class="fa-solid fa-table"></i></button>
+                <button class="btn bg-blue-100 text-blue-500 py-2 px-4 rounded-lg ml-1 hover:bg-blue-500 hover:text-white" id="print">In <i class="fa-solid fa-print"></i></button>
             </div>
         </div>
         <div class="h-fit bg-gray-100 rounded-lg p-6">
             <form action="" method="POST">
-                <table class="text-sm w-full text-center">
+                <table class="text-sm w-full text-center" id="table">
                     <thead>
                         <tr>
                             <th class="text-gray-600 border-2 py-2">Mã NV</th>
@@ -36,6 +36,7 @@ if (isset($_POST["btndd"])) {
                         <?php
                         $ctrl = new cEmployees;
                         $storeID = $_SESSION["user"][1];
+                        $attendanceData = [];
 
                         if ($ctrl->cGetEmployeeAttendance($storeID) != 0) {
                             $result = $ctrl->cGetEmployeeAttendance($storeID);
@@ -50,7 +51,16 @@ if (isset($_POST["btndd"])) {
                                         <td class='py-2 border-2'><button type='submit' value='" . $row["employeeshiftID"] . "' name='btndd' class='btn btn-danger'>Chấm công</button></td>
                                     </tr>
                                     ";
+                                $attendanceData[] = [
+                                    "Mã nhân viên" => $row["userID"],
+                                    "Tên nhân viên" => $row["userName"],
+                                    "Ca làm" => $row["shiftName"],
+                                    "Cửa hàng làm việc" => $row["storeName"]
+                                ];    
+                                
                             }
+                            
+                            $data = json_encode($attendanceData);
                         } else echo "Không có dữ liệu!";
                         ?>
                     </tbody>
@@ -58,3 +68,45 @@ if (isset($_POST["btndd"])) {
             </form>
         </div>
     </div>
+    <script>
+        /* Xuất */
+        document.getElementById("export").addEventListener("click", function() {
+            let data = <?php echo $data; ?>;
+
+            let worksheet = XLSX.utils.json_to_sheet(data);
+
+            let workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Bảng chấm công");
+
+            XLSX.writeFile(workbook, "Bảng chấm công.xlsx");
+        });
+
+        /* In  */
+        document.getElementById("print").addEventListener("click", () => {
+            var actionColumn = document.querySelectorAll("#table tr td:last-child, #table tr th:last-child");
+
+            actionColumn.forEach(function(cell) {
+                cell.style.display = "none";
+            });
+
+            var content = document.getElementById("table").outerHTML;
+
+            var printWindow = window.open("", "", "height=500,width=800");
+
+            printWindow.document.write("<html><head><title>In bảng chấm công</title>");
+            printWindow.document.write("<style>table {width: 100%; border-collapse: collapse;} table, th, td {border: 1px solid black; padding: 10px;} </style>");
+            printWindow.document.write("</head><body>");
+            printWindow.document.write("<h1>Bảng chấm công</h1>");
+            printWindow.document.write(content);
+            printWindow.document.write("</body></html>");
+
+            printWindow.document.close();
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+
+            actionColumn.forEach(function(cell) {
+                cell.style.display = "block";
+            });
+        });
+    </script>

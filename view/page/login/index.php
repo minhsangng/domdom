@@ -109,7 +109,7 @@ $conn = $db->connect();
 
 if (isset($_POST["btndn"])) {
     $email = $_POST["email"];
-    $psw = $_POST["psw"];
+    $psw = md5($_POST["psw"]);
     if (empty($email) || empty($psw))
         echo "<script>
             document.addEventListener('DOMContentLoaded', function() {

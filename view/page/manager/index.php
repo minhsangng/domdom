@@ -34,6 +34,9 @@
     <!-- Bootstrap Bundle JS  -->
     <script src="../../js/bootstrap.bundle.min.js"></script>
     
+    <!-- Xuất Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
+    
     <!-- Sweet Alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -61,8 +64,7 @@
         }
 
         .pagination {
-            margin-left: 40%;
-            margin-bottom: 8%;
+            justify-content: center;
         }
 
         .pagination a {
@@ -190,18 +192,26 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                         <i class="fa-regular fa-bell"></i>
                     </div>
                     <div class="ml-4 flex items-center relative user-container">
-                        <img alt="User Avatar" class="rounded-full mr-1 border-solid border-2" height="40" width="40" src="../../../images/user.png" />
-                        <span class="text-xs font-bold ml-1">
-                            <?php
-                            echo $_SESSION["user"][0];
-                            
+                        <div class="rounded-full mr-1 border-solid bg-gray-400 text-white font-bold border-2 w-10 h-10 flex justify-center items-center">
+                        <?php
                             $userName = $_SESSION["user"][0];
 
-                            $sql = "SELECT userID FROM user WHERE userName = '$userName'";
+                            $sql = "SELECT userID, userName FROM user WHERE userName = '$userName'";
                             $result = $conn->query($sql);
                             $row = $result->fetch_assoc();
 
                             $_SESSION["user"][] = $row["userID"];
+                            
+                            $fullName = $row["userName"];
+                            $name = end(explode(" ", $fullName));
+                            $firstLetter = substr($name, 0, 1);
+                            
+                            echo $firstLetter;
+                        ?>
+                        </div>
+                        <span class="text-xs font-bold ml-1"> Hello, 
+                            <?php
+                            echo $name;
                             ?>
                         </span>
                     </div>

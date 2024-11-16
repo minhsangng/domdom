@@ -8,8 +8,8 @@
                 <button type="submit" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#insertModal">Tạo đề xuất</button>
             </div>
             <div class="flex items-center">
-                <button class="btn bg-green-100 text-green-500 py-2 px-4 rounded-lg mr-1 hover:bg-green-500 hover:text-white">Xuất <i class="fa-solid fa-table"></i></button>
-                <button class="btn bg-blue-100 text-blue-500 py-2 px-4 rounded-lg ml-1 hover:bg-blue-500 hover:text-white">In <i class="fa-solid fa-print"></i></button>
+                <button class="btn bg-green-100 text-green-500 py-2 px-4 rounded-lg mr-1 hover:bg-green-500 hover:text-white" id="export">Xuất <i class="fa-solid fa-table"></i></button>
+                <button class="btn bg-blue-100 text-blue-500 py-2 px-4 rounded-lg ml-1 hover:bg-blue-500 hover:text-white" id="print">In <i class="fa-solid fa-print"></i></button>
             </div>
         </div>
         <div class="h-fit bg-gray-100 rounded-lg p-6">
@@ -23,17 +23,26 @@
                 </thead>
                 <tbody>
                     <?php
-                    $sql = "SELECT * FROM proposal AS P JOIN user AS U ON P.userID = U.userID";
+                    $userID = $_SESSION["user"][2];
+                    $sql = "SELECT * FROM proposal AS P JOIN user AS U ON P.userID = U.userID WHERE P.userID = $userID";
                     $result = $conn->query($sql);
+                    $proposalData = [];
 
                     while ($row = $result->fetch_assoc()) {
                         echo "
-                                <tr>
-                                    <td class='py-2 border-2'>" . $row["typeOfProposal"] . "</td>
-                                    <td class='py-2 border-2'>" . $row["content"] . "</td>
-                                    <td class='py-2 border-2'><span class='bg-" . ($row["status"] == 1 ? "green" : "red") . "-100 text-" . ($row["status"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["status"] == 1 ? "Đã duyệt" : "Chờ duyệt") . "</span></td>
-                                </tr>";
+                            <tr>
+                                <td class='py-2 border-2'>" . $row["typeOfProposal"] . "</td>
+                                <td class='py-2 border-2'>" . $row["content"] . "</td>
+                                <td class='py-2 border-2'><span class='bg-" . ($row["status"] == 1 ? "green" : "red") . "-100 text-" . ($row["status"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["status"] == 1 ? "Đã duyệt" : "Chờ duyệt") . "</span></td>
+                            </tr>";
+                        $proposalData[] = [
+                            "Loại đề xuất" => $row["typeOfProposal"],
+                            "Nội dung đề xuất" => $row["content"],
+                            "Trạng thái" => $row["status"] == 1 ? "Đã duyệt" : "Chờ duyệt"
+                        ];
                     }
+
+                    $data = json_encode($proposalData);
                     ?>
                 </tbody>
             </table>
@@ -49,7 +58,7 @@
                     </div>
                     <div class="modal-body">
                         <form action="" method="POST">
-                            <table class="w-full">
+                            <table class="w-full" id="table">
                                 <tr>
                                     <td>
                                         <label for="type" class="w-full py-2"><b>Loại đề xuất <span class="text-red-500">*</span></b></label>
@@ -79,3 +88,37 @@
     </div>
 
 </div>
+<script>
+    /* Xuất */
+    document.getElementById("export").addEventListener("click", function() {
+        let data = <?php echo $data; ?>;
+
+        let worksheet = XLSX.utils.json_to_sheet(data);
+
+        let workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Danh sách đề xuất");
+
+        XLSX.writeFile(workbook, "Danh sách đề xuất.xlsx");
+    });
+
+    /* In  */
+    document.getElementById("print").addEventListener("click", () => {
+        var actionColumn = document.querySelectorAll("#table tr td:last-child, #table tr th:last-child");
+
+        var content = document.getElementById("table").outerHTML;
+
+        var printWindow = window.open("", "", "height=500,width=800");
+
+        printWindow.document.write("<html><head><title>In danh sách đề xuất</title>");
+        printWindow.document.write("<style>table {width: 100%; border-collapse: collapse;} table, th, td {border: 1px solid black; padding: 10px;} </style>");
+        printWindow.document.write("</head><body>");
+        printWindow.document.write("<h1>Danh sách đề xuất</h1>");
+        printWindow.document.write(content);
+        printWindow.document.write("</body></html>");
+
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+    });
+</script>

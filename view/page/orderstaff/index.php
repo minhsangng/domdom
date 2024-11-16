@@ -164,38 +164,46 @@ $conn = $db->connect();
                         <i class="fa-regular fa-bell"></i>
                     </div>
                     <div class="ml-4 flex items-center relative user-container">
-                        <img alt="User Avatar" class="rounded-full mr-1 border-solid border-2" height="40" width="40" src="../../../images/user.png" />
-                        <span class="text-xs font-bold ml-1">
-                            <?php
-                            echo $_SESSION["user"][0];
+                        <div class="rounded-full mr-1 border-solid bg-gray-400 text-white font-bold border-2 w-10 h-10 flex justify-center items-center"></div>
+                        <?php
+                        $userName = $_SESSION["user"][0];
 
-                            $userName = $_SESSION["user"][0];
+                        $sql = "SELECT userID, userName FROM user WHERE userName = '$userName'";
+                        $result = $conn->query($sql);
+                        $row = $result->fetch_assoc();
 
-                            $sql = "SELECT userID FROM user WHERE userName = '$userName'";
-                            $result = $conn->query($sql);
-                            $row = $result->fetch_assoc();
+                        $_SESSION["user"][] = $row["userID"];
 
-                            $_SESSION["user"][] = $row["userID"];
-                            ?>
-                        </span>
+                        $fullName = $row["userName"];
+                        $name = end(explode(" ", $fullName));
+                        $firstLetter = substr($name, 0, 1);
+
+                        echo $firstLetter;
+                        ?>
                     </div>
+                    <span class="text-xs font-bold ml-1"> Hello,
+                        <?php
+                        echo $name;
+                        ?>
+                    </span>
                 </div>
             </div>
-
-
-            <?php
-            $i = "";
-            if (isset($_REQUEST["i"]))
-                $i = $_REQUEST["i"];
-            else
-                $i = "home";
-
-            if ($i != "home")
-                require("" . $_REQUEST["i"] . "/index.php");
-            else if ($i == "home")
-                require("home/index.php");
-            ?>
         </div>
+
+
+        <?php
+        $i = "";
+        if (isset($_REQUEST["i"]))
+            $i = $_REQUEST["i"];
+        else
+            $i = "home";
+
+        if ($i != "home")
+            require("" . $_REQUEST["i"] . "/index.php");
+        else if ($i == "home")
+            require("home/index.php");
+        ?>
+    </div>
     </div>
     </div>
 

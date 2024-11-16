@@ -1,51 +1,5 @@
 <?php
 $ctrl = new cDishes;
-function removeVietnameseAccents($str)
-{
-    $unicode = array(
-        'a' => ['á', 'à', 'ả', 'ã', 'ạ', 'ă', 'ắ', 'ằ', 'ẳ', 'ẵ', 'ặ', 'â', 'ấ', 'ầ', 'ẩ', 'ẫ', 'ậ'],
-        'd' => ['đ'],
-        'e' => ['é', 'è', 'ẻ', 'ẽ', 'ẹ', 'ê', 'ế', 'ề', 'ể', 'ễ', 'ệ'],
-        'i' => ['í', 'ì', 'ỉ', 'ĩ', 'ị'],
-        'o' => ['ó', 'ò', 'ỏ', 'õ', 'ọ', 'ô', 'ố', 'ồ', 'ổ', 'ỗ', 'ộ', 'ơ', 'ớ', 'ờ', 'ở', 'ỡ', 'ợ'],
-        'u' => ['ú', 'ù', 'ủ', 'ũ', 'ụ', 'ư', 'ứ', 'ừ', 'ử', 'ữ', 'ự'],
-        'y' => ['ý', 'ỳ', 'ỷ', 'ỹ', 'ỵ'],
-        'A' => ['Á', 'À', 'Ả', 'Ã', 'Ạ', 'Ă', 'Ắ', 'Ằ', 'Ẳ', 'Ẵ', 'Ặ', 'Â', 'Ấ', 'Ầ', 'Ẩ', 'Ẫ', 'Ậ'],
-        'D' => ['Đ'],
-        'E' => ['É', 'È', 'Ẻ', 'Ẽ', 'Ẹ', 'Ê', 'Ế', 'Ề', 'Ể', 'Ễ', 'Ệ'],
-        'I' => ['Í', 'Ì', 'Ỉ', 'Ĩ', 'Ị'],
-        'O' => ['Ó', 'Ò', 'Ỏ', 'Õ', 'Ọ', 'Ô', 'Ố', 'Ồ', 'Ổ', 'Ỗ', 'Ộ', 'Ơ', 'Ớ', 'Ờ', 'Ở', 'Ỡ', 'Ợ'],
-        'U' => ['Ú', 'Ù', 'Ủ', 'Ũ', 'Ụ', 'Ư', 'Ứ', 'Ừ', 'Ử', 'Ữ', 'Ự'],
-        'Y' => ['Ý', 'Ỳ', 'Ỷ', 'Ỹ', 'Ỵ']
-    );
-
-    foreach ($unicode as $nonAccent => $accentedChars) {
-        $str = str_replace($accentedChars, $nonAccent, $str);
-    }
-
-    $str = str_replace(' ', '', $str);
-
-    return strtolower($str);
-}
-
-if (isset($_POST["btnthemmon"])) {
-    $dishName = $_POST["name"];
-    $category = $_POST["cate"];
-    $price = $_POST["price"];
-    $unit = $_POST["unit"];
-    $ingredient = $_POST["ingredient"];
-    $quantity = $_POST["quantity"];
-    $prepare = $_POST["prepare"];
-    $image = $_FILES["image"];
-
-    if (isset($dishName) && isset($category) && isset($price) && isset($unit) && isset($ingredient) && isset($quantity) && isset($prepare) && $image["size"] > 0 && $image["error"] == 0) {
-        $imgName = removeVietnameseAccents($dishName) . ".png";
-
-        move_uploaded_file($image["tmp_name"], "../../../images/dish/" . $imgName);
-
-        $ctrl->cInsertDish($dishName, $category, $price, $prepare, $imgName);
-    }
-}
 
 if (isset($_POST["btncapnhat"])) {
 
@@ -57,23 +11,23 @@ if (isset($_POST["btncapnhat"])) {
     </script>";
 
     $dishID = $_POST["btncapnhat"];
-    
-    if ($ctrl->cGetDishById($dishID) != 0) {
-    $result = $ctrl->cGetDishById($dishID);
-    $row = $result->fetch_assoc();
 
-    $_SESSION["dishID"] = $row["dishID"];
-    $_SESSION["dishName"] = $row["dishName"];
-    $_SESSION["category"] = $row["dishCategory"];
-    $_SESSION["price"] = $row["price"];
-    $_SESSION["image"] = $row["image"];
-    $_SESSION["availabilityStatus"] = $row["availabilityStatus"];
+    if ($ctrl->cGetDishById($dishID) != 0) {
+        $result = $ctrl->cGetDishById($dishID);
+        $row = $result->fetch_assoc();
+
+        $_SESSION["dishID"] = $row["dishID"];
+        $_SESSION["dishName"] = $row["dishName"];
+        $_SESSION["category"] = $row["dishCategory"];
+        $_SESSION["price"] = $row["price"];
+        $_SESSION["image"] = $row["image"];
+        $_SESSION["availabilityStatus"] = $row["availabilityStatus"];
     }
 }
 
 if (isset($_POST["btnhet"])) {
     $dishID = $_SESSION["dishID"];
-        $availibility = ($_SESSION["availabilityStatus"] == 1 ? 0 : 1);
+    $availibility = ($_SESSION["availabilityStatus"] == 1 ? 0 : 1);
 
     $ctrl->cUpdateDishAvailabilityStatus($availibility, $dishID);
 }
@@ -113,7 +67,7 @@ if (isset($_POST["btnhet"])) {
                             while ($row = $result->fetch_assoc()) {
                                 echo "
                     <tr>
-                        <td class='py-2 border-2'>#010" . $row["dishID"] . "</td>
+                        <td class='py-2 border-2'>#DH0" . ($row["dishID"] < 10 ? "0" . $row["dishID"] : $row["dishID"]) . "</td>
                         <td class='py-2 border-2'>" . $row["dishName"] . "</td>
                         <td class='py-2 border-2'>" . $row["dishCategory"] . "</td>
                         <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
@@ -169,10 +123,10 @@ if (isset($_POST["btnhet"])) {
                             <tr>
                                 <td>
                                     <label for="availability" class="w-full py-2"><b>Trạng thái sẵn có</b></label>
-                                    <input type="text" class="w-full form-control" name="availability" value="<?php echo ($_SESSION["availabilityStatus"] == 1 ? "Còn hàng" : "Hết hàng");?>">
+                                    <input type="text" class="w-full form-control" name="availability" value="<?php echo ($_SESSION["availabilityStatus"] == 1 ? "Còn hàng" : "Hết hàng"); ?>">
                                 </td>
                             </tr>
-                            
+
                             <tr>
                                 <td>
                                     <label for="prepare" class="w-full py-2"><b>Quy trình chế biến</b></label>
@@ -182,13 +136,13 @@ if (isset($_POST["btnhet"])) {
                             <tr>
                                 <td>
                                     <label for="image" class="w-full py-2"><b>Hình ảnh</b></label>
-                                    <img src="../../../images/dish/<?php echo $_SESSION["image"];?>" alt="<?php echo $_SESSION["dishName"];?>" class="w-full h-48 rounded-md">
+                                    <img src="../../../images/dish/<?php echo $_SESSION["image"]; ?>" alt="<?php echo $_SESSION["dishName"]; ?>" class="w-full h-48 rounded-md">
                                 </td>
                             </tr>
                         </table>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary" name="btnhet" value="<?php echo $_SESSION["dishID"]; ?>"><?php echo ($_SESSION["availabilityStatus"] == 1 ? "Hết hàng" : "Còn hàng");?></button>
+                        <button type="submit" class="btn btn-primary" name="btnhet" value="<?php echo $_SESSION["dishID"]; ?>"><?php echo ($_SESSION["availabilityStatus"] == 1 ? "Hết hàng" : "Còn hàng"); ?></button>
                     </div>
                 </form>
             </div>
@@ -196,46 +150,3 @@ if (isset($_POST["btnhet"])) {
     </div>
 
 </div>
-
-<script>
-    /* Xuất */
-    document.getElementById("export").addEventListener("click", function() {
-        let data = <?php echo $data; ?>;
-
-        let worksheet = XLSX.utils.json_to_sheet(data);
-
-        let workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Danh sách món ăn");
-
-        XLSX.writeFile(workbook, "DishList.xlsx");
-    });
-
-    /* In  */
-    document.getElementById("print").addEventListener("click", () => {
-        var actionColumn = document.querySelectorAll("#dishTable tr td:last-child, #dishTable tr th:last-child");
-
-        actionColumn.forEach(function(cell) {
-            cell.style.display = "none";
-        });
-
-        var content = document.getElementById("dishTable").outerHTML;
-
-        var printWindow = window.open("", "", "height=500,width=800");
-
-        printWindow.document.write("<html><head><title>In danh sách món ăn</title>");
-        printWindow.document.write("<style>table {width: 100%; border-collapse: collapse;} table, th, td {border: 1px solid black; padding: 10px;} </style>");
-        printWindow.document.write("</head><body>");
-        printWindow.document.write("<h1>Danh sách món ăn</h1>");
-        printWindow.document.write(content);
-        printWindow.document.write("</body></html>");
-
-        printWindow.document.close();
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
-
-        actionColumn.forEach(function(cell) {
-            cell.style.display = "block";
-        });
-    });
-</script>

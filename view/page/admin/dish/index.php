@@ -159,7 +159,6 @@ if (isset($_POST["btnkhoa"])) {
                                     "Trạng thái" => ($row["businessStatus"] == 1 ? "Đang kinh doanh" : "Ngưng kinh doanh")
                                 ];
                             }
-                            /* $_SESSION["dishData"] = $dishData; */
                         }
                         $data = json_encode($dishData);
                         ?>
@@ -367,7 +366,7 @@ if (isset($_POST["btnkhoa"])) {
         let workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Danh sách món ăn");
 
-        XLSX.writeFile(workbook, "DishList.xlsx");
+        XLSX.writeFile(workbook, "Danh sách món ăn.xlsx");
     });
 
     /* In  */
