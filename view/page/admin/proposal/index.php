@@ -1,3 +1,17 @@
+<?php
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    
+    $proposalID = $_POST['proposalID'];
+    $status = $_POST['status'];
+    $sql = "UPDATE proposal SET statusP = $status WHERE proposalID = $proposalID";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "<script>alert('Cập nhật trạng thái thành công');</script>";
+    } else {
+        echo "<script>alert('Cập nhật thất bại: " . $conn->error . "');</script>";
+    }
+}
+?>
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
         <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
             <div class="flex justify-between items-center mb-4">
@@ -21,25 +35,50 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <?php
-                        $sql = "SELECT * FROM proposal AS P JOIN user AS U ON P.userID = U.userID";
-                        $result = $conn->query($sql);
+    <?php
+    $sql = "SELECT * FROM proposal AS P JOIN user AS U ON P.userID = U.userID";
+    $result = $conn->query($sql);
 
-                        while ($row = $result->fetch_assoc()) {
-                            echo "
-                                <tr>
-                                    <td class='py-2 border-2'>" . $row["userName"] . "</td>
-                                    <td class='py-2 border-2'>" . $row["typeOfProposal"] . "</td>
-                                    <td class='py-2 border-2'>" . $row["content"] . "</td>
-                                    <td class='py-2 border-2'><span class='bg-".($row["status"] == 1 ? "green" : "red")."-100 text-".($row["status"] == 1 ? "green" : "red")."-500 py-1 px-2 rounded-lg'>".($row["status"] == 1 ? "Đã duyệt" : "Chờ duyệt")."</span></td>
-                                    <td class='py-2 border-2 flex justify-center'>
-                                        <button class='btn btn-secondary mr-1'>Từ chối</button>
-                                        <button class='btn btn-danger ml-1'>Duyệt</button>
-                                    </td>
-                                </tr>";
-                        }
-                        ?>
-                    </tbody>
+    while ($row = $result->fetch_assoc()) {
+        if ($row["statusP"] == 1) {
+            $statusLabel = "Đã duyệt";
+            $statusClass = "bg-green-100 text-green-500";
+        } elseif ($row["statusP"] == 2) {
+            $statusLabel = "Từ chối";
+            $statusClass = "bg-yellow-100 text-yellow-500"; 
+        } else {
+            $statusLabel = "Chờ duyệt";
+            $statusClass = "bg-red-100 text-red-500";
+        }
+
+        echo "
+            <tr id='proposal-".$row["proposalID"]."'>
+                <td class='py-2 border-2'>" . $row["userName"] . "</td>
+                <td class='py-2 border-2'>" . $row["typeOfProposal"] . "</td>
+                <td class='py-2 border-2'>" . $row["content"] . "</td>
+                <td class='py-2 border-2'>
+                    <span class='$statusClass py-1 px-2 rounded-lg'>$statusLabel</span>
+                </td>
+                <td class='py-2 border-2 flex justify-center'>
+                    <!-- Form Từ chối -->
+                    <form action='' method='POST' style='display: inline-block;'>
+                        <input type='hidden' name='proposalID' value='".$row["proposalID"]."'>
+                        <input type='hidden' name='status' value='2'> <!-- Từ chối -->
+                        <button type='submit' class='btn btn-secondary mr-1' " . ($row["statusP"] != 0 ? "disabled" : "") . ">Từ chối</button>
+                    </form>
+                    <!-- Form Duyệt -->
+                    <form action='' method='POST' style='display: inline-block;'>
+                        <input type='hidden' name='proposalID' value='".$row["proposalID"]."'>
+                        <input type='hidden' name='status' value='1'> <!-- Duyệt -->
+                        <button type='submit' class='btn btn-danger ml-1' " . ($row["statusP"] != 0 ? "disabled" : "") . ">Duyệt</button>
+                    </form>
+                </td>
+            </tr>";
+    }
+    ?>
+</tbody>
+
+
                 </table>
             </div>
         </div>

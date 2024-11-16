@@ -59,6 +59,7 @@ if (isset($_POST["btndn"])) {
 
     if ($result->num_rows > 0) {
         $_SESSION["userName"] = $row["userName"];
+        $_SESSION["userID"] = $row["userID"];
         $_SESSION["login"] = 1;
 
         switch ($row["roleID"]) {
