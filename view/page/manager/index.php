@@ -119,6 +119,7 @@ include("../../../controller/cDishes.php");
 include("../../../controller/cIngredients.php");
 include("../../../controller/cOrders.php");
 include("../../../controller/cEmployees.php");
+include("../../../controller/cProposals.php");
 include("../../../controller/cMessage.php");
 
 /* Xử lý đăng nhập */
@@ -318,7 +319,7 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
             });
             swalWithBootstrapButtons.fire({
                 title: "Bạn chắc chắn muốn đăng xuất?",
-                icon: "warning",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonText: "Đồng ý",
                 cancelButtonText: "Hủy",

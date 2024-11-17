@@ -42,8 +42,31 @@ class cMessage
                     }
                   });
                   Toast.fire({
-                    icon: 'warning',
+                    icon: 'error',
                     title: text + ' thất bại'
+                  });
+                });
+        </script>";
+  }
+  
+  public function emptyMessage()
+  {
+    echo "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    didOpen: (toast) => {
+                      toast.onmouseenter = Swal.stopTimer;
+                      toast.onmouseleave = Swal.resumeTimer;
+                    }
+                  });
+                  Toast.fire({
+                    icon: 'warning',
+                    title: 'Vui lòng nhập đầy đủ thông tin!'
                   });
                 });
         </script>";

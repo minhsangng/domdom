@@ -2,17 +2,6 @@
 
 class mPromotions
 {
-    public function showPromotions()
-    {
-        $db = new Database;
-        $conn = $db->connect();
-        $sql = "SELECT * FROM promotion";
-        
-        if ($conn != null)
-            return $conn->query($sql);
-        return 0;
-    }
-    
     public function mGetAllPromotion() {
         $db = new Database;
         $conn = $db->connect();

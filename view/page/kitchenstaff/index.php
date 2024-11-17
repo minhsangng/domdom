@@ -299,7 +299,7 @@ $conn = $db->connect();
             });
             swalWithBootstrapButtons.fire({
                 title: "Bạn chắc chắn muốn đăng xuất?",
-                icon: "warning",
+                icon: "question",
                 showCancelButton: true,
                 confirmButtonText: "Đồng ý",
                 cancelButtonText: "Hủy",
