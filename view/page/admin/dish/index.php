@@ -140,17 +140,17 @@ if (isset($_POST["btnkhoa"])) {
 
                             while ($row = $result->fetch_assoc()) {
                                 echo "
-                    <tr>
-                        <td class='py-2 border-2'>#010" . $row["dishID"] . "</td>
-                        <td class='py-2 border-2'>" . $row["dishName"] . "</td>
-                        <td class='py-2 border-2'>" . $row["dishCategory"] . "</td>
-                        <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
-                        <td class='py-2 border-2'><span class='bg-" . ($row["businessStatus"] == 1 ? "green" : "red") . "-100 text-" . ($row["businessStatus"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["businessStatus"] == 1 ? "Đang kinh doanh" : "Ngưng kinh doanh") . "</span></td>
-                        <td class='py-2 border-2 flex justify-center'>
-                            <button type='submit' class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["dishID"] . "'>Cập nhật</button>
-                            <button type='submit' class='btn btn-danger ml-1' name='btnkhoa' value='" . $row["dishID"] . "'>" . ($row["businessStatus"] == 1 ? "Khóa" : "Mở") . "</button>
-                        </td>
-                    </tr>";
+                                    <tr>
+                                        <td class='py-2 border-2'>#010" . $row["dishID"] . "</td>
+                                        <td class='py-2 border-2'>" . $row["dishName"] . "</td>
+                                        <td class='py-2 border-2'>" . $row["dishCategory"] . "</td>
+                                        <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
+                                        <td class='py-2 border-2'><span class='bg-" . ($row["businessStatus"] == 1 ? "green" : "red") . "-100 text-" . ($row["businessStatus"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["businessStatus"] == 1 ? "Đang kinh doanh" : "Ngưng kinh doanh") . "</span></td>
+                                        <td class='py-2 border-2 flex justify-center'>
+                                            <button type='submit' class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["dishID"] . "'>Cập nhật</button>
+                                            <button type='submit' class='btn btn-danger ml-1' name='btnkhoa' value='" . $row["dishID"] . "'>" . ($row["businessStatus"] == 1 ? "Khóa" : "Mở") . "</button>
+                                        </td>
+                                    </tr>";
                                 $dishData[] = [
                                     "Mã món" => $row["dishID"],
                                     "Tên món" => $row["dishName"],

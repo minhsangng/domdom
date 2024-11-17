@@ -30,10 +30,10 @@ if (isset($_POST['btnthemmon'])) {
             <table class="text-base w-full text-center">
                 <thead>
                     <tr>
-                        <th class="text-gray-600 border-2 py-2">Tên người đề xuất</th>
-                        <th class="text-gray-600 border-2 py-2">Loại đề xuất</th>
+                        <th class="text-gray-600 border-2 py-2 w-40">Tên người đề xuất</th>
+                        <th class="text-gray-600 border-2 py-2 w-52">Loại đề xuất</th>
                         <th class="text-gray-600 border-2 py-2">Nội dung</th>
-                        <th class="text-gray-600 border-2 py-2">Trạng thái</th>
+                        <th class="text-gray-600 border-2 py-2 w-32">Trạng thái</th>
                     </tr>
                 </thead>
                 <tbody>

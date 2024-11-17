@@ -28,11 +28,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <table class="text-base w-full text-center">
                 <thead>
                     <tr>
-                        <th class="text-gray-600 border-2 py-2">Người đề xuất</th>
-                        <th class="text-gray-600 border-2 py-2">Loại đề xuất</th>
+                        <th class="text-gray-600 border-2 py-2 w-40">Người đề xuất</th>
+                        <th class="text-gray-600 border-2 py-2 w-52">Loại đề xuất</th>
                         <th class="text-gray-600 border-2 py-2">Nội dung</th>
-                        <th class="text-gray-600 border-2 py-2">Trạng thái</th>
-                        <th class="text-gray-600 border-2 py-2">Chức năng</th>
+                        <th class="text-gray-600 border-2 py-2 w-32">Trạng thái</th>
+                        <th class="text-gray-600 border-2 py-2 w-48">Chức năng</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,28 +53,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         }
 
                         echo "
-                        <tr id='proposal-" . $row["proposalID"] . "'>
-                            <td class='py-2 border-2'>" . $row["userName"] . "</td>
-                            <td class='py-2 border-2'>" . $row["typeOfProposal"] . "</td>
-                            <td class='py-2 border-2'>" . $row["content"] . "</td>
-                            <td class='py-2 border-2'>
-                                <span class='" . $statusClass . " py-1 px-2 rounded-lg'>" . $statusLabel . "</span>
-                            </td>
-                            <td class='py-2 border-2 flex justify-center'>
-                                <!-- Form Từ chối -->
-                                <form action='' method='POST' style='display: inline-block;'>
-                                    <input type='hidden' name='proposalID' value='" . $row["proposalID"] . "'>
-                                    <input type='hidden' name='status' value='2'> <!-- Từ chối -->
-                                    <button type='submit' class='btn btn-secondary mr-1' " . ($row["status"] != 0 ? "disabled" : "") . ">Từ chối</button>
-                                </form>
-                                <!-- Form Duyệt -->
-                                <form action='' method='POST' style='display: inline-block;'>
-                                    <input type='hidden' name='proposalID' value='" . $row["proposalID"] . "'>
-                                    <input type='hidden' name='status' value='1'> <!-- Duyệt -->
-                                    <button type='submit' class='btn btn-danger ml-1' " . ($row["status"] != 0 ? "disabled" : "") . ">Duyệt</button>
-                                </form>
-                            </td>
-                        </tr>";
+                            <tr id='proposal-" . $row["proposalID"] . "'>
+                                <td class='py-2 border-2'>" . $row["userName"] . "</td>
+                                <td class='py-2 border-2'>" . $row["typeOfProposal"] . "</td>
+                                <td class='py-2 border-2'>" . $row["content"] . "</td>
+                                <td class='py-2 border-2'>
+                                    <span class='" . $statusClass . " py-1 px-2 rounded-lg'>" . $statusLabel . "</span>
+                                </td>
+                                <td class='py-2 border-2 flex justify-center'>
+                                    <!-- Form Từ chối -->
+                                    <form action='' method='POST' style='display: inline-block;'>
+                                        <input type='hidden' name='proposalID' value='" . $row["proposalID"] . "'>
+                                        <input type='hidden' name='status' value='2'> <!-- Từ chối -->
+                                        <button type='submit' class='btn btn-secondary mr-1' " . ($row["status"] != 0 ? "disabled" : "") . ">Từ chối</button>
+                                    </form>
+                                    <!-- Form Duyệt -->
+                                    <form action='' method='POST' style='display: inline-block;'>
+                                        <input type='hidden' name='proposalID' value='" . $row["proposalID"] . "'>
+                                        <input type='hidden' name='status' value='1'> <!-- Duyệt -->
+                                        <button type='submit' class='btn btn-danger ml-1' " . ($row["status"] != 0 ? "disabled" : "") . ">Duyệt</button>
+                                    </form>
+                                </td>
+                            </tr>";
                     }
                     ?>
                 </tbody>
