@@ -1,13 +1,13 @@
 <?php
 $ctrl = new cPromotions;
 
-/* Css dè cho nav-link focus - lỗi từ php chưa thể fix */
-
 echo "<script>
         window.addEventListener('load', () => {
             document.getElementById('promotion').classList.add('activeAd'); 
         });
     </script>";
+
+$errors = [];
 
 if (isset($_POST["btnthemkm"])) {
     $proName = $_POST["proName"];
@@ -18,16 +18,40 @@ if (isset($_POST["btnthemkm"])) {
     $image = $_FILES["image"];
     $status = 1;
 
-    $imgName = '';
-
-    if ($image["size"] > 0 && $image["error"] == 0) {
-        if ($image["type"] == "image/png" || $image["type"] == "image/jpeg")
-            move_uploaded_file($image["tmp_name"], "../../../images/promotion/".$imgage["name"]);
-            // $imgName=$imgage["name"];
-        else echo "<script>alert('Không phải ảnh. Vui lòng chọn lại ảnh khác!')</script>";
+    if (!preg_match("/^[a-zA-Z0-9\s]+$/", $proName)) {
+        $errors['proName'] = 'Tên khuyến mãi không hợp lệ!';
+    }
+    if (!preg_match("/^[a-zA-Z0-9\s]+$/", $des)) {
+        $errors['description'] = 'Mô tả không hợp lệ!';
+    }
+    if (!preg_match("/^\d+$/", $percent) || $percent < 0 || $percent > 100) {
+        $errors['percent'] = 'Phần trăm khuyến mãi không hợp lệ!';
+    }
+    if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $start)) {
+        $errors['startDate'] = 'Ngày bắt đầu không hợp lệ!';
+    }
+    if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $end)) {
+        $errors['endDate'] = 'Ngày kết thúc không hợp lệ!';
+    }
+    if (strtotime($start) >= strtotime($end)) {
+        $errors['date'] = 'Ngày bắt đầu phải nhỏ hơn ngày kết thúc!';
     }
 
-    $ctrl->cInsertPromotion($proName, $des, $percent, $start, $end, $imgName, $status);
+    if (empty($errors)) {
+        $imgName = '';
+
+        if ($image["size"] > 0 && $image["error"] == 0){
+            if ($image["type"] == "image/png" || $image["type"] == "image/jpeg") {
+                $imgName = $image["name"];
+                move_uploaded_file($image["tmp_name"], "../../../images/promotion1/".$imgName);
+            } else {
+                $errors['image'] = 'Không phải ảnh. Vui lòng chọn lại ảnh khác!';
+            }
+        }
+        if (empty($errors)) {
+            $ctrl->cInsertPromotion($proName, $des, $percent, $start, $end, $imgName, $status);
+        }
+    }
 }
 
 if (isset($_POST["btncapnhat"])) {
@@ -64,17 +88,29 @@ if (isset($_POST["btnsuakm"])) {
 
     $imgName = '';
 
-    if ($image["size"] > 0 && $image["error"] == 0)
-        if ($image["type"] == "image/png" || $image["type"] == "image/jpg")
+    if ($image["size"] > 0 && $image["error"] == 0) {
+        if ($image["type"] == "image/png" || $image["type"] == "image/jpeg") {
+            $imgName = $image["name"];
             move_uploaded_file($image["tmp_name"], "../../../images/promotion/".$imgName);
-        else echo "<script>alert('Không phải ảnh. Vui lòng chọn lại ảnh khác!')</script>";
-
+        } else {
+            echo "<script>alert('Không phải ảnh. Vui lòng chọn lại ảnh khác!')</script>";
+        }
+    }
     $ctrl->cUpdatePromotion($proID, $proName, $des, $percent, $start, $end, $imgName, $status);
 }
 
 if (isset($_POST["btnxoa"])) {
     $proID = $_SESSION["proID"];
     $ctrl->cdeletePromotion($proID);
+}
+
+if (!empty($errors)) {
+    echo "<script>
+        window.addEventListener('load', () => {
+            var insertModal = new bootstrap.Modal(document.getElementById('insertModal'));
+            insertModal.show();
+        });
+    </script>";
 }
 ?>
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
@@ -120,7 +156,7 @@ if (isset($_POST["btnxoa"])) {
                             <td class='py-2 border-2'>" . str_replace(".00", "%", $row["discountPercentage"]) . "</td>
                             <td class='py-2 border-2'>" . $row["startDate"] . "</td>
                             <td class='py-2 border-2'>" . $row["endDate"] . "</td>
-                            <td class='py-2 border-2'><img src='../../../images/promotion/" . $row["image"] . "' alt='" . $row["promotionName"] . "' class='size-24' /></td>
+                            <td class='py-2 border-2'><img src='../../../images/promotion1/" . $row["image"] . "' alt='" . $row["promotionName"] . "' class='size-24' /></td>
                             <td class='py-2 border-2 text-" . ($row["status"] == 1 ? "green" : "red") . "-500'>" . ($row["status"] == 1 ? "Đang áp dụng" : "Ngưng áp dụng") . "</td>
                             <td class='py-2 border-2 flex justify-center items-center h-28'>
                                 <button class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["promotionID"] . "'>Cập nhật</button>
@@ -148,41 +184,64 @@ if (isset($_POST["btnxoa"])) {
                             <tr>
                                 <td>
                                     <label for="proName" class="w-full py-2"><b>Tên KM <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="proName" required>
+                                    <input type="text" class="w-full form-control" name="proName" required value="<?php echo isset($proName) ? $proName : ''; ?>">
+                                    <?php if (isset($errors['proName'])) {
+                                        echo '<div class="text-red-500">' . $errors['proName'] . '</div>';
+                                    } ?>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="description" class="w-full py-2"><b>Mô tả <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="description" required>
+                                    <input type="text" class="w-full form-control" name="description" required value="<?php echo isset($des) ? $des : ''; ?>">
+                                    <?php if (isset($errors['description'])) {
+                                        echo '<div class="text-red-500">' . $errors['description'] . '</div>';
+                                    } ?>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="percent" class="w-full py-2"><b>Phần trăm KM<span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="percent" required>
+                                    <input type="text" class="w-full form-control" name="percent" required value="<?php echo isset($percent) ? $percent : ''; ?>">
+                                    <?php if (isset($errors['percent'])) {
+                                        echo '<div class="text-red-500">' . $errors['percent'] . '</div>';
+                                    } ?>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="startDate" class="w-full py-2"><b>Ngày bắt đầu<span class="text-red-500">*</span></b></label>
-                                    <input type="date" class="w-full form-control" name="startDate" required>
+                                    <input type="date" class="w-full form-control" name="startDate" required value="<?php echo isset($start) ? $start : ''; ?>">
+                                    <?php if (isset($errors['startDate'])) {
+                                        echo '<div class="text-red-500">' . $errors['startDate'] . '</div>';
+                                    } ?>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="endDate" class="w-full py-2"><b>Ngày kết thúc<span class="text-red-500">*</span></b></label>
-                                    <input type="date" class="w-full form-control" name="endDate" required>
+                                    <input type="date" class="w-full form-control" name="endDate" required value="<?php echo isset($end) ? $end : ''; ?>">
+                                    <?php if (isset($errors['endDate'])) {
+                                        echo '<div class="text-red-500">' . $errors['endDate'] . '</div>';
+                                    } ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <?php if (isset($errors['date'])) {
+                                        echo '<div class="text-red-500">' . $errors['date'] . '</div>';
+                                    } ?>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="image" class="w-full py-2"><b>Hình ảnh<span class="text-red-500">*</span></b></label>
                                     <input type="file" class="w-full form-control" name="image" required>
+                                    <?php if (isset($errors['image'])) {
+                                        echo '<div class="error">' . $errors['image'] . '</div>';
+                                    } ?>
                                 </td>
                             </tr>
-                            
-                           
                         </table>
                     </div>
                     <div class="modal-footer">
@@ -264,3 +323,5 @@ if (isset($_POST["btnxoa"])) {
             </div>
         </div>
     </div>
+
+
