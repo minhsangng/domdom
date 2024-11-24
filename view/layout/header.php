@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="images/logo-nobg.png" type="image/x-icon">
 
-    <!-- Font Awesome CSS -->
+    <!-- Font Awesome -->
     <link href="view/css/all.css" rel="stylesheet" />
 
     <!-- Preconnect for Google Fonts -->
@@ -19,6 +19,7 @@
     <!-- Style CSS -->
     <link rel="stylesheet" href="view/css/style.css">
 
+    <!-- SweetAlerts CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <!-- Tailwind CSS -->
@@ -33,7 +34,7 @@
     <!-- Font Awesome JS -->
     <script src="view/js/all.js"></script>
 
-    <!-- Bootstrap JS (bundle includes Popper.js) -->
+    <!-- Bootstrap JS -->
     <script src="view/js/bootstrap.bundle.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -45,6 +46,7 @@
         }
 
         .scrolled {
+            background-color: rgba(255, 255, 255, 0.2);
             box-shadow: 0 5px 10px 0 rgba(138, 155, 165, 0.15);
             padding: 2px 0;
             -webkit-transition: all 0.3s ease-out;
@@ -112,7 +114,7 @@
             color: #212121;
             background-color: #fcfaff;
             border: none;
-            border-radius: 3px;
+            border-radius: 6px;
             box-shadow: 0 5px 10px 0 rgba(138, 155, 165, 0.15);
             transition: all 200ms linear;
         }

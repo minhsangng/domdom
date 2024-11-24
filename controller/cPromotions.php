@@ -18,6 +18,22 @@ class cPromotions extends mPromotions
         } return 0;
     }
     
+    public function cGetAllPromotionGoingOn() {
+        if ($this->mGetAllPromotionGoingOn() != 0) {
+            $result = $this->mGetAllPromotionGoingOn();
+            
+            return $result;
+        } return 0;
+    }
+    
+    public function cGetAllPromotionComming() {
+        if ($this->mGetAllPromotionComming() != 0) {
+            $result = $this->mGetAllPromotionComming();
+            
+            return $result;
+        } return 0;
+    }
+    
     public function cGetPromotionNotStatus($status) {
         if ($this->mGetPromotionNotStatus($status) != 0) {
             $result = $this->mGetPromotionNotStatus($status);

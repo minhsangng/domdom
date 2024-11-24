@@ -12,6 +12,26 @@ class mPromotions
         return 0;
     }
     
+    public function mGetAllPromotionGoingOn() {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT * FROM promotion WHERE status = 1";
+        
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+    
+    public function mGetAllPromotionComming() {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT * FROM promotion WHERE status = 2";
+        
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+    
     public function mGetPromotionNotStatus($status) {
         $db = new Database;
         $conn = $db->connect();

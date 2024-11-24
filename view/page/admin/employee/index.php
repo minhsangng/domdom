@@ -36,13 +36,13 @@ if (isset($_POST["btnsuanv"])) {
     $role = $_POST["role"];
 
     $sqlUpdate = "UPDATE user SET 
-                      userName = '$userName', 
-                      dateBirth = '$dateBirth', 
-                      phoneNumber = '$phone', 
-                      email = '$email', 
-                      sex = '$sex', 
-                      roleID = $role 
-                      WHERE userID = $userID";
+        userName = '$userName', 
+        dateBirth = '$dateBirth', 
+        phoneNumber = '$phone', 
+        email = '$email', 
+        sex = '$sex', 
+        roleID = $role 
+        WHERE userID = $userID";
 
     if ($conn->query($sqlUpdate) === TRUE) {
         echo "<script>
@@ -52,7 +52,6 @@ if (isset($_POST["btnsuanv"])) {
         echo "<script>alert('Cập nhật thất bại! Lỗi: " . $conn->error . "');</script>";
     }
 }
-
 
 // Trạng thái nhân viên
 if (isset($_POST["btnkhoa"])) {
@@ -131,7 +130,7 @@ if (isset($_POST["btnthemnv"])) {
                     </thead>
                     <tbody>
                         <?php
-                        $sql = "SELECT * FROM `user` AS U JOIN `role` AS R ON U.roleID = R.roleID WHERE R.roleID IN (2, 3, 4)";
+                        $sql = "SELECT * FROM `user` AS U JOIN `role` AS R ON U.roleID = R.roleID WHERE R.roleID != 1";
                         $result = $conn->query($sql);
                         $employeeData = [];
 

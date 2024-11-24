@@ -6,7 +6,21 @@ class mDishes
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT * FROM dish GROUP BY dishCategory ORDER BY dishCategory DESC";
+        $sql = "SELECT * FROM dish GROUP BY dishCategory";
+        if ($conn != null) 
+            return $conn->query($sql);
+        return 0;
+    }
+    
+    public function mSearchDish($input)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        
+        if (is_numeric($input))
+            $sql = "SELECT * FROM dish WHERE price = $input";
+        else
+            $sql = "SELECT * FROM dish WHERE dishName LIKE '%".$input."%'";
         if ($conn != null) 
             return $conn->query($sql);
         return 0;

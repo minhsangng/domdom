@@ -126,7 +126,7 @@ if (isset($_POST["btndattiec"])) {
             var modalParty = new bootstrap.Modal(document.getElementById('partyModal')); 
             modalParty.show();
         });
-    </script>";    
+    </script>";
 }
 
 if (isset($_POST["btnxn"])) {
@@ -136,45 +136,48 @@ if (isset($_POST["btnxn"])) {
     $address = $_POST["address"];
     $email = $_POST["email"];
     $paymentMethod = $_POST["method"];
-    
-    /* $sql = "INSERT INTO customer(phoneNumber, fullName, address, email) VALUES ('$phone', '$name', '$address', '$email')";
-    $result = $conn->query($sql); */
-    
+
     $ctrlCustomer->cInsertCustomer($phone, $name, $address, $email);
     $sql1 = "SELECT customerID FROM `customer` ORDER BY customerID DESC LIMIT 1";
     $row1 = $conn->query($sql1)->fetch_assoc();
     $customerID = $row1["customerID"];
-    
+
     $ctrlOrder->cInsertOrder($customerID, $paymentMethod);
-    
+
     $sql2 = "SELECT orderID FROM `order` ORDER BY orderID DESC LIMIT 1";
     $row2 = $conn->query($sql2)->fetch_assoc();
     $orderID = $row2["orderID"];
-    
+
     if ($ctrlParty->cGetDishFromPartyPacakge($ppID) != 0) {
-        $resultParty = $ctrlParty->cGetDishFromPartyPacakge($ppID);    
-        
-        while($row3 = $resultParty->fetch_assoc()) {
+        $resultParty = $ctrlParty->cGetDishFromPartyPacakge($ppID);
+
+        while ($row3 = $resultParty->fetch_assoc()) {
             $dishID = $row3["dishID"];
             $quantity = $row3["quantity"];
-            
+
             $ctrlOrder->cInsertOrderDish($orderID, $dishID, $quantity);
             $ctrlOrder->cUpdateOrderDish($orderID, $dishID);
         }
-            $ctrlOrder->cUpdateOrder($orderID);
-    } else $ctrlMessage->errorMessage("Đặt tiệc");
-    
+        $ctrlOrder->cUpdateOrder($orderID);
+    } else
+        $ctrlMessage->errorMessage("Đặt tiệc");
+
     $ctrlMessage->successMessage("Đặt tiệc");
 }
 ?>
 
 <div class="flex flex-col justify-center items-center absolute top-48 left-28">
-    <h2 class="text font-bold uppercase text-center relative text-3xl">Sử dụng ngay<br />các gói dịch vụ <br> của chúng tôi! <br>
+    <h2 class="text font-bold uppercase text-center relative text-3xl">Sử dụng ngay<br />các gói dịch vụ <br> của chúng
+        tôi! <br>
         <span class="text-sm italic">Tổ chức các bữa tiệc sẽ trở nên đơn giản</span< </h2>
 </div>
 
 <div class="w-full py-20 ">
-    <div class="grid grid-cols-4 md:grid-cols-2 lg:grid-cols-3 gap-8 mx-14 flex justify-center gap-10 px-4 py-6 rounded-md">
+    <h2 id="title"
+        class="text-center text-[#795548] text-3xl font-bold w-1/3 mb-8 mx-auto py-2 rounded-xl border-x-4 border-amber-300 border-dotted">
+        CHƯƠNG TRÌNH DỊCH VỤ</h2>
+    <div
+        class="grid grid-cols-4 md:grid-cols-2 lg:grid-cols-3 gap-8 mx-14 flex justify-center gap-5 p-8 rounded-md shadow">
         <?php
         $ctrl = new cPartyPackages;
 
@@ -188,13 +191,13 @@ if (isset($_POST["btnxn"])) {
                             <div class='mb-2 z-10'>
                                 <img src='images/party/" . $row["image"] . "' class='w-48 h-28 rounded-lg'>
                             </div>
-                            <span class='absolute bg-green-200 bottom-0 left-0 w-6 h-4 rounded-tr-full group-hover:rounded-lg group-hover:w-full group-hover:h-full transition-all ease-linear delay-150'></span>
+                            <span class='absolute bg-green-200 bottom-0 left-0 w-6 h-4 rounded-tr-full rounded-bl-lg group-hover:rounded-lg group-hover:w-full group-hover:h-full transition-all ease-linear delay-150'></span>
                             <div class='text-white z-10'>
                                 <h3 class='font-bold text-center text-xl group-hover:text-amber-500 delay-200'>" . $row["partyPackageName"] . "</h3>
                                 <p class='text-wrap font-bold group-hover:text-gray-900 h-14'>Combo: <span class='text-gray-bold font-thin'>" . $row["Name"] . "</span></p>
                             </div>
                         </div>
-                        <div class='translate-y-16 -translate-x-16 absolute opacity-[0.01] group-hover:opacity-100 group-hover:-translate-y-48 group-hover:translate-x-[170px] transition delay-100 z-10'>
+                        <div class='translate-y-16 -translate-x-16 absolute opacity-[0.01] group-hover:opacity-100 group-hover:-translate-y-48 group-hover:translate-x-[162px] transition delay-100 z-10'>
                                 <button class='btn btn-danger' name='btndattiec' value='" . $row["partyPackageID"] . "' id='btn'>Đặt ngay</button>
                         </div>
                     </form>
@@ -210,7 +213,8 @@ if (isset($_POST["btnxn"])) {
         <div class="modal-content">
             <form action="" method="POST">
                 <div class="modal-header flex justify-center">
-                    <h2 class="modal-title fs-5 font-bold text-3xl text-[#E67E22]" id="partyModalLabel">Thông tin đặt tiệc</h2>
+                    <h2 class="modal-title fs-5 font-bold text-3xl text-[#E67E22]" id="partyModalLabel">Thông tin đặt
+                        tiệc</h2>
                 </div>
                 <div class=" modal-body">
                     <table class="w-full">
@@ -218,18 +222,25 @@ if (isset($_POST["btnxn"])) {
                             <tr>
                                 <td>
                                     <h2 class="text-[#EF5350] font-bold mb-2">Thông tin cá nhân</h2>
-                                    <input type="text" id="" name="name" class="form-control w-full mb-3" placeholder="Họ và tên...">
-                                    <input type="text" id="" name="phone" class="form-control w-full mb-3" placeholder="Số điện thoại...">
-                                    <input type="email" id="" name="email" class="form-control w-full mb-3" placeholder="Email...">
-                                    <input type="text" id="" name="address" class="form-control w-full mb-3" placeholder="Địa chỉ...">
+                                    <input type="text" id="" name="name" class="form-control w-full mb-3"
+                                        placeholder="Họ và tên...">
+                                    <input type="text" id="" name="phone" class="form-control w-full mb-3"
+                                        placeholder="Số điện thoại...">
+                                    <input type="email" id="" name="email" class="form-control w-full mb-3"
+                                        placeholder="Email...">
+                                    <input type="text" id="" name="address" class="form-control w-full mb-3"
+                                        placeholder="Địa chỉ...">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <h2 class="text-[#EF5350] font-bold mb-2">Thông tin tiệc</h2>
-                                    <input type="date" id="" class="form-control w-full mb-3" placeholder="Ngày diễn ra...">
-                                    <input type="time" id="" class="form-control w-full mb-3" placeholder="Giờ diễn ra...">
-                                    <input type="text" id="" class="form-control w-full mb-3" placeholder="Yêu cầu khác...">
+                                    <input type="date" id="" class="form-control w-full mb-3"
+                                        placeholder="Ngày diễn ra...">
+                                    <input type="time" id="" class="form-control w-full mb-3"
+                                        placeholder="Giờ diễn ra...">
+                                    <input type="text" id="" class="form-control w-full mb-3"
+                                        placeholder="Yêu cầu khác...">
                                 </td>
                             </tr>
                             <tr>

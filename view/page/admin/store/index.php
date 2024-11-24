@@ -66,7 +66,7 @@ if (isset($_POST["btnkhoa"])) {
 
                         while ($row = $result->fetch_assoc()) {
                             $storeID = $row["storeID"];
-                            $sql2 = "SELECT * FROM user WHERE userID = $storeID + 1";
+                            $sql2 = "SELECT * FROM user WHERE userID = $storeID";
                             $result2 = $conn->query($sql2);
                             $row2 = $result2->fetch_assoc();
 

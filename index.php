@@ -23,7 +23,7 @@ if ($_REQUEST["p"] != "")
   $p = $_REQUEST["p"];
 else
   $p = "home";
-  
+
 if ($p != "home")
   include_once("view/page/" . $p . "/index.php");
 else

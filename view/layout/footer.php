@@ -1,3 +1,45 @@
+<?php
+require_once "PHPMailer/src/Exception.php";
+require_once "PHPMailer/src/PHPMailer.php";
+require_once "PHPMailer/src/SMTP.php";
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+if (isset($_POST["submit"])) {
+    $email = $_POST["email"];
+
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->Host = "smtp.gmail.com";
+        $mail->SMTPAuth = true;
+        $mail->Username = "nmsangtg26@gmail.com";
+        $mail->Password = "ajzt mmxl fkdl hibs";
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        $mail->setFrom("nmsangtg26@gmail.com", mb_encode_mimeheader("Chuỗi cửa hàng thức ăn nhanh Đom Đóm", "UTF-8", "B"));
+        $mail->addAddress($email);
+
+        $mail->isHTML(true);
+        $mail->Subject = mb_encode_mimeheader("Xác nhận đăng ký nhận khuyến mại mới nhất (no-reply)", "UTF-8", "B");
+        $mail->Body    = "Xin chào!<br><br>
+            Đây là email xác nhận bạn đã đăng ký nhận khuyến mãi mới nhất từ chúng tôi.<br>
+            Chúng tôi sẽ gửi mã khuyến mãi cho bạn vào địa chỉ email này ngay khi được cập nhật. Hãy kiểm tra email thường xuyên để không bỏ lỡ những ưu đãi hấp dẫn từ chúng tôi nhé!</a><br><br>
+            Nếu bạn không yêu cầu điều này, vui lòng bỏ qua email này!<br><br>
+            Trân trọng,<br>
+            Đội ngũ hỗ trợ | DomDom";
+
+        $mail->send();
+        echo "<script>alert('Đăng ký thành công. Vui lòng kiểm tra email của bạn!');</script>";
+    } catch (Exception $e) {
+        echo "Lỗi khi gửi email: {$mail->ErrorInfo}";
+    }
+}
+
+?>
+
 <!-- On top button -->
 <button
     class="fixed bottom-10 right-4 text-white bg-gray-700 rounded-full size-10 z-20 opacity-40 hover:opacity-100"
@@ -14,19 +56,17 @@
                 Đăng ký ngay để nhận được ưu đãi mới nhất từ chúng tôi
             </h3>
 
-            <form class="mt-6">
+            <form class="mt-6" method="POST">
                 <div class="relative w-1/2 mx-auto">
                     <label class="sr-only" for="email"> Email </label>
 
                     <input
                         class="w-full rounded-full outline-emerald-300 bg-gray-100 text-gray-500 p-4 pe-32 text-md font-medium"
-                        id="email"
-                        type="email"
-                        placeholder="exam@gmail.com" />
+                        name="email" type="email" id="email"
+                        placeholder="example@gmail.com" />
 
-                    <button
-                        class="absolute end-1 top-1/2 -translate-y-1/2 rounded-full btn btn-warning px-5 py-3 text-sm font-medium text-white transition">
-                        Đăng ký
+                    <button class="absolute end-1 top-1/2 -translate-y-1/2 rounded-full btn btn-warning px-5 py-3 text-sm font-medium text-white transition"
+                        name="submit"> Đăng ký
                     </button>
                 </div>
             </form>

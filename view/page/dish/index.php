@@ -2,7 +2,6 @@
 
 <section class="py-8 absolute top-16 left-16 w-1/2 h-screen">
     <div class="container mx-auto">
-        <!-- <h2 class="text-2xl font-bold mb-4 breadcrumb-item">Danh mục</h2> -->
         <div class="grid grid-cols-2 gap-14">
             <?php
             $ctrl = new cDishes;
@@ -19,35 +18,35 @@
 
                     echo "<div class='relative h-36'>
                     <a href='?p=dish&c=" . $row["dishCategory"] . "#ci'>
-                <div class='absolute top-0 left-0 flex items-center w-64 h-40 mt-6 ml-6 bg-white border-8 border-gray-700 border-solid rounded-lg'>
-                    <div class='w-1/3 h-40'></div>
-                    <div class='w-2/3 h-32 pr-4 md:pt-3'>
-                        <img alt='" . $row["dishCategory"] . "' class='w-full h-20 rounded border-2 border-red-100' src='" . $img_dish . "'/>
-                    </div>
-                </div>
-                <div class='absolute top-0 left-0 z-20 w-12 h-12 mt-6 ml-6 bg-white rounded-full'>
-                    <svg class='mt-2 ml-2' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='#e53e3e'
-                        width='32px' height='32px'>
-                        <path d='M0 0h24v24H0z' fill='none' />
-                        <path
-                            d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z' />
-                    </svg>
-                </div>
-                <div class='absolute top-0 left-0 z-10 w-24 h-40 py-20 px-auto text-center text-lg text-wrap font-bold text-center text-white bg-amber-500 rounded-lg'>" . $row["dishCategory"] . "</div>
-                <div class='absolute top-0 left-0 z-30 w-24 h-2 mt-40 ml-48 bg-amber-500'></div>
-                </a>
-            </div>";
+                        <div class='absolute top-0 left-0 flex items-center w-64 h-40 mt-6 ml-6 bg-white border-8 border-gray-700 border-solid rounded-lg'>
+                            <div class='w-1/3 h-40'></div>
+                            <div class='w-2/3 h-28 pr-4 pb-2'>
+                                <img alt='" . $row["dishCategory"] . "' class='relative overflow-hidden group w-full h-full rounded border-2 border-red-100' src='" . $img_dish . "'/>
+                            </div>
+                        </div>
+                        <div class='absolute top-0 left-0 z-20 w-12 h-12 mt-6 ml-6 bg-white rounded-full'>
+                            <svg class='mt-2 ml-2' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='#e53e3e'
+                                width='32px' height='32px'>
+                                <path d='M0 0h24v24H0z' fill='none' />
+                                <path
+                                    d='M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z' />
+                            </svg>
+                        </div>
+                        <div class='absolute top-0 -left-3 z-10 w-28 h-40 py-20 px-auto text-center text-lg text-wrap font-bold text-center text-white bg-amber-500 rounded-lg'>" . $row["dishCategory"] . "</div>
+                        <div class='absolute top-0 left-0 z-30 w-24 h-2 mt-40 ml-48 bg-amber-500'></div>
+                    </a>
+                </div>";
                 }
             }
             ?>
         </div>
     </div>
 </section>
-<section class="bg-white py-8">
-    <div class="container mx-auto mt-4 bg-gray-100 py-4 px-4 rounded-md">
+<section class="py-8">
+    <div class="container mx-auto mt-4 bg-[#FFF9C4] py-4 px-4 rounded-md shadow">
         <nav aria-label="breadcrumb">
-            <ol class="breadcrumb text-2xl font-bold mb-4 border-b-2 border-slate-200 pb-2">
-                <li class="breadcrumb-item">Sản phẩm</li>
+            <ol class="breadcrumb border-l-8 border-b-2 border-amber-200 text-[#EF5350] text-2xl font-bold mb-4 py-2">
+                <li class="breadcrumb-item pl-4">Thực đơn</li>
                 <?php
                 if (isset($_GET["c"]))
                     echo "<li class='breadcrumb-item active' aria-current='page'>" . $_GET["c"] . "</li>";
@@ -108,9 +107,3 @@
         </div>
     </div>
 </section>
-
-<script>
-        function scrollProducts() {
-            document.getElementById("ci").scrollIntoView({ behavior: 'smooth' });
-        }
-</script>

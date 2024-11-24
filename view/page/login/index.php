@@ -44,63 +44,89 @@
             font-family: "Playwrite DE Grund", cursive;
         }
 
-        .firefly {
-            position: absolute;
-            top: 0;
-            left: 0;
-            background-color: rgba(255, 223, 0, 0.6);
-            border-radius: 50%;
-            box-shadow: 0 0 8px rgba(255, 223, 0, 0.8);
-            width: 8px;
-            height: 8px;
-            opacity: 0;
-            animation: firefly-flicker 3s infinite alternate,
-                firefly-move 6s infinite linear;
-        }
-
-        @keyframes firefly-flicker {
-
-            0%,
-            100% {
-                opacity: 0;
-            }
-
-            50% {
-                opacity: 1;
-            }
-        }
-
-        @keyframes firefly-move {
-            from {
-                transform: translate(0, 0);
-            }
-
-            to {
-                transform: translate(calc(100vw - 10px), calc(100vh - 10px));
-            }
-        }
-        
         .swal2-modal {
             width: 50%;
             border-radius: 15px;
         }
-        
+
         .swal2-icon {
             font-size: 0.8rem;
         }
-        
+
         .swal2-title {
             font-size: 1.3rem;
         }
-        
+
         .swal2-confirm {
             border-radius: 8px;
             padding: 6px 20px;
+        }
+
+        .bg {
+            position: fixed;
+            top: -50%;
+            left: -50%;
+            right: -50%;
+            bottom: -50%;
+            width: 200%;
+            height: 200vh;
+            background: transparent url('http://assets.iceable.com/img/noise-transparent.png') repeat 0 0;
+            background-repeat: repeat;
+            animation: bg-animation .2s infinite;
+            opacity: .9;
+            visibility: visible;
+        }
+
+        @keyframes bg-animation {
+            0% {
+                transform: translate(0, 0)
+            }
+
+            10% {
+                transform: translate(-5%, -5%)
+            }
+
+            20% {
+                transform: translate(-10%, 5%)
+            }
+
+            30% {
+                transform: translate(5%, -10%)
+            }
+
+            40% {
+                transform: translate(-5%, 15%)
+            }
+
+            50% {
+                transform: translate(-10%, 5%)
+            }
+
+            60% {
+                transform: translate(15%, 0)
+            }
+
+            70% {
+                transform: translate(0, 10%)
+            }
+
+            80% {
+                transform: translate(-15%, 0)
+            }
+
+            90% {
+                transform: translate(10%, 5%)
+            }
+
+            100% {
+                transform: translate(5%, 0)
+            }
         }
     </style>
 </head>
 
 <?php
+error_reporting(1);
 session_start();
 
 include("../../../model/connect.php");
@@ -161,47 +187,37 @@ if (isset($_POST["btndn"])) {
 }
 ?>
 
-<body class="overflow-hidden" style="background: linear-gradient(135deg, #0d1b2a, #1b263b 40%, #243447 70%, #2a2a2a 90%);">
+<body class="overflow-hidden"
+    style="background: linear-gradient(135deg, #0d1b2a, #1b263b 40%, #243447 70%, #2a2a2a 90%);">
+    <div class="bg"></div>
     <div class="flex h-screen w-screen">
-        <div class="w-1/3 h-5/6 bg-transparent flex border-sky-400 border-2 flex-col justify-center items-center p-10 mx-auto my-auto rounded-lg" style="box-shadow: 0 0 10px rgb(56, 189, 248);">
+        <div class="w-1/3 h-5/6 bg-transperant flex border-sky-400 border-2 flex-col justify-center items-center p-10 mx-auto my-auto rounded-lg"
+            style="box-shadow: 0 0 10px rgb(56, 189, 248);">
             <div class="mb-8 flex flex-col items-center justify-center">
-                <img alt="Logo" class="mb-4 size-24 rounded-full" src="../../../images/logo.png" />
-                <h1 class="text-[#ffdd87] text-2xl font-semibold mb-2">ĐĂNG NHẬP</h1>
-                <p class="text-gray-500">Welcome back!</p>
+                <img alt="Logo" class="mb-4 size-24 rounded-full" src="../../../images/logo-nobg.png" />
+                <h1 class="text-amber-500 text-2xl font-black mb-2">ĐĂNG NHẬP</h1>
+                <p class="text-gray-400">Welcome back!</p>
             </div>
             <div class="w-full max-w-sm">
                 <form action="" method="POST">
                     <div class="relative mb-4">
                         <i class="fas fa-user absolute left-4 top-3 text-[#8ecae6]"></i>
-                        <input type="email" class="w-full border border-gray-300 py-2 px-5 rounded-lg form-control" name="email"
-                            placeholder="Email" />
+                        <input type="email" class="w-full border border-gray-300 py-2 px-5 rounded-lg form-control"
+                            name="email" placeholder="Email" />
                     </div>
                     <div class="relative mb-10">
                         <i class="fas fa-lock absolute left-4 top-3 text-[#8ecae6]"></i>
-                        <input type="password" class="w-full border border-gray-300 py-2 px-5 rounded-lg form-control" name="psw"
-                            placeholder="Mật khẩu" />
+                        <input type="password" class="w-full border border-gray-300 py-2 px-5 rounded-lg form-control"
+                            name="psw" placeholder="Mật khẩu" />
                     </div>
-                    <!-- <div class="flex justify-center items-center mt-10 mb-4 text-sm">
-                        <input type="radio" name="role" id="role1" value="1"
-                            class="mr-1 size-4 rounded-full peer/role1 accent-amber-700" /><label for="role1"
-                            class="text-gray-500 peer-checked/role1:text-amber-700">QLCCH</label>
-                        <input type="radio" name="role" id="role2" value="2"
-                            class="ml-6 mr-1 size-4 rounded-full peer/role2 accent-amber-700" /><label for="role2"
-                            class="text-gray-500  peer-checked/role2:text-amber-700">QLCH</label>
-                        <input type="radio" name="role" id="role3" value="3"
-                            class="ml-6 mr-1 size-4 rounded-full peer/role3 accent-amber-700" /><label for="role3"
-                            class="text-gray-500  peer-checked/role3:text-amber-700">NVND</label>
-                        <input type="radio" name="role" id="role4" value="4"
-                            class="ml-6 mr-1 size-4 rounded-full peer/role4 accent-amber-700" /><label for="role4" 
-                            class="text-gray-500 peer-checked/role4:text-amber-700">NVB</label>
-                    </div> -->
-                    <button class="w-full text-white py-2 px-4 rounded-lg btn btn-primary" name="btndn">Đăng nhập</button>
+                    <button class="w-full text-white py-2 px-4 rounded-lg btn btn-primary" name="btndn">Đăng
+                        nhập</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <script>
+    <!-- <script>
         const fireflyCount = 20;
 
         for (let i = 0; i < fireflyCount; i++) {
@@ -213,7 +229,7 @@ if (isset($_POST["btndn"])) {
             firefly.style.animationDuration = 5 + Math.random() * 5 + "s";
             document.body.appendChild(firefly);
         }
-    </script>
+    </script> -->
 </body>
 
 </html>

@@ -19,6 +19,16 @@ class cDishes extends mDishes
         }
         return 0;
     }
+    
+    public function cSearchDish($input)
+    {
+        if ($this->mSearchDish($input) != 0) {
+            $result = $this->mSearchDish($input);
+
+            return $result;
+        }
+        return 0;
+    }
 
     public function cGetCategoryNotId($category)
     {
