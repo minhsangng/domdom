@@ -172,7 +172,7 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                         </span>
 
                         <div class="subnav absolute top-11 right-0 bg-white rounded-lg bg-gray-500 h-fit p-2 text-center border-2">
-                            <a href="index.php?m=logout">Đăng xuất <i class="fa-solid fa-right-from-bracket"></i></a>
+                            <a href="index.php?m=logout" onclick="return confirmLogout()">Đăng xuất <i class="fa-solid fa-right-from-bracket"></i></a>
                         </div>
                     </div>
                 </div>
@@ -193,7 +193,7 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 require("home/index.php");
             }
             
-            if (isset($_GET["m"])) {
+            if (isset($_GET["m"]) && $_GET["m"] === "lgout") {
                 unset($_SESSION["userName"]);
                 unset($_SESSION["login"]);
                 echo "<script>window.location.href = '../login/'</script>";
@@ -204,6 +204,9 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
     </div>
 
     <script>
+        function confirmLogout() {
+            return confirm("Bạn có chắc chắn muốn đăng xuất không?");
+        }
         function adjustContentHeight() {
             var rightSession = document.getElementById("right");
 

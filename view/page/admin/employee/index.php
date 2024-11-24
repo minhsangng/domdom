@@ -1,40 +1,100 @@
 <?php
+// Cập nhật thông tin nhân viên
 if (isset($_POST["btncapnhat"])) {
-
     echo "<script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var modalUpdate = new bootstrap.Modal(document.getElementById('updateModal')); 
-                modalUpdate.show();
-            });
-          </script>";
-
-    $userID = $_POST["btncapnhat"];
-        
+    document.addEventListener('DOMContentLoaded', function() {
+        var modalUpdate = new bootstrap.Modal(document.getElementById('updateModal')); 
+        modalUpdate.show();
+    });
+  </script>";
+    
+    $userID = $_POST["btncapnhat"];  
     $sql = "SELECT * FROM user WHERE userID = $userID";
     $result = $conn->query($sql);
-    $row = $result->fetch_assoc();
-    
-    $_SESSION["userID"] = $row["userID"];
-    $_SESSION["userName"] = $row["userName"];
-    $_SESSION["phone"] = $row["phoneNumber"];
-    $_SESSION["email"] = $row["email"];
-    $_SESSION["dateBirth"] = $row["dateBirth"];
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $userName = $row["userName"];
+        $phone = $row["phoneNumber"];
+        $email = $row["email"];
+        $dateBirth = $row["dateBirth"];
+        $sex = $row["sex"];
+        $roleID = $row["roleID"];
+    } else {
+        echo "<script>alert('Không tìm thấy nhân viên!');</script>";
+    }
 }
 
+if (isset($_POST["btnsuanv"])) {
+    
+    $userID = $_POST["userID"]; 
+    $userName = $_POST["userName"];
+    $dateBirth = $_POST["dateBirth"];
+    $phone = $_POST["phone"];
+    $email = $_POST["email"];
+    $sex = $_POST["sex"];
+    $role = $_POST["role"];
+
+        $sqlUpdate = "UPDATE user SET 
+                      userName = '$userName', 
+                      dateBirth = '$dateBirth', 
+                      phoneNumber = '$phone', 
+                      email = '$email', 
+                      sex = '$sex', 
+                      roleID = $role 
+                      WHERE userID = $userID";
+
+        if ($conn->query($sqlUpdate) === TRUE) {
+            echo "<script>
+                    alert('Cập nhật thành công!');
+                  </script>";
+        } else {
+            echo "<script>alert('Cập nhật thất bại! Lỗi: " . $conn->error . "');</script>";
+        }
+    }
+
+
+// Trạng thái nhân viên
 if (isset($_POST["btnkhoa"])) {
     $status = $_POST["btnkhoa"];
-    if ($status == 1)
-        echo "<script>
-            document.addEventListener('DOMContentLoaded', function() {
-                confirm('Bạn có chắc chắn khóa tài khoản này?');
-            });
-          </script>";
-    else 
-        echo "<script>
-            document.addEventListener('DOMContentLoaded', function() {
-                alert('Mở khóa tài khoản thành công');
-            });
-          </script>";
+    $userID = $_POST["userID"];
+
+    $newStatus = ($status == 1) ? 0 : 1; 
+    
+    $sql = "UPDATE user SET status = '$newStatus' WHERE userID = '$userID'";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "<script>alert('Cập nhật trạng thái tài khoản thành công!'); </script>";
+    } else {
+        echo "<script>alert('Lỗi khi cập nhật trạng thái tài khoản.');</script>";
+    }
+}
+
+// Thêm nhân viên
+if(isset($_POST["btnthemnv"])){
+    $userName = $_POST["userName"];
+    $dateBirth = $_POST["dateBirth"];
+    $phone = $_POST["phone"];
+    $email = $_POST["email"];
+    $sex = $_POST["sex"];
+    $role = $_POST["role"];
+    $pass = $_POST["pass"];  
+    $image = $_FILES["image"]["name"];
+    
+    if ($image) {
+        $targetDir = "images/user/";
+        $targetFile = $targetDir . basename($_FILES["image"]["name"]);
+        move_uploaded_file($_FILES["image"]["tmp_name"], $targetFile);
+    }
+    
+    $sql = "INSERT INTO user (userName, dateBirth, phoneNumber, email, sex, roleID, password, image) 
+            VALUES ('$userName', '$dateBirth', '$phone', '$email', '$sex', '$role', '$pass', '$targetFile')";
+    
+    if ($conn->query($sql) === TRUE) {
+        echo "<script>alert('Thêm nhân viên thành công!'); </script>";
+    } else {
+        echo "<script>alert('Thêm nhân viên thất bại.');</script>";
+    }
 }
 
 ?>    
@@ -55,6 +115,7 @@ if (isset($_POST["btnkhoa"])) {
             </div>
             <div class="h-fit bg-gray-100 rounded-lg p-6">
                 <form action="" method="POST">
+                <input type="hidden" name="userID" value="">
                     <table class="text-sm w-full text-center">
                         <thead>
                             <tr>
@@ -82,13 +143,13 @@ if (isset($_POST["btnkhoa"])) {
                                         <td class='py-2 border-2'>" . $row["userName"] . "</td>
                                         <td class='py-2 border-2'>" . $row["phoneNumber"] . "</td>
                                         <td class='py-2 border-2'>" . $row["email"] . "</td>
-                                        <td class='py-2 border-2'>" . date("d-m-Y", strtotime($dateBirth)) . "</td>
+                                        <td class='py-2 border-2'>" . date("d-m-Y", strtotime($row["dateBirth"])) . "</td>
                                         <td class='py-2 border-2'>" . ($row["sex"] == 1 ? "Nam" : "Nữ") . "</td>
                                         <td class='py-2 border-2'>" . $row["roleName"] . "</td>
                                         <td class='py-2 border-2'><span class='bg-" . ($row["status"] == 1 ? "green" : "red") . "-100 text-" . ($row["status"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["status"] == 1 ? "Đang làm" : "Đã nghỉ") . "</span></td>
                                         <td class='py-2 border-2 flex justify-center items-center'>
                                             <button class='btn btn-secondary mr-1' value='".$row["userID"]."' name='btncapnhat'>Cập nhật</button>
-                                            <button class='btn btn-danger ml-1' name='btnkhoa' value='".$row["status"]."'>".($row["status"] == 1 ? "Khóa" : "Mở")."</button>
+                                            <button class='btn btn-danger ml-1' name='btnkhoa' value='".$row["status"]."' onclick='this.form.userID.value=".$row["userID"]."'>".($row["status"] == 1 ? "Khóa" : "Mở")."</button>                                          
                                         </td>
                                     </tr>
                                     ";
@@ -170,74 +231,64 @@ if (isset($_POST["btnkhoa"])) {
             </div>
         </div>
     </div>
-
-    <div class="modal modalUpdate fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="" method="POST" class="form-container w-full">
-                    <div class="modal-header justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="updateModalLabel" style="color: #E67E22;">Cập nhật nhân viên</h2>
-                    </div>
-                    <div class="modal-body">
+<div class="modal modalUpdate fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form action="" method="POST" class="form-container w-full">
+                <div class="modal-header justify-center">
+                    <h2 class="modal-title fs-5 font-bold text-3xl" id="updateModalLabel" style="color: #E67E22;">Cập nhật nhân viên</h2>
+                </div>
+                <div class="modal-body">
+                <input type="hidden" name="userID" value="<?php echo $userID; ?>">
                     <table class="w-full">
-                            <tr>
-                                <td>
-                                    <label for="userName" class="w-full py-2"><b>Tên nhân viên</b></label>
-                                    <input type="text" class="w-full form-control" name="userName" value="<?php echo $_SESSION["userName"]; ?>">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="dateBirth" class="w-full py-2"><b>Ngày sinh</b></label>
-                                    <input type="date" class="w-full form-control" name="dateBirth" value="<?php echo $_SESSION["dateBirth"]; ?>">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="phone" class="w-full py-2"><b>Số điện thoại</b></label>
-                                    <input type="text" class="w-full form-control" name="phone"  value="<?php echo $_SESSION["phone"]; ?>">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="email" class="w-full py-2"><b>Email</b></label>
-                                    <input type="text" class="w-full form-control" name="email"  value="<?php echo $_SESSION["email"]; ?>">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="image" class="w-full py-2"><b>Hình ảnh</b></label>
-                                    <input type="file" class="w-full form-control" name="image">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="pass" class="w-full py-2"><b>Mật khẩu đăng nhập</b></label>
-                                    <input type="text" class="w-full form-control" name="pass">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="sex" class="w-full py-2"><b>Giới tính</b></label>
-                                    <input type="radio" class="mr-1" name="sex" value="1" id="male"><label for="male" class="mr-4">Nam</label>
-                                    <input type="radio" class="mr-1" name="sex" value="0" id="female"><label for="female">Nữ</label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="role" class="w-full py-2"><b>Vai trò</b></label>
-                                    <input type="radio" class="mr-1" name="role" value="2" id="qlch"><label for="qlch" class="mr-4">QL cửa hàng</label>
-                                    <input type="radio" class="mr-1" name="role" value="3" id="nvnd"><label for="nvnd" class="mr-4">NV nhận đơn</label>
-                                    <input type="radio" class="mr-1" name="role" value="4" id="nvb"><label for="nvb">NV bếp</label>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" name="btndong" data-bs-dismiss="modal" onclick="if (confirm('Thông tin chưa được lưu. Bạn có chắc chắn thoát?') === false) { var modalUpdate = new bootstrap.Modal(document.querySelector('.modalUpdate')); modalUpdate.show();}">Hủy</button>
-                        <button type="submit" class="btn btn-primary" name="btnsuanv">Xác nhận</button>
-                    </div>
-                </form>
-            </div>
+                        <tr>
+                            <td>
+                                <label for="userName" class="w-full py-2"><b>Tên nhân viên</b></label>
+                                <input type="text" class="w-full form-control" name="userName" value="<?php echo $userName; ?>">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="dateBirth" class="w-full py-2"><b>Ngày sinh</b></label>
+                                <input type="date" class="w-full form-control" name="dateBirth" value="<?php echo $dateBirth; ?>">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="phone" class="w-full py-2"><b>Số điện thoại</b></label>
+                                <input type="text" class="w-full form-control" name="phone" value="<?php echo $phone; ?>">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="email" class="w-full py-2"><b>Email</b></label>
+                                <input type="text" class="w-full form-control" name="email" value="<?php echo $email; ?>">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="sex" class="w-full py-2"><b>Giới tính</b></label>
+                                <input type="radio" class="mr-1" name="sex" value="1" <?php echo ($sex == 1) ? 'checked' : ''; ?> id="male"><label for="male" class="mr-4">Nam</label>
+                                <input type="radio" class="mr-1" name="sex" value="0" <?php echo ($sex == 0) ? 'checked' : ''; ?> id="female"><label for="female">Nữ</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label for="role" class="w-full py-2"><b>Vai trò</b></label>
+                                <input type="radio" class="mr-1" name="role" value="2" <?php echo ($roleID == 2) ? 'checked' : ''; ?> id="qlch"><label for="qlch" class="mr-4">QL cửa hàng</label>
+                                <input type="radio" class="mr-1" name="role" value="3" <?php echo ($roleID == 3) ? 'checked' : ''; ?> id="nvnd"><label for="nvnd" class="mr-4">NV nhận đơn</label>
+                                <input type="radio" class="mr-1" name="role" value="4" <?php echo ($roleID == 4) ? 'checked' : ''; ?> id="nvb"><label for="nvb">NV bếp</label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary" name="btnsuanv">Cập nhật</button>
+                </div>
+            </form>
         </div>
+    </div>
+</div>
+
     </div>

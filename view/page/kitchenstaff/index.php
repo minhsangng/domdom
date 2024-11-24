@@ -48,7 +48,7 @@
             display: inline-block;
             width: 150px;
         }
-        
+
         #calendar {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -139,19 +139,19 @@ $conn = $db->connect();
                         <span class="text-xs font-bold ml-1">
                             <?php
                             echo $_SESSION["userName"];
-                            
+
                             $userName = $_SESSION["userName"];
-                            
+
                             $sql = "SELECT userID FROM user WHERE userName = '$userName'";
                             $result = $conn->query($sql);
                             $row = $result->fetch_assoc();
-                            
+
                             $_SESSION["userID"] = $row["userID"];
                             ?>
                         </span>
 
                         <div class="subnav absolute top-11 right-0 bg-white rounded-lg bg-gray-500 h-fit p-2 text-center border-2">
-                            <a href="index.php?m=lgout">Đăng xuất <i class="fa-solid fa-right-from-bracket"></i></a>
+                            <a href="index.php?m=lgout" onclick="return confirmLogout()">Đăng xuất <i class="fa-solid fa-right-from-bracket"></i></a>
                         </div>
                     </div>
                 </div>
@@ -170,7 +170,7 @@ $conn = $db->connect();
             else if ($i == "home")
                 require("home/index.php");
 
-            if (isset($_GET["m"])) {
+            if (isset($_GET["m"]) && $_GET["m"] === "lgout") {
                 unset($_SESSION["userName"]);
                 unset($_SESSION["login"]);
                 echo "<script>window.location.href = '../login/'</script>";
@@ -194,7 +194,7 @@ $conn = $db->connect();
         window.onload = adjustContentHeight;
 
         window.onresize = adjustContentHeight;
-    
+
         const navAd = document.querySelectorAll(".adnav");
         let idActiveAd = "home";
 
@@ -217,11 +217,8 @@ $conn = $db->connect();
             });
         });
 
-        function logout() {
-            <?php
-            unset($_SESSION["loginstaff"]);
-            unset($_SESSION["name"]);
-            ?>
+        function confirmLogout() {
+            return confirm("Bạn có chắc chắn muốn đăng xuất không?");
         }
     </script>
 </body>

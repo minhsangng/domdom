@@ -1,33 +1,88 @@
 <?php
+
+if (isset($_POST["btnthemch"])) {
+    $storeID = $_SESSION["storeID"];
+    $storeName = $_POST["storeName"];
+    $address = $_POST["address"];
+    $contact = $_POST["contact"];
+    $status = $_POST["status"];    
+    $sql = "INSERT INTO store (storeName, address, contact, status) 
+            VALUES ('$storeName', '$address', '$contact', 1)";
+
+    if ($conn->query($sql) === TRUE) {
+        echo "<script>
+                alert('Cửa hàng đã được thêm thành công');
+                window.location.href = ''
+              </script>";
+    } else {
+        echo "Thêm thất bại";
+    }
+}
+
 if (isset($_POST["btncapnhat"])) {
-
-    echo "<script>
-            document.addEventListener('DOMContentLoaded', function() {
-                var modalUpdate = new bootstrap.Modal(document.getElementById('updateModal')); 
-                modalUpdate.show();
-            });
-          </script>";
-
     $storeID = $_POST["btncapnhat"];
-        
     $sql = "SELECT * FROM store WHERE storeID = $storeID";
     $result = $conn->query($sql);
-    $row = $result->fetch_assoc();
-    
-    $_SESSION["storeID"] = $row["storeID"];
-    $_SESSION["storeName"] = $row["storeName"];
-    $_SESSION["address"] = $row["address"];
-    $_SESSION["contact"] = $row["contact"];
-    $_SESSION["status"] = $row["status"];
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        $_SESSION["storeID"] = $row["storeID"];
+        $_SESSION["storeName"] = $row["storeName"];
+        $_SESSION["address"] = $row["address"];
+        $_SESSION["contact"] = $row["contact"];
+    } else {
+        echo "<script>alert('Không tìm thấy cửa hàng!');</script>";
+    }
+
+    echo "<script>
+         document.addEventListener('DOMContentLoaded', function() {
+             var modalUpdate = new bootstrap.Modal(document.getElementById('updateModal')); 
+             modalUpdate.show();
+         });
+       </script>";
 }
 
-if (isset($_POST["btnkhoa"])) {
-    echo "<script>
-            document.addEventListener('DOMContentLoaded', function() {
-                confirm('Bạn có chắc chắn khóa cửa hàng này?');
-            });
-          </script>";
+if (isset($_POST["btnsuach"])) {
+
+    $storeID = $_POST["storeID"];
+    $storeName = $_POST["storeName"];
+    $address = $_POST["address"];
+    $contact = $_POST["contact"];
+    echo "storeID: $storeID, storeName: $storeName, address: $address, contact: $contact";
+
+    $sql = "UPDATE store SET storeName='$storeName', address='$address', 
+        contact='$contact' WHERE storeID=$storeID";
+    if ($conn->query($sql) === TRUE) {
+        echo "<script>
+            alert('Cửa hàng đã được cập nhật thành công!');
+            window.location.href = '';
+        </script>";
+    } else {
+        echo "Cập nhật thất bại: " . $conn->error;
+    }
 }
+
+
+
+//////////Khoa
+if (isset($_POST["btnkhoa"])) {
+    $storeID = $_POST["btnkhoa"];
+    $status = $_POST["btnkhoa"];
+    $newStatus = ($status == 1) ? 0 : 1; 
+    $sqlUpdate = "UPDATE store SET status = 0 WHERE storeID = $storeID";
+    if ($conn->query($sqlUpdate) === TRUE) {
+        echo "<script>
+                alert('Cửa hàng đã được khóa thành công!');
+                setTimeout(function() {
+                    window.location.href = '';}, 2000); 
+              </script>";
+    } else {
+        echo "<script>alert('Khóa cửa hàng thất bại!');</script>";
+    }
+}
+
+
+
 
 ?>
 
@@ -70,6 +125,8 @@ if (isset($_POST["btnkhoa"])) {
                             $result2 = $conn->query($sql2);
                             $row2 = $result2->fetch_assoc();
 
+
+
                             echo "
                                 <tr>
                                     <td class='py-2 border-2'>#CH0" . $row["storeID"] . "</td>
@@ -80,7 +137,7 @@ if (isset($_POST["btnkhoa"])) {
                                     <td class='py-2 border-2'><span class='bg-green-100 text-green-500 py-1 px-2 rounded-lg'>" . ($row["status"] == 1 ? "Đang hoạt động" : "Ngưng hoạt động") . "</span></td>
                                     <td class='py-2 border-2 flex justify-center items-center'>
                                         <button class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["storeID"] . "'>Cập nhật</button>
-                                        <button class='btn btn-danger ml-1' name='btnkhoa'>Khóa</button>
+                                        <button class='btn btn-danger ml-1' name='btnkhoa' value='".$row["status"]."' onclick='this.form.userID.value=".$row["userID"]."'>".($row["status"] == 1 ? "Khóa" : "Mở")."</button>                                          
                                     </td>
                                 </tr>
                                 ";
@@ -157,15 +214,7 @@ if (isset($_POST["btnkhoa"])) {
                                     <input type="text" class="w-full form-control" name="contact" value="<?php echo $_SESSION["contact"];?>">
                                 </td>
                             </tr>
-                            <tr>
-                                <td>
-                                    <label for="status" class="w-full py-2"><b>Trạng thái</b></label>
-                                    <select name="status" class="w-full py-2 form-control">
-                                        <option value="1">Đang hoạt động</option>
-                                        <option value="0">Ngừng hoạt động</option>
-                                    </select>
-                                </td>
-                            </tr>
+                            
                         </table>
                     </div>
                     <div class="modal-footer">
