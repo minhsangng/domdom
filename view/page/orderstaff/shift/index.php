@@ -71,15 +71,15 @@
 
                     // Hiển thị các ngày trong tuần và ca làm cho từng ngày
                     foreach ($days as $day) {
-                        $dateString = $day->format('d-m-Y'); 
+                        $dateString = $day->format('d-m-Y'); // Định dạng ngày
                         echo "<div class='day p-2 border rounded-md mb-2'>";
                         echo "<strong>{$day->format('l')}</strong><br>";
                         echo "{$day->format('d-m-Y')}<br>";
                         
                         foreach ($workShifts as $shift) {
-                            echo "<label>";
+                            echo "<div class='my-2'><label>";
                             echo "<input type='checkbox' name='shift[{$dateString}][]' value='{$shift['shiftName']}'> {$shift['shiftName']}";
-                            echo "</label><br>";
+                            echo "</label><br> </div>";
                         }
                         echo "</div>";
                     }

@@ -77,9 +77,9 @@
                         echo "{$day->format('d-m-Y')}<br>";
                         
                         foreach ($workShifts as $shift) {
-                            echo "<label>";
+                            echo "<div class='my-2'><label>";
                             echo "<input type='checkbox' name='shift[{$dateString}][]' value='{$shift['shiftName']}'> {$shift['shiftName']}";
-                            echo "</label><br>";
+                            echo "</label><br> </div>";
                         }
                         echo "</div>";
                     }
