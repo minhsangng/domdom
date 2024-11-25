@@ -79,8 +79,6 @@ if (isset($_POST["btnkhoach"])) {
 }
 
 
-
-
 ?>
 
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
