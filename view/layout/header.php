@@ -225,25 +225,25 @@
                                         <tr>
                                             <td>
                                                 <label for="" class="font-bold mb-1">Tên khách hàng</label>
-                                                <input type="text" name="" id="" class="form-control mb-2">
+                                                <input type="text" name="name" id="name" class="form-control mb-2" required>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <label for="" class="font-bold mb-1">Số điện thoại</label>
-                                                <input type="text" name="" id="" class="form-control mb-2">
+                                                <input type="text" name="sdt" id="sdt" class="form-control mb-2"required>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <label for="" class="font-bold mb-1">Địa chỉ</label>
-                                                <input type="text" name="" id="" class="form-control mb-2">
+                                                <input type="text" name="address" id="address" class="form-control mb-2"required>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>
                                                 <label for="" class="font-bold mb-1">Email</label>
-                                                <input type="email" name="" id="" class="form-control mb-2">
+                                                <input type="email" name="email" id="email" class="form-control mb-2"required>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -355,215 +355,4 @@
         </div>
     </div>
     
-    <div class="modal modalFollowDetail" id="followDetailModal" tabindex="-1" aria-labelledby="followDetailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="" method="POST">
-                    <div class="modal-header flex justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="followDetailModalLabel" style="color: #E67E22;">Thông tin đơn hàng</h2>
-                    </div>
-                    <div class=" modal-body">
-                        <div class="w-full border-b pb-4 mb-4">
-                            <form action="" method="POST">
-                                <table class="w-full">
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Mã đơn hàng</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="#DH012">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Ngày đặt</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="23-10-2024">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Tên món (gói tiệc)</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="Burger bò">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Số lượng</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="2">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Tổng tiền</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="60,000">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Ghi chú</label>
-                                                <input type="text" name="" id="" class="form-control mb-2">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Trạng thái</label>
-                                                <select type="text" name="" id="" class="form-control mb-2">
-                                                    <option value="">Chờ chế biến</option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        
-                                    </tbody>
-                                </table>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal" data-bs-target="#payModal">Lưu</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal modalParty z-50" id="partyModal" tabindex="-1" aria-labelledby="partyModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="" method="POST">
-                    <div class="modal-header flex justify-center">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="partyModalLabel" style="color: #E67E22;">Thông tin đặt tiệc</h2>
-                    </div>
-                    <div class=" modal-body">
-                        <div class="w-full border-b pb-4 mb-4">
-                            <form action="" method="POST">
-                                <table class="w-full">
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Họ tên</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="Nguyễn Minh Sang">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Số điện thoại</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="0926458232">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Email</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="sang@gmail.com">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Ngày diễn ra</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="26-10-2024">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Giờ diễn ra</label>
-                                                <input type="text" name="" id="" class="form-control mb-2" value="14:00">
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <label for="" class="font-bold mb-2">Yêu cầu khác</label>
-                                                <input type="text" name="" id="" class="form-control mb-2">
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </form>
-                        </div>
-                        <div class="border-b pb-4 mb-4">
-                            <label for="" class="font-bold w-full mb-2">Phương thức thanh toán</label>
-                            <ul class="w-full">
-                                <li><input type="radio" name="" id="" class="mr-2">Ví điện tử</li>
-                                <li><input type="radio" name="" id="" class="mr-2">Thẻ ngân hàng</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="button" class="btn btn-danger" name="btntt" data-bs-toggle="modal" data-bs-target="#payModal">Xác nhận</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
     
-    <div class="banner w-full flex items-center relative">
-        <div id="carousel" class="carousel slide w-full" data-bs-ride="carousel">
-            <div class="carousel-indicators" id="ci">
-                <button type="button" data-bs-target="#carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-                <button type="button" data-bs-target="#carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
-            </div>
-            <div class="carousel-inner">
-                <div class="carousel-item active" data-bs-interval="2000">
-                    <img src="images/banner.png" class="d-block w-100" alt="images/banner.png">
-                </div>
-                <div class="carousel-item" data-bs-interval="2000">
-                    <img src="images/banner2.png" class="d-block w-100" alt="images/banner2.png">
-                </div>
-                <div class="carousel-item">
-                    <img src="images/banner3.png" class="d-block w-100" alt="images/banner3.png">
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="search absolute top-52 left-16">
-        <form action="" method="post" class="form-search">
-            <section class="content-home">
-                <h1 class="text-center my-4 leading-relaxed text-5xl">THÈM MÓN GÌ, <br> <span id="text">NGẠI CHI MÀ KHÔNG NÓI?</span></h1>
-                <div class="content w-full flex justify-center text-xl">
-                    <div class="flex justify-center items-center input-group w-full h-14 mr-3">
-                        <input type="search" name="search" id="" class="form-control h-14 pl-8 text-xl" autocomplete="false" value="<?php echo $_POST['search']; ?>">
-                        <button type="submit" class="btn btn-danger btn-search h-full px-8 text-xl font-bold" name="btn">Tìm</button>
-                    </div>
-            </section>
-        </form>
-    </div>
-
-    <?php
-    $input = "";
-    if (isset($_REQUEST["btn"])) {
-        $input = $_POST["search"];
-
-        if ($input != "") {
-            $sql = "SELECT * FROM dishes WHERE dishName LIKE '%" . $input . "%'";
-            $result = $conn->query($sql);
-            $n = $result->num_rows;
-
-            echo "<section class='output-search border-t border-gray-500 my-16' id='search-output'>
-            <h2 class='border-b border-gray-500 text-2xl font-bold px-2 py-4'>KẾT QUẢ DÀNH CHO: " . $input . "</h2>";
-
-            if ($n > 0) {
-                echo "<div class='grid grid-cols-3 gap-x-14 gap-y-10 my-4'>";
-                while ($row = $result->fetch_assoc()) {
-                    echo "
-                <div class='card w-full'>
-                  <a href='?i=" . $row["dishID"] . "'>
-                    <img src='images/dish/" . $row["image"] . "' class='card-img-top h-64' alt=''>
-                    <div class='card-body flex justify-between items-center'>
-                      <h5 class='card-title font-bold'>" . $row["dishName"] . "</h5>
-                      <a href='#' class='btn btn-outline-info'>Xem thêm</a>
-                    </div>
-                  </a>
-              </div>
-              ";
-                }
-                echo "</div>";
-            } else {
-                echo "<div class='grid w-full my-4'><h5 class='font-bold'>Xin lỗi! Chúng tôi không tìm thấy kết quả bạn cần!</h5></div>";
-                $_POST["search"] = "";
-            }
-            echo "</section>";
-        }
-    } else
-        $_POST["search"] = "";
-    ?>
