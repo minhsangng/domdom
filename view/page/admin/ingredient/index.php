@@ -1,4 +1,13 @@
 <?php
+/* Ghi đè js */
+echo "<script>
+    document.getElementById('ingredient').classList.add('activeAd');
+    
+    if (document.body.scrollHeight > window.innerHeight)
+        document.getElementById('right').style.height = '';
+    else
+        document.getElementById('right').style.height = '100vh';
+</script>";
 $ctrl = new cIngredients;
 
 if (isset($_POST["btnthemnl"])) {
@@ -14,10 +23,10 @@ if (isset($_POST["btncapnhat"])) {
 
     echo "<script>
         document.addEventListener('DOMContentLoaded', function() {
-                var modalUpdate = new bootstrap.Modal(document.getElementById('updateModal')); 
-                modalUpdate.show();
-            });
-        </script>";
+            var modalUpdate = new bootstrap.Modal(document.getElementById('updateModal')); 
+            modalUpdate.show();
+        });
+    </script>";
 
     $ingreID = $_POST["btncapnhat"];
 
@@ -42,10 +51,10 @@ if (isset($_POST["btnsuanl"])) {
 
 if (isset($_POST["btnkhoa"])) {
     echo "<script>
-            document.addEventListener('DOMContentLoaded', function() {
-                confirm('Bạn có chắc chắn khóa nguyên liệu này?');
-            });
-          </script>";
+        document.addEventListener('DOMContentLoaded', function() {
+            confirm('Bạn có chắc chắn khóa nguyên liệu này?');
+        });
+        </script>";
 }
 ?>
 

@@ -1,7 +1,7 @@
 <?php
 $currentPath = $_SERVER["REQUEST_URI"];
 $path = "";
-if (strpos($currentPath, "admin") == true || strpos($currentPath, "manager") == true || strpos($currentPath, "orderstaff") == true || strpos($currentPath, "kitchenstaff") == true)
+if (strpos($currentPath, "admin") || strpos($currentPath, "manager") || strpos($currentPath, "orderstaff") || strpos($currentPath, "kitchenstaff"))
     $path = "../../../model/mOrders.php";
 else $path = "./model/mOrders.php";
 
@@ -13,6 +13,14 @@ class cOrders extends mOrders
     public function cGetAllOrder() {
         if ($this->mGetAllOrder() != 0) {
             $result = $this->mGetAllOrder();
+            
+            return $result;
+        } return 0;
+    }
+    
+    public function cGetRevenueOrderByStore($storeID, $start, $end) {
+        if ($this->mGetRevenueOrderByStore($storeID, $start, $end) != 0) {
+            $result = $this->mGetRevenueOrderByStore($storeID, $start, $end);
             
             return $result;
         } return 0;

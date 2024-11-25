@@ -14,7 +14,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playwrite+DE+Grund:wght@100..400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+DE+Grund:wght@100..400&display=swap"
+        rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link href="../../css/bootstrap.min.css" rel="stylesheet">
@@ -132,7 +133,7 @@ if (!isset($_SESSION["login"]))
 $db = new Database();
 $conn = $db->connect();
 
-/* Xử lý form */
+/* Xử lý form lấy ngày đuầ và cuối tháng hiện tại*/
 if (isset($_POST["btnxem"])) {
     $_SESSION["startM"] = $_POST["startM"];
     $_SESSION["endM"] = $_POST["endM"];
@@ -159,31 +160,40 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 </a>
             </div>
             <nav class="mt-10">
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="admin" href="index.php">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="admin"
+                    href="index.php">
                     <i class="fas fa-tachometer-alt mr-3"></i>Tổng quan
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="store" href="index.php?i=store">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="store"
+                    href="index.php?i=store">
                     <i class="fa-solid fa-store mr-3"></i>Quản lý cửa hàng
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="employee" href="index.php?i=employee">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="employee" href="index.php?i=employee">
                     <i class="fa-solid fa-users-gear mr-3"></i></i>Quản lý nhân viên
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="dish" href="index.php?i=dish">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="dish"
+                    href="index.php?i=dish">
                     <i class="fa-solid fa-utensils mr-3"></i>Quản lý món ăn
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="ingredient" href="index.php?i=ingredient">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="ingredient" href="index.php?i=ingredient">
                     <i class="fa-solid fa-cubes mr-3"></i>Quản lý nguyên liệu
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="promotion" href="index.php?i=promotion">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="promotion" href="index.php?i=promotion">
                     <i class="fa-solid fa-tags mr-3"></i>Quản lý khuyến mãi
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="revenue" href="index.php?i=revenue">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="revenue" href="index.php?i=revenue">
                     <i class="fa-solid fa-file-invoice-dollar mr-3"></i>Xem thống kê
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="proposal" href="index.php?i=proposal">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="proposal" href="index.php?i=proposal">
                     <i class="fa-solid fa-paper-plane mr-3"></i>Đề xuất
                 </a>
-                <a href="#" onclick="logout()" class="flex items-center py-2 px-8 text-white border-y-2 bg-gray-700 border-gray-500 mt-4 hover:bg-gray-700 hover:text-white adnav">
+                <a href="#" onclick="logout()"
+                    class="flex items-center py-2 px-8 text-white border-y-2 bg-gray-700 border-gray-500 mt-4 hover:bg-gray-700 hover:text-white adnav">
                     <i class="fa-solid fa-right-from-bracket mr-3"></i>Đăng xuất
                 </a>
             </nav>
@@ -191,23 +201,25 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
         <div class="bg-gray-100 flex-1 p-6 pb-2 md:p-10" id="right">
             <div class="flex justify-between items-center mb-6 hover:cursor-pointer">
                 <div class="relative w-1/2 flex">
-                    <input class="w-full py-2 px-4 mr-2 rounded-lg border border-gray-300" placeholder="Tìm kiếm..." type="text" />
+                    <input class="w-full py-2 px-4 mr-2 rounded-lg border border-gray-300" placeholder="Tìm kiếm..."
+                        type="text" />
                     <button type="submit" class="btn btn-primary ml-2 px-3">Tìm</button>
                 </div>
                 <div class="flex items-center hover:cursor-pointer">
-                    <div class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-red-500 hover:text-white">
+                    <div
+                        class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-red-500 hover:text-white">
                         <i class="fa-regular fa-bell"></i>
                     </div>
                     <div class="ml-4 flex items-center relative user-container">
-                        <div class="rounded-full mr-1 border-solid bg-gray-400 text-white font-bold border-2 w-10 h-10 flex justify-center items-center">
+                        <div
+                            class="rounded-full mr-1 border-solid bg-gray-400 text-white font-bold border-2 w-10 h-10 flex justify-center items-center">
+                            <div class="absolute w-2 h-2 bg-yellow "></div>
                             <?php
-                            $userName = $_SESSION["user"][0];
+                            $userID = $_SESSION["user"][0];
 
-                            $sql = "SELECT userID, userName FROM user WHERE userName = '$userName'";
+                            $sql = "SELECT userID, userName FROM user WHERE userID = $userID";
                             $result = $conn->query($sql);
                             $row = $result->fetch_assoc();
-
-                            $_SESSION["user"][] = $row["userID"];
 
                             $fullName = $row["userName"];
                             $name = end(explode(" ", $fullName));
@@ -245,40 +257,6 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
     </div>
 
     <script>
-        /* Nếu thoát khỏi trang sẽ xóa tất cả session - ngăn chặn truy cập khi chưa đăng nhập */
-        document.addEventListener("DOMContentLoaded", () => {
-            let targetUrl = "";
-            let isFormSubmitting = false;
-
-            document.querySelectorAll("a").forEach(link => {
-                link.addEventListener("click", function(event) {
-                    targetUrl = event.currentTarget.href;
-                });
-            });
-
-            document.querySelectorAll("form").forEach(form => {
-                form.addEventListener("submit", function(event) {
-                    isFormSubmitting = true;
-                });
-            });
-
-            let hasNavigatedAway = false;
-
-            document.addEventListener("visibilitychange", () => {
-                if (document.visibilityState === "hidden") {
-                    hasNavigatedAway = true;
-                }
-            });
-
-            window.addEventListener("beforeunload", (event) => {
-                if (!isFormSubmitting && hasNavigatedAway && (!targetUrl || new URL(targetUrl).origin !== window.location.origin)) {
-                    if (performance.navigation.type != 1) {
-                        navigator.sendBeacon("../logout/index.php");
-                    }
-                }
-            });
-        });
-
         function adjustContentHeight() {
             var rightSession = document.getElementById("right");
 
@@ -288,29 +266,6 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 rightSession.style.height = "100vh";
             }
         }
-
-        window.onload = adjustContentHeight;
-
-        window.onresize = adjustContentHeight;
-
-        const navAd = document.querySelectorAll(".adnav");
-        let idActiveAd = "admin";
-
-        navAd.forEach(function(item) {
-            item.addEventListener("click", () => {
-                navAd.forEach((i) => i.classList.remove("activeAd"));
-            });
-        });
-
-        if (window.location.search != "")
-            idActiveAd = window.location.search.slice(3);
-
-        window.addEventListener("load", () => {
-            navAd.forEach(function(item) {
-                if (item.id == idActiveAd) item.classList.add("activeAd");
-                else item.classList.remove("activeAd");
-            });
-        });
 
         function logout() {
             const swalWithBootstrapButtons = Swal.mixin({
@@ -333,6 +288,63 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 }
             });
         }
+
+        /* Nếu thoát khỏi trang sẽ xóa tất cả session - ngăn chặn truy cập khi chưa đăng nhập */
+        document.addEventListener("DOMContentLoaded", () => {
+            let targetUrl = "";
+            let isFormSubmitting = false;
+
+            document.querySelectorAll("a").forEach(link => {
+                link.addEventListener("click", function (event) {
+                    targetUrl = event.currentTarget.href;
+                });
+            });
+
+            document.querySelectorAll("form").forEach(form => {
+                form.addEventListener("submit", function (event) {
+                    isFormSubmitting = true;
+                });
+            });
+
+            let hasNavigatedAway = false;
+
+            document.addEventListener("visibilitychange", () => {
+                if (document.visibilityState === "hidden") {
+                    hasNavigatedAway = true;
+                }
+            });
+
+            window.addEventListener("beforeunload", (event) => {
+                if (!isFormSubmitting && hasNavigatedAway && (!targetUrl || new URL(targetUrl).origin !== window.location.origin)) {
+                    if (performance.navigation.type != 1) {
+                        navigator.sendBeacon("../logout/index.php");
+                    }
+                }
+            });
+
+            window.onload = adjustContentHeight;
+
+            window.onresize = adjustContentHeight;
+            
+            const navAd = document.querySelectorAll(".adnav");
+            let idActiveAd = "admin";
+    
+            navAd.forEach(function (item) {
+                item.addEventListener("click", () => {
+                    navAd.forEach((i) => i.classList.remove("activeAd"));
+                });
+            });
+    
+            if (window.location.search != "")
+                idActiveAd = window.location.search.slice(3);
+    
+            window.addEventListener("load", () => {
+                navAd.forEach(function (item) {
+                    if (item.id == idActiveAd) item.classList.add("activeAd");
+                    else item.classList.remove("activeAd");
+                });
+            });
+        });
     </script>
 </body>
 

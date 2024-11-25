@@ -12,6 +12,16 @@ class mOrders
         return 0;
     }
     
+    public function mGetRevenueOrderByStore($storeID, $start, $end)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT *, GROUP_CONCAT(CONCAT(D.dishName, ' (x', OD.quantity, ')') SEPARATOR ', ') AS dishes FROM `order` AS O JOIN `order_dish` AS OD ON OD.orderID = O.orderID JOIN `dish` AS D ON D.dishID = OD.dishID WHERE O.orderDate >= '$start' AND O.orderDate <= '$end' AND O.storeID = $storeID GROUP BY O.orderID";
+        if ($conn != null) 
+            return $conn->query($sql);
+        return 0;
+    }
+    
     public function mGetAllOrderRangeOf($start, $end)
     {
         $db = new Database;
@@ -26,7 +36,7 @@ class mOrders
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "UPDATE `order` SET sumOfQuantity = (SELECT SUM(quantity) FROM `order_dish` GROUP BY orderID HAVING orderID = $orderID), total = (SELECT SUM(totalPrice) FROM `order_dish` GROUP BY orderID HAVING orderID = $orderID) WHERE orderID = $orderID";
+        $sql = "UPDATE `order` SET sumOfQuantity = (SELECT SUM(quantity) FROM `order_dish` GROUP BY orderID HAVING orderID = $orderID), total = (SELECT SUM(lineTotal) FROM `order_dish` GROUP BY orderID HAVING orderID = $orderID) WHERE orderID = $orderID";
         if ($conn != null) 
             return $conn->query($sql);
         return 0;
@@ -36,7 +46,7 @@ class mOrders
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "UPDATE `order_dish` SET totalPrice = (SELECT price FROM dish WHERE dishID = $dishID) * quantity WHERE orderID = $orderID";
+        $sql = "UPDATE `order_dish` SET unitPrice = (SELECT price FROM `dish` WHERE dishID = $dishID), lineTotal = (SELECT price FROM dish WHERE dishID = $dishID) * quantity * discountAmount =  WHERE orderID = $orderID";
         if ($conn != null) 
             return $conn->query($sql);
         return 0;

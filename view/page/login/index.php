@@ -154,7 +154,7 @@ if (isset($_POST["btndn"])) {
         $row = $result->fetch_assoc();
 
         if ($result->num_rows > 0) {
-            $_SESSION["user"] = [$row["userName"], $row["storeID"]];
+            $_SESSION["user"] = [$row["userID"], $row["storeID"]];
             $_SESSION["login"] = true;
 
             switch ($row["roleID"]) {

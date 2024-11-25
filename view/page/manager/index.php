@@ -195,18 +195,16 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                     <div class="ml-4 flex items-center relative user-container">
                         <div class="rounded-full mr-1 border-solid bg-gray-400 text-white font-bold border-2 w-10 h-10 flex justify-center items-center">
                         <?php
-                            $userName = $_SESSION["user"][0];
+                            $userID = $_SESSION["user"][0];
 
-                            $sql = "SELECT userID, userName FROM user WHERE userName = '$userName'";
+                            $sql = "SELECT userID, userName FROM user WHERE userID = $userID";
                             $result = $conn->query($sql);
                             $row = $result->fetch_assoc();
 
-                            $_SESSION["user"][] = $row["userID"];
-                            
                             $fullName = $row["userName"];
                             $name = end(explode(" ", $fullName));
                             $firstLetter = substr($name, 0, 1);
-                            
+
                             echo $firstLetter;
                         ?>
                         </div>
