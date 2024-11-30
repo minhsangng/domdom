@@ -1,4 +1,44 @@
 <html lang="en">
+<?php
+error_reporting(1);
+session_start();
+
+/* Kết nối control */
+include("../../../model/connect.php");
+include("../../../controller/cPromotions.php");
+include("../../../controller/cDishes.php");
+include("../../../controller/cIngredients.php");
+include("../../../controller/cOrders.php");
+include("../../../controller/cEmployees.php");
+include("../../../controller/cUsers.php");
+include("../../../controller/cProposals.php");
+include("../../../controller/cStores.php");
+include("../../../controller/cMessage.php");
+
+/* Kiểm soát truy cập */
+if (!isset($_SESSION["login"]))
+    echo "<script>window.location.href = '../login/';</script>";
+
+$db = new Database;
+$conn = $db->connect();
+
+/* Xử lý form lấy ngày đuầ và cuối tháng hiện tại*/
+if (isset($_POST["btnxem"])) {
+    $_SESSION["startM"] = $_POST["startM"];
+    $_SESSION["endM"] = $_POST["endM"];
+
+    $daystart = explode("-", $_SESSION["startM"]);
+    $startM = implode("-", array($daystart[0], $daystart[1], $daystart[2]));
+    $dayend = explode("-", $_SESSION["endM"]);
+    $endM = implode("-", array($dayend[0], $dayend[1], $dayend[2]));
+} else {
+    $startM = date("Y-m-01");
+    $endM = date("Y-m-t");
+}
+
+$startW = date("Y-m-d", strtotime("monday this week"));
+$endW = date("Y-m-d", strtotime("sunday this week"));
+?>
 
 <head>
     <meta charset="utf-8" />
@@ -109,47 +149,6 @@
         }
     </style>
 </head>
-<?php
-/* Điều kiện ban đầu */
-session_set_cookie_params(0);
-error_reporting(1);
-session_start();
-
-/* Kết nối control */
-include("../../../model/connect.php");
-include("../../../controller/cPromotions.php");
-include("../../../controller/cDishes.php");
-include("../../../controller/cIngredients.php");
-include("../../../controller/cOrders.php");
-include("../../../controller/cEmployees.php");
-include("../../../controller/cProposals.php");
-include("../../../controller/cMessage.php");
-
-/* Kiểm soát truy cập */
-if (!isset($_SESSION["login"]))
-    echo "<script>window.location.href = '../login/';</script>";
-
-/* Kết nối database */
-$db = new Database();
-$conn = $db->connect();
-
-/* Xử lý form lấy ngày đuầ và cuối tháng hiện tại*/
-if (isset($_POST["btnxem"])) {
-    $_SESSION["startM"] = $_POST["startM"];
-    $_SESSION["endM"] = $_POST["endM"];
-
-    $daystart = explode("-", $_SESSION["startM"]);
-    $startM = implode("-", array($daystart[0], $daystart[1], $daystart[2]));
-    $dayend = explode("-", $_SESSION["endM"]);
-    $endM = implode("-", array($dayend[0], $dayend[1], $dayend[2]));
-} else {
-    $startM = date("Y-m-01");
-    $endM = date("Y-m-t");
-}
-
-$startW = date("Y-m-d", strtotime("monday this week"));
-$endW = date("Y-m-d", strtotime("sunday this week"));
-?>
 
 <body class="bg-gray-900" style="scroll-behavior: smooth; font-family: 'Playwrite DE Grund', cursive;">
     <div class="flex flex-col md:flex-row" id="container">
@@ -213,22 +212,26 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                     <div class="ml-4 flex items-center relative user-container">
                         <div
                             class="rounded-full mr-1 border-solid bg-gray-400 text-white font-bold border-2 w-10 h-10 flex justify-center items-center">
-                            <div class="absolute w-2 h-2 bg-yellow "></div>
-                            <?php
-                            $userID = $_SESSION["user"][0];
+                            <div class="">
+                                <?php
+                                $ctrl = new cUsers;
 
-                            $sql = "SELECT userID, userName FROM user WHERE userID = $userID";
-                            $result = $conn->query($sql);
-                            $row = $result->fetch_assoc();
+                                if ($ctrl->cGetUserByID($_SESSION["user"][0]) != 0) {
 
-                            $fullName = $row["userName"];
-                            $name = end(explode(" ", $fullName));
-                            $firstLetter = substr($name, 0, 1);
+                                    $result = $ctrl->cGetUserByID($_SESSION["user"][0]);
+                                    $row = $result->fetch_assoc();
 
-                            echo $firstLetter;
-                            ?>
+                                    $fullName = $row["userName"];
+                                    $name = end(explode(" ", $fullName));
+                                    $firstLetter = substr($name, 0, 1);
+
+                                    echo $firstLetter;
+                                } else
+                                    echo "";
+                                ?>
+                            </div>
                         </div>
-                        <span class="text-xs font-bold ml-1"> Hello,
+                        <span class="text-xs font-bold ml-1"> Admin -
                             <?php
                             echo $name;
                             ?>
@@ -289,55 +292,23 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
             });
         }
 
-        /* Nếu thoát khỏi trang sẽ xóa tất cả session - ngăn chặn truy cập khi chưa đăng nhập */
         document.addEventListener("DOMContentLoaded", () => {
-            let targetUrl = "";
-            let isFormSubmitting = false;
-
-            document.querySelectorAll("a").forEach(link => {
-                link.addEventListener("click", function (event) {
-                    targetUrl = event.currentTarget.href;
-                });
-            });
-
-            document.querySelectorAll("form").forEach(form => {
-                form.addEventListener("submit", function (event) {
-                    isFormSubmitting = true;
-                });
-            });
-
-            let hasNavigatedAway = false;
-
-            document.addEventListener("visibilitychange", () => {
-                if (document.visibilityState === "hidden") {
-                    hasNavigatedAway = true;
-                }
-            });
-
-            window.addEventListener("beforeunload", (event) => {
-                if (!isFormSubmitting && hasNavigatedAway && (!targetUrl || new URL(targetUrl).origin !== window.location.origin)) {
-                    if (performance.navigation.type != 1) {
-                        navigator.sendBeacon("../logout/index.php");
-                    }
-                }
-            });
-
             window.onload = adjustContentHeight;
 
             window.onresize = adjustContentHeight;
-            
+
             const navAd = document.querySelectorAll(".adnav");
             let idActiveAd = "admin";
-    
+
             navAd.forEach(function (item) {
                 item.addEventListener("click", () => {
                     navAd.forEach((i) => i.classList.remove("activeAd"));
                 });
             });
-    
+
             if (window.location.search != "")
                 idActiveAd = window.location.search.slice(3);
-    
+
             window.addEventListener("load", () => {
                 navAd.forEach(function (item) {
                     if (item.id == idActiveAd) item.classList.add("activeAd");

@@ -16,7 +16,7 @@ if (isset($_GET["p"])) {
         });
     </script>";
 
-    $quantity = isset($_POST["quantity"]) ? (int)$_POST["quantity"] : 1;
+    $quantity = isset($_POST["quantity"]) ? (int) $_POST["quantity"] : 1;
 
     $productExists = false;
     foreach ($_SESSION["product"] as $product) {
@@ -32,8 +32,8 @@ if (isset($_GET["p"])) {
 
     if (isset($_POST["quantity"])) {
         foreach ($_POST["quantity"] as $productID => $quantity) {
-            $productID = (int)$productID;
-            $quantity = (int)$quantity;
+            $productID = (int) $productID;
+            $quantity = (int) $quantity;
 
             if (isset($_SESSION["product"][$productID])) {
                 $_SESSION["product"][$productID]["quantity"] = $quantity;
@@ -52,6 +52,18 @@ if (isset($_POST["btntt"])) {
 }
 
 $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
+
+if (isset($_POST["btnxn"])) {
+    $method = "";
+    if ($_POST["cash"] != "")
+        $method = 0;
+    else if ($_POST["vnpay"] != "")
+        $method = 1;
+    else if ($_POST["banking"] != "")
+        $method = 2;
+
+    echo $_POST["total"];
+}
 
 ?>
 
@@ -82,7 +94,8 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
                                 </a>
                             </div>";
                             }
-                        } else echo "Không có dữ liệu!";
+                        } else
+                            echo "Không có dữ liệu!";
                         ?>
                     </div>
                     <div class="flex mt-3 pt-3 border-t">
@@ -103,7 +116,7 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
                                 echo "<div class='card px-auto py-3 rounded'>
                                 <a href='index.php?i=create&c=" . $row["dishCategory"] . "&p=" . $row["dishID"] . "' class='text-center flex flex-col items-center'>
                                     <img alt='" . $row["dishName"] . "' class='mb-2 rounded-md size-28' src='" . $img_dish . "'/>
-                                    <h2 class='text-base font-bold my-1'>" . $row["dishName"] . "</h2>
+                                    <h2 class='text-base font-bold my-1 h-12'>" . $row["dishName"] . "</h2>
                                     <p class='text-sm text-red-400'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . " đ</p>
                                 </a>
                             </div>";
@@ -120,7 +133,7 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
                     <div class="grid grid-cols-4 gap-4">
                         <?php
                         $ctrl = new cDishes;
-                        
+
                         if ($ctrl->cGetDishTop() != 0) {
                             $result = $ctrl->cGetDishTop();
 
@@ -128,12 +141,13 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
                                 echo "<div class='card px-auto py-3 rounded'>
                                     <a href='index.php?i=create&p=" . $row["dishID"] . "' class='text-center flex flex-col items-center'>
                                         <img alt='" . $row["dishName"] . "' class='mb-2 rounded-md size-28' src='../../../images/dish/" . $row["image"] . "'/>
-                                        <h2 class='text-base font-bold my-1'>" . $row["dishName"] . "</h2>
+                                        <h2 class='text-base font-bold my-1 h-12'>" . $row["dishName"] . "</h2>
                                         <p class='text-sm text-red-400'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . " đ</p>
                                     </a>
                                 </div>";
                             }
-                        } else echo "Không có dữ liệu!";
+                        } else
+                            echo "Không có dữ liệu!";
                         ?>
                     </div>
                 </div>
@@ -174,7 +188,7 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
                     if (isset($_SESSION["product"])) {
                         echo "<form action='' method='POST' class='m-0 form'>";
                         foreach ($_SESSION["product"] as $product) {
-                            $productID = (int)$product["id"];
+                            $productID = (int) $product["id"];
                             $quantity = $product["quantity"];
 
                             $ctrl = new cDishes;
@@ -203,7 +217,8 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
                     <form action="" method="POST">
                         <div class="flex justify-between items-center pt-2 mb-4 border-t">
                             <span class="text-lg font-bold">Tổng thanh toán:</span>
-                            <span class="text-lg font-bold finalTotal"><?php echo str_replace(".00", "", number_format($total, "2", ".", ",")) . " đ"; ?></span>
+                            <span
+                                class="text-lg font-bold finalTotal"><?php echo str_replace(".00", "", number_format($total, "2", ".", ",")) . " đ"; ?></span>
                         </div>
                         <button class="btn btn-danger w-full p-2 rounded" name="btntt" type="submit">Thanh toán</button>
                     </form>
@@ -213,12 +228,14 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
     </div>
 </div>
 
-<div class="modal modalPayment fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+<div class="modal modalPayment fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" style="min-width: 50%;">
         <div class="modal-content h-full">
             <form action="" method="POST">
                 <div class="modal-header justify-center">
-                    <h2 class="modal-title fs-5 font-bold text-3xl text-[#E67E22]" id="paymentModalLabel">Thông tin thanh toán</h2>
+                    <h2 class="modal-title fs-5 font-bold text-3xl text-[#E67E22]" id="paymentModalLabel">Thông tin
+                        thanh toán</h2>
                 </div>
                 <div class="modal-body flex">
                     <div class="w-2/3 mr-2 p-2 border rounded-lg">
@@ -229,22 +246,27 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
                                 </tr>
                                 <tr>
                                     <td class="font-bold pl-3 py-1 w-32 flex items-start">Tiền mặt</td>
-                                    <td class="divMoney"><input type="text" class="form-control m-0 pr-3" name="money" id="" placeholder="Số tiền thanh toán"></td>
+                                    <td class="divMoney"><input type="text" class="form-control m-0 pr-3 money"
+                                            name="cash" id="" placeholder="Số tiền thanh toán" autocomplete="off"></td>
                                 </tr>
                                 <tr>
                                     <td class="font-bold pl-3 py-1 w-32 flex items-start">Ví điện tử</td>
-                                    <td class="divMoney"><input type="text" class="form-control m-0 pr-3" name="money" id="" placeholder="Số tiền thanh toán"></td>
+                                    <td class="divMoney"><input type="text" class="form-control m-0 pr-3 money"
+                                            name="vnpay" id="" placeholder="Số tiền thanh toán" autocomplete="off"></td>
                                 </tr>
                                 <tr>
                                     <td class="font-bold pl-3 py-1 w-32 flex items-start">Ngân hàng</td>
-                                    <td class="divMoney"><input type="text" class="form-control m-0 pr-3" name="money" id="" placeholder="Số tiền thanh toán"></td>
+                                    <td class="divMoney"><input type="text" class="form-control m-0 pr-3 money"
+                                            name="banking" id="" placeholder="Số tiền thanh toán" autocomplete="off">
+                                    </td>
                                 </tr>
 
                                 <tr>
-                                    <th colspan="2" class="mt-4 text-[#EF5350]">Áp dụng khuyến mãi</th>
+                                    <th colspan="2" class="mt-4 text-[#EF5350]">Khuyến mãi</th>
                                 </tr>
                                 <tr>
-                                    <td colspan="2" class="py-1"><input type="text" class="form-control m-0" name="promotionID" id="" value="" placeholder="Nhập mã khuyến mãi (nếu có)">
+                                    <td colspan="2" class="py-1"><input type="text" class="form-control m-0"
+                                            name="promotionID" id="" value="" placeholder="Nhập mã khuyến mãi (nếu có)">
                                         <p class="promotionID text-gray-500 italic text-sm mt-2"></p>
                                     </td>
                                 </tr>
@@ -258,24 +280,28 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
                                     <th colspan="2" class=" text-[#EF5350]">Thanh toán</th>
                                 </tr>
                                 <tr>
-                                    <td class="font-bold pl-3 py-1">Tổng đơn</td>
-                                    <td><span class="totalOrder"><?php echo str_replace(".00", "", number_format($total, "2", ".", ",")) . " đ"; ?></span></td>
+                                    <td class="font-bold pl-2 py-1">Tổng đơn</td>
+                                    <td><input type="text" name="total" class="totalOrder w-24"
+                                            value="<?php echo str_replace(".00", "", number_format($total, "2", ".", ",")) . " đ"; ?>">
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="font-bold pl-3 py-1">Khuyến mãi</td>
-                                    <td><span class="promotion">0%</span></td>
+                                    <td class="font-bold pl-2 py-1">Khuyến mãi</td>
+                                    <td><input type="text" class="promotion w-24" value="0"></td>
                                 </tr>
                                 <tr>
-                                    <td class="font-bold pl-3 py-1">Phải trả</td>
-                                    <td><span class="total"><?php echo str_replace(".00", "", number_format($total, "2", ".", ",")) . " đ"; ?></span></td>
+                                    <td class="font-bold pl-2 py-1">Phải trả</td>
+                                    <td><input type="text" class="total w-24"
+                                            value="<?php echo str_replace(".00", "", number_format($total, "2", ".", ",")) . " đ"; ?>">
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="font-bold pl-3 py-1">Khách trả</td>
-                                    <td><span class="customerPay">0</span></td>
+                                    <td class="font-bold pl-2 py-1">Khách trả</td>
+                                    <td><input type="text" class="customerPay w-24" value="0"></td>
                                 </tr>
                                 <tr>
-                                    <td class="font-bold pl-3 py-1">Tiền thối</td>
-                                    <td><span class="change">0</span></td>
+                                    <td class="font-bold pl-2 py-1">Tiền thối</td>
+                                    <td><input type="text" class="change w-24" value="0"></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -283,7 +309,7 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="button" class="btn btn-danger" name="btnxn">Xác nhận</button>
+                    <button type="submit" class="btn btn-danger" name="btnxn">Xác nhận</button>
                 </div>
             </form>
         </div>
@@ -330,81 +356,51 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
         });
     });
 
-    let inputMoney = document.querySelectorAll('input[type="text"][name="money"]');
+    let inputMoney = document.querySelectorAll(".money");
     let totalOrder = document.querySelector(".totalOrder");
     let total = document.querySelector(".total");
     let promotion = document.querySelector(".promotion");
     let change = document.querySelector(".change");
     let customerPay = document.querySelector(".customerPay");
 
-    totalOrderValue = parseInt(totalOrder.outerText.replace(/,/g, "").replace(/ đ/g, ""));
-    totalOrder.textContent = totalOrderValue.toLocaleString("vi-VN", {
+    totalOrderValue = parseInt(totalOrder.value.replace(/,/g, "").replace(/ đ/g, ""));
+    totalOrder.value = totalOrderValue.toLocaleString("vi-VN", {
         style: "currency",
         currency: "VND"
     });
 
-    totalValue = parseInt(total.outerText.replace(/,/g, "").replace(/ đ/g, ""));
-    total.textContent = totalValue.toLocaleString("vi-VN", {
+    totalValue = parseInt(total.value.replace(/,/g, "").replace(/ đ/g, ""));
+    total.value = totalValue.toLocaleString("vi-VN", {
         style: "currency",
         currency: "VND"
     });
 
-    customerPayValue = parseInt(customerPay.outerText.replace(/,/g, "").replace(/ đ/g, ""));
-    customerPay.textContent = customerPayValue.toLocaleString("vi-VN", {
+    customerPayValue = parseInt(customerPay.value.replace(/,/g, "").replace(/ đ/g, ""));
+    customerPay.value = customerPayValue.toLocaleString("vi-VN", {
         style: "currency",
         currency: "VND"
     });
 
-    changeValue = parseInt(change.outerText.replace(/,/g, "").replace(/ đ/g, ""));
-    change.textContent = changeValue.toLocaleString("vi-VN", {
+    changeValue = parseInt(change.value.replace(/,/g, "").replace(/ đ/g, ""));
+    change.value = changeValue.toLocaleString("vi-VN", {
         style: "currency",
         currency: "VND"
     });
 
-    let promotionID = document.querySelector('input[type="text"][name="promotionID"]');
+    function updateChange() {
+        let totalValue = parseFloat(total.value.replace(/,/g, "").replace(/ đ/g, "")) || 0;
+        let customerPayValue = parseFloat(customerPay.value.replace(/,/g, "").replace(/ đ/g, "")) || 0;
 
-    promotionID.addEventListener("change", () => {
-        let proID = parseInt(promotionID.value);
-        <?php
-        $ctrl = new cPromotions;
-
-        if ($ctrl->cGetAllPromotion() != 0) {
-            $result = $ctrl->cGetAllPromotion();
-            $arr = [];
-            while ($row = $result->fetch_assoc()) {
-                $arr[] = ["id" => $row["promotionID"], "value" => $row["discountPercentage"], "name" => $row["promotionName"]];
-            }
-        }
-        ?>
-        let arr = <?php echo json_encode($arr); ?>;
-        let found = false;
-
-        for (let i = 0; i < arr.length; i++) {
-            if (proID == arr[i].id) {
-                totalOrderValue = parseInt(totalOrder.outerText.replace(/,/g, "").replace(/ đ/g, ""));
-                promotionValue = parseFloat(arr[i].value);
-                promotion.textContent = promotionValue + "%";
-
-                totalValue = (totalOrderValue - (totalOrderValue * promotionValue / 100)) * 1000;
-                total.textContent = totalValue.toLocaleString("vi-VN", {
-                    style: "currency",
-                    currency: "VND"
-                });
-                found = true;
-            } else
-                promotion.textContent = "0%";
-
-            if (found) {
-                document.querySelector(".promotionID").innerHTML = `<span class="text-red-500">*</span>` + " Áp dụng thành công ưu đãi: " + arr[i].name;
-                break;
-            } else {
-
-            }
+        let changeValue = 0;
+        if (customerPayValue >= totalValue) {
+            changeValue = customerPayValue - totalValue;
         }
 
-        if (!found)
-            document.querySelector(".promotionID").innerHTML = `<span class="text-red-500">*</span>` + " Mã giảm giá không hợp lệ. Vui lòng nhập mã khác!";
-    });
+        change.value = changeValue.toLocaleString("vi-VN", {
+            style: "currency",
+            currency: "VND"
+        });
+    }
 
     inputMoney.forEach(input => {
         input.addEventListener("focus", () => {
@@ -430,22 +426,22 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
 
                 priceButton.addEventListener("click", () => {
                     let inputPrice = parseFloat(input.value) || 0;
-                    inputPrice += price;
+                    inputPrice += price * 1000;
                     input.value = inputPrice;
-                    customerPay.textContent = (inputPrice * 1000).toLocaleString("vi-VN", {
+                    customerPay.value = inputPrice.toLocaleString("vi-VN", {
                         style: "currency",
                         currency: "VND"
                     });
 
-                    let inputTotal = parseFloat(total.outerText.replace(/,/g, "").replace(/ đ/g, "")) * 1000;
-                    let inputCus = parseFloat(customerPay.outerText.replace(/,/g, "").replace(/ đ/g, "")) * 1000;
+                    let inputTotal = parseFloat(total.value.replace(/,/g, "").replace(/ đ/g, "")) * 1000;
+                    let inputCus = parseFloat(customerPay.value.replace(/,/g, "").replace(/ đ/g, "")) * 1000;
                     let inputChange = 0;
 
                     if (inputCus >= inputTotal) {
                         inputChange = (inputCus - inputTotal);
                     } else inputChange = 0;
 
-                    change.textContent = inputChange.toLocaleString("vi-VN", {
+                    change.value = inputChange.toLocaleString("vi-VN", {
                         style: "currency",
                         currency: "VND"
                     });
@@ -463,12 +459,12 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
             deleteButton.addEventListener("click", () => {
                 input.value = "";
                 customerPayValue = parseInt(0);
-                customerPay.textContent = customerPayValue.toLocaleString("vi-VN", {
+                customerPay.value = customerPayValue.toLocaleString("vi-VN", {
                     style: "currency",
                     currency: "VND"
                 });
                 changeValue = parseInt(0);
-                change.textContent = changeValue.toLocaleString("vi-VN", {
+                change.value = changeValue.toLocaleString("vi-VN", {
                     style: "currency",
                     currency: "VND"
                 });

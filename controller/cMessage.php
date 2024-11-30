@@ -71,4 +71,28 @@ class cMessage
                 });
         </script>";
   }
+  
+  public function falseMessage($text)
+  {
+    echo "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+              let text = " . json_encode($text) . ";
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    didOpen: (toast) => {
+                      toast.onmouseenter = Swal.stopTimer;
+                      toast.onmouseleave = Swal.resumeTimer;
+                    }
+                  });
+                  Toast.fire({
+                    icon: 'warning',
+                    title: text
+                  });
+                });
+        </script>";
+  }
 }

@@ -281,28 +281,18 @@ if (isset($_POST["submit"])) {
         quantityElement.textContent = value;
     }
 
-    document.querySelectorAll(".cart-form button").forEach(button => {
-    button.addEventListener("click", (e) => {
-        e.preventDefault(); // Ngừng reload trang
-        
-        const form = e.target.closest("form"); // Lấy form gần nhất
-        let formData = new FormData(form); // Tạo FormData từ form đó
+    document.addEventListener("readystatechange", () => {
+        const progressBar = document.getElementById("progress-bar");
 
-        fetch(window.location.href, {
-            method: 'POST',
-            body: formData,
-        })
-        .then(response => response.text()) // Đọc phản hồi từ server
-        .then(data => {
-            // Cập nhật giao diện tại đây nếu cần
-            console.log("Cập nhật thành công:", data);
-
-            // Bạn có thể thêm logic để cập nhật số lượng và tổng giá trị đơn hàng trên giao diện
-        })
-        .catch(error => console.error("Có lỗi xảy ra:", error));
+        if (document.readyState === "interactive") {
+            progressBar.style.width = "50%";
+        } else if (document.readyState === "complete") {
+            progressBar.style.width = "100%";
+            setTimeout(() => {
+                progressBar.style.opacity = "0";
+            }, 500);
+        }
     });
-});
-
 </script>
 </body>
 

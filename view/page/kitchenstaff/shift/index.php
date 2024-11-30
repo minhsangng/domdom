@@ -1,24 +1,51 @@
 <?php
-if (isset($_POST["btndkca"])) {
-    $userID = $_POST["btndkca"];
-    $arrDay = $_POST["input"];
-    $arr = explode("/", $arrDay);
-    $date = $arr[0];
-    $shiftName = $arr[1];
+$ctrl = new cEmployees;
+$ctrlMessage = new cMessage;
+
+if (!isset($_SESSION["shifts"]))
+    $_SESSION["shifts"] = [];
     
-    $sql = "SELECT shiftID FROM shift WHERE shiftName = '$shiftName'";
-    $result = $conn->query($sql)->fetch_assoc();
-    
-    $shiftID = $result["shiftID"];
-    
-    $sql = "INSERT INTO employee_shift (userID, shiftID, date) VALUES ($userID, $shiftID, '$date')";
-    $result = $conn->query($sql);
-    
-    echo "<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            alert('Đăng ký ca làm thành công');
-        });
-    </script>";
+// Lấy dữ liệu ca làm từ cơ sở dữ liệu
+if ($ctrl->cGetAllShift() != 0) {
+    $result = $ctrl->cGetAllShift();
+    $workShifts = [];
+    while ($row = $result->fetch_assoc()) {
+        $workShifts[] = $row; // Chứa các thông tin ca làm tất cả
+    }
+} else echo "Không có dữ liệu ca làm việc!";
+
+if (isset($_POST["shift"])) {
+    $userID = $_SESSION["user"][0];
+    $selectedShifts = $_POST["shift"]; // Dữ liệu ca làm đã chọn
+    $totalShifts = 0; // Đếm tổng số ca làm
+
+    // Đếm tổng số ca làm được chọn
+    foreach ($selectedShifts as $date => $shifts) {
+        $totalShifts += count($shifts);
+    }
+
+    if ($totalShifts >= 4) {
+        foreach ($selectedShifts as $date => $shifts) {
+            foreach ($shifts as $shiftName) {
+                // Lấy shiftID từ shiftName
+                if ($ctrl->cGetShiftIDByName($shiftName) != 0) {
+                    $result = $ctrl->cGetShiftIDByName($shiftName);
+                    $row = $result->fetch_assoc();
+                    $shiftID = $row["shiftID"];
+                    $_SESSION["shifts"][] = [
+                        "date" => $date,
+                        "shiftName" => $shiftName,
+                    ];
+                    
+                    // Thêm thông tin vào bảng employee_shift
+                    $dateForDatabase = DateTime::createFromFormat("d-m-Y", $date)->format("Y-m-d");
+
+                    $ctrl->cInsertEmployeeShift($shiftID, $userID, $dateForDatabase);
+                    $ctrlMessage->successMessage("Đăng ký ca làm ");
+                } else $ctrlMessage->falseMessage("Không tồn tại ca làm: $shiftName");
+            }
+        }
+    } else $ctrlMessage->falseMessage("Vui lòng chọn ít nhất 4 ca làm 1 tuần!");
 }
 ?>
 
@@ -28,87 +55,53 @@ if (isset($_POST["btndkca"])) {
             <h2 class="text-xl font-semibold">Đăng ký ca làm việc</h2>
         </div>
         <div class="h-fit bg-blue-100 rounded-lg p-4">
-            <div id="calendar"></div>
+            <form method="POST" action="">
+                <div id="calendar">
+                    <?php
+                    $currentDate = new DateTime();
+                    $startW = clone $currentDate;
+                    $startW->modify('next Monday');
+                    $endW = clone $startW;
+                    $endW->modify('+6 days');
 
-            <div id="workshift" class="hidden">
-                <h2 class="font-bold text-xl py-1">Thông tin ca làm</h2>
-                <div id="details"></div>
-            </div>
+                    $days = [];
+                    for ($i = 0; $i < 7; $i++) {
+                        $day = clone $startW;
+                        $day->modify("+$i days");
+                        $days[] = $day;
+                    }
 
-            <?php
-            $currentDate = new DateTime();
-            $currentWeekDay = $currentDate->format('w');
+                    // Hiển thị các ngày trong tuần và ca làm cho từng ngày
+                    foreach ($days as $day) {
+                        $dateString = $day->format('d-m-Y'); // Định dạng ngày
+                        echo "<div class='day p-2 border-2 border-amber-100 rounded-md mb-2'>";
+                        echo "<h3 class='font-bold border-b-2 border-amber-200 pb-2 mb-2 text-center'>{$day->format('l')}</h3>";
+                        echo "<h4 class='mb-3 text-center'>{$day->format('d-m-Y')}</h4>";
 
-            $startW = clone $currentDate;
-            $startW->modify('next Monday');
+                        foreach ($workShifts as $shift) {
+                            $isChecked = "";
+                            if (isset($_SESSION["shifts"])) {
+                                foreach ($_SESSION["shifts"] as $registeredShift) {
+                                    if ($registeredShift["date"] === $dateString && $registeredShift["shiftName"] === $shift["shiftName"]) {
+                                        $isChecked = "checked";
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            echo "<div class='my-2'><label>";
+                            echo "<input type='checkbox' name='shift[{$dateString}][]' value='{$shift['shiftName']}' {$isChecked}> {$shift['shiftName']}";
+                            echo "</label><br> </div>";
+                        }
+                        echo "</div>";
+                    }
+                    ?>
+                </div>
 
-            $endW = clone $startW;
-            $endW->modify('+6 days');
-
-            $startW = $startW->format('Y-m-d');
-            $endW = $endW->format('Y-m-d');
-
-            $sql = "SELECT * FROM `shift`";
-            $result = $conn->query($sql);
-            $workShifts = [];
-
-            while ($row = $result->fetch_assoc()) {
-                $workShifts[] = [
-                    "shiftName" => $row["shiftName"],
-                    "startTime" => $row["startTime"],
-                    "endTime" => $row["endTime"]
-                ];
-            }
-            $jsonWorkShifts = json_encode($workShifts);
-            ?>
+                <div id="registerButtonDiv" class="mt-4">
+                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-lg" name="submitShifts">Đăng ký</button>
+                </div>
+            </form>
         </div>
     </div>
-
-    <script>
-        const workShifts = <?php echo $jsonWorkShifts; ?>;
-
-        function createCalendar() {
-            const calendar = document.getElementById("calendar");
-
-            const startW = new Date("<?php echo $startW; ?>");
-            const endW = new Date("<?php echo $endW; ?>");
-
-            for (let day = new Date(startW); day <= endW; day.setDate(day.getDate() + 1)) {
-                const dateString = day.toISOString().split('T')[0];
-
-                const dayDiv = document.createElement("div");
-                dayDiv.classList.add("day");
-                dayDiv.textContent = day.getDate();
-
-                dayDiv.onclick = () => showInfoShift(dateString);
-
-
-                calendar.appendChild(dayDiv);
-            }
-        }
-
-        function showInfoShift(date) {
-            const infoDiv = document.getElementById("workshift");
-            const detailsDiv = document.getElementById("details");
-            let subDetails = "";
-
-                workShifts.forEach((shift, index) => {
-                    subDetails += `
-                        <div class='flex items-center mb-2'>
-                            <input type='radio' class='size-4 mr-2' id='${index}' name='input' value='${date}/${shift.shiftName}' class="mr-4"><label for='${index}'>${shift.shiftName} - (${shift.startTime.slice(0, -3)} - ${shift.endTime.slice(0, -3)})</label></input>
-                        </div>`;
-                });
-
-                detailsDiv.innerHTML = `<p class='mb-3'><strong>Ngày:</strong> ${date}</p><form method='POST'>` + subDetails + `
-                    <div class='mt-4'>
-                        <button type='submit' class='bg-blue-500 text-white py-2 px-4 rounded-lg' name='btndkca' value='<?php echo $_SESSION["userID"]; ?>'>Đăng ký</button>
-                    </div>
-                </form>`;
-
-
-            infoDiv.classList.remove("hidden");
-        }
-
-
-        createCalendar();
-    </script>
+</div>

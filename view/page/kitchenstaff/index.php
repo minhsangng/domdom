@@ -1,5 +1,27 @@
 <html lang="en">
+<?php
+error_reporting(1);
+session_start();
 
+/* Kết nối control */
+include("../../../model/connect.php");
+include("../../../controller/cPromotions.php");
+include("../../../controller/cDishes.php");
+include("../../../controller/cIngredients.php");
+include("../../../controller/cOrders.php");
+include("../../../controller/cEmployees.php");
+include("../../../controller/cUsers.php");
+include("../../../controller/cStores.php");
+include("../../../controller/cMessage.php");
+
+/* Xử lý đăng nhập */
+if (!isset($_SESSION["login"]))
+    echo "<script>window.location.href = '../login/';</script>";
+
+/* Kết nối database */
+$db = new Database();
+$conn = $db->connect();
+?>
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -109,29 +131,6 @@
         }
     </style>
 </head>
-<?php
-/* Điều kiện ban đầu */
-session_set_cookie_params(0);
-error_reporting(1);
-session_start();
-
-/* Kết nối control */
-include("../../../model/connect.php");
-include("../../../controller/cPromotions.php");
-include("../../../controller/cDishes.php");
-include("../../../controller/cIngredients.php");
-include("../../../controller/cOrders.php");
-include("../../../controller/cEmployees.php");
-include("../../../controller/cMessage.php");
-
-/* Xử lý đăng nhập */
-if (!isset($_SESSION["login"]))
-    echo "<script>window.location.href = '../login/';</script>";
-
-/* Kết nối database */
-$db = new Database();
-$conn = $db->connect();
-?>
 
 <body class="bg-gray-900" style="scroll-behavior: smooth; font-family: 'Playwrite DE Grund', cursive;">
     <div class="flex flex-col md:flex-row">
@@ -188,20 +187,23 @@ $conn = $db->connect();
                         <div
                             class="rounded-full mr-1 border-solid bg-gray-400 text-white font-bold border-2 w-10 h-10 flex justify-center items-center">
                             <?php
-                            $userID = $_SESSION["user"][0];
+                            $ctrl = new cUsers;
 
-                            $sql = "SELECT userID, userName FROM user WHERE userID = $userID";
-                            $result = $conn->query($sql);
-                            $row = $result->fetch_assoc();
+                            if ($ctrl->cGetUserByID($_SESSION["user"][0]) != 0) {
 
-                            $fullName = $row["userName"];
-                            $name = end(explode(" ", $fullName));
-                            $firstLetter = substr($name, 0, 1);
+                                $result = $ctrl->cGetUserByID($_SESSION["user"][0]);
+                                $row = $result->fetch_assoc();
 
-                            echo $firstLetter;
+                                $fullName = $row["userName"];
+                                $name = end(explode(" ", $fullName));
+                                $firstLetter = substr($name, 0, 1);
+
+                                echo $firstLetter;
+                            } else
+                                echo "";
                             ?>
                         </div>
-                        <span class="text-xs font-bold ml-1"> Hello,
+                        <span class="text-xs font-bold ml-1"> Staff -
                             <?php
                             echo $name;
                             ?>
@@ -260,38 +262,7 @@ $conn = $db->connect();
             });
         }
 
-        /* Nếu thoát khỏi trang sẽ xóa tất cả session - ngăn chặn truy cập khi chưa đăng nhập */
         document.addEventListener("DOMContentLoaded", () => {
-            let targetUrl = "";
-            let isFormSubmitting = false;
-
-            document.querySelectorAll("a").forEach(link => {
-                link.addEventListener("click", function (event) {
-                    targetUrl = event.currentTarget.href;
-                });
-            });
-
-            document.querySelectorAll("form").forEach(form => {
-                form.addEventListener("submit", function (event) {
-                    isFormSubmitting = true;
-                });
-            });
-
-            let hasNavigatedAway = false;
-
-            document.addEventListener("visibilitychange", () => {
-                if (document.visibilityState === "hidden") {
-                    hasNavigatedAway = true;
-                }
-            });
-
-            window.addEventListener("beforeunload", (event) => {
-                if (!isFormSubmitting && hasNavigatedAway && (!targetUrl || new URL(targetUrl).origin !== window.location.origin)) {
-                    if (performance.navigation.type != 1) {
-                        navigator.sendBeacon("../logout/index.php");
-                    }
-                }
-            });
             window.onload = adjustContentHeight;
 
             window.onresize = adjustContentHeight;

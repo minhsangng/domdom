@@ -1,4 +1,28 @@
 <html lang="en">
+<?php
+error_reporting(1);
+session_start();
+
+/* Kết nối control */
+include("../../../model/connect.php");
+include("../../../controller/cPromotions.php");
+include("../../../controller/cDishes.php");
+include("../../../controller/cIngredients.php");
+include("../../../controller/cOrders.php");
+include("../../../controller/cEmployees.php");
+include("../../../controller/cUsers.php");
+include("../../../controller/cStores.php");
+include("../../../controller/cMessage.php");
+
+/* Xử lý đăng nhập */
+if (!isset($_SESSION["login"])) {
+    echo "<script>window.location.href = '../login/';</script>";
+}
+
+/* Kết nối database */
+$db = new Database();
+$conn = $db->connect();
+?>
 
 <head>
     <meta charset="utf-8" />
@@ -14,7 +38,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playwrite+DE+Grund:wght@100..400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+DE+Grund:wght@100..400&display=swap"
+        rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link href="../../css/bootstrap.min.css" rel="stylesheet">
@@ -99,30 +124,6 @@
         }
     </style>
 </head>
-<?php
-/* Xử lý ban đầu */
-session_set_cookie_params(0);
-error_reporting(1);
-session_start();
-
-/* Kết nối control */
-include("../../../model/connect.php");
-include("../../../controller/cPromotions.php");
-include("../../../controller/cDishes.php");
-include("../../../controller/cIngredients.php");
-include("../../../controller/cOrders.php");
-include("../../../controller/cEmployees.php");
-include("../../../controller/cMessage.php");
-
-/* Xử lý đăng nhập */
-if (!isset($_SESSION["login"])) {
-    echo "<script>window.location.href = '../login/';</script>";
-}
-
-/* Kết nối database */
-$db = new Database();
-$conn = $db->connect();
-?>
 
 <body class="bg-gray-900" style="scroll-behavior: smooth; font-family: 'Playwrite DE Grund', cursive;">
     <div class="flex flex-col md:flex-row">
@@ -133,22 +134,28 @@ $conn = $db->connect();
                 </a>
             </div>
             <nav class="mt-10">
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="home" href="index.php">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="home"
+                    href="index.php">
                     <i class="fa-solid fa-home mr-3"></i>Trang chủ
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="create" href="index.php?i=create">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="create" href="index.php?i=create">
                     <i class="fa-solid fa-folder-plus mr-3"></i>Tạo đơn hàng
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="update" href="index.php?i=update">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="update" href="index.php?i=update">
                     <i class="fa-solid fa-pen-to-square mr-3"></i>Cập nhật đơn hàng
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="shift" href="index.php?i=shift">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="shift"
+                    href="index.php?i=shift">
                     <i class="fa-regular fa-calendar-days mr-3"></i>Đăng ký ca làm
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="info" href="index.php?i=info">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="info"
+                    href="index.php?i=info">
                     <i class="fa-solid fa-lightbulb mr-3"></i>Xem TT công việc
                 </a>
-                <a href="#" onclick="logout()" class="flex items-center py-2 px-8 text-white border-y-2 bg-gray-700 border-gray-500 mt-4 hover:bg-gray-700 hover:text-white adnav">
+                <a href="#" onclick="logout()"
+                    class="flex items-center py-2 px-8 text-white border-y-2 bg-gray-700 border-gray-500 mt-4 hover:bg-gray-700 hover:text-white adnav">
                     <i class="fa-solid fa-right-from-bracket mr-3"></i>Đăng xuất
                 </a>
             </nav>
@@ -156,90 +163,64 @@ $conn = $db->connect();
         <div class="bg-gray-100 flex-1 p-6 pb-2 md:p-10" id="right">
             <div class="flex justify-between items-center mb-6 hover:cursor-pointer">
                 <div class="relative w-1/2 flex">
-                    <input class="w-full py-2 px-4 mr-2 rounded-lg border border-gray-300" placeholder="Tìm kiếm..." type="text" />
+                    <input class="w-full py-2 px-4 mr-2 rounded-lg border border-gray-300" placeholder="Tìm kiếm..."
+                        type="text" />
                     <button type="submit" class="btn btn-primary ml-2 px-3">Tìm</button>
                 </div>
                 <div class="flex items-center hover:cursor-pointer">
-                    <div class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
+                    <div
+                        class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
                         <i class="fa-regular fa-bell"></i>
                     </div>
                     <div class="ml-4 flex items-center relative user-container">
-                        <div class="rounded-full mr-1 border-solid bg-gray-400 text-white font-bold border-2 w-10 h-10 flex justify-center items-center"></div>
-                        <?php
-                        $userID = $_SESSION["user"][0];
+                        <div
+                            class="rounded-full mr-1 border-solid bg-gray-400 text-white font-bold border-2 w-10 h-10 flex justify-center items-center">
+                            <div class="">
+                                <?php
+                                $ctrl = new cUsers;
 
-                        $sql = "SELECT userID, userName FROM user WHERE userID = $userID";
-                        $result = $conn->query($sql);
-                        $row = $result->fetch_assoc();
+                                if ($ctrl->cGetUserByID($_SESSION["user"][0]) != 0) {
 
-                        $fullName = $row["userName"];
-                        $name = end(explode(" ", $fullName));
-                        $firstLetter = substr($name, 0, 1);
+                                    $result = $ctrl->cGetUserByID($_SESSION["user"][0]);
+                                    $row = $result->fetch_assoc();
 
-                        echo $firstLetter;
-                        ?>
+                                    $fullName = $row["userName"];
+                                    $name = end(explode(" ", $fullName));
+                                    $firstLetter = substr($name, 0, 1);
+
+                                    echo $firstLetter;
+                                } else
+                                    echo "";
+                                ?>
+                            </div>
+                        </div>
+                        <span class="text-xs font-bold ml-1"> Staff -
+                            <?php
+                            echo $name;
+                            ?>
+                        </span>
                     </div>
-                    <span class="text-xs font-bold ml-1"> Hello,
-                        <?php
-                        echo $name;
-                        ?>
-                    </span>
                 </div>
             </div>
+
+
+            <?php
+            $i = "";
+            if (isset($_REQUEST["i"]))
+                $i = $_REQUEST["i"];
+            else
+                $i = "home";
+
+            if ($i != "home")
+                require("" . $_REQUEST["i"] . "/index.php");
+            else if ($i == "home")
+                require("home/index.php");
+            ?>
         </div>
-
-
-        <?php
-        $i = "";
-        if (isset($_REQUEST["i"]))
-            $i = $_REQUEST["i"];
-        else
-            $i = "home";
-
-        if ($i != "home")
-            require("" . $_REQUEST["i"] . "/index.php");
-        else if ($i == "home")
-            require("home/index.php");
-        ?>
-    </div>
     </div>
     </div>
 
     <script>
-        /* Nếu thoát khỏi trang sẽ xóa tất cả session - ngăn chặn truy cập khi chưa đăng nhập */
-        document.addEventListener("DOMContentLoaded", () => {
-            let targetUrl = "";
-            let isFormSubmitting = false;
-
-            document.querySelectorAll("a").forEach(link => {
-                link.addEventListener("click", function(event) {
-                    targetUrl = event.currentTarget.href;
-                });
-            });
-
-            document.querySelectorAll("form").forEach(form => {
-                form.addEventListener("submit", function(event) {
-                    isFormSubmitting = true;
-                });
-            });
-
-            let hasNavigatedAway = false;
-
-            document.addEventListener("visibilitychange", () => {
-                if (document.visibilityState === "hidden") {
-                    hasNavigatedAway = true;
-                }
-            });
-
-            window.addEventListener("beforeunload", (event) => {
-                if (!isFormSubmitting && hasNavigatedAway && (!targetUrl || new URL(targetUrl).origin !== window.location.origin)) {
-                    if (performance.navigation.type != 1) {
-                        navigator.sendBeacon("../logout/index.php");
-                    }
-                }
-            });
-        });
-
         function adjustContentHeight() {
             var rightSession = document.getElementById("right");
 
@@ -249,32 +230,6 @@ $conn = $db->connect();
                 rightSession.style.height = "100vh";
             }
         }
-
-        window.onload = adjustContentHeight;
-
-        window.onresize = adjustContentHeight;
-
-        const navAd = document.querySelectorAll(".adnav");
-        let idActiveAd = "home";
-
-        navAd.forEach(function(item) {
-            item.addEventListener("click", () => {
-                navAd.forEach((i) => i.classList.remove("activeAd"));
-            });
-        });
-
-        if (window.location.search != "")
-            if (window.location.search.slice(3).includes("create"))
-                idActiveAd = "create";
-            else idActiveAd = window.location.search.slice(3);
-
-
-        window.addEventListener("load", () => {
-            navAd.forEach(function(item) {
-                if (item.id == idActiveAd) item.classList.add("activeAd");
-                else item.classList.remove("activeAd");
-            });
-        });
 
         function logout() {
             const swalWithBootstrapButtons = Swal.mixin({
@@ -297,6 +252,34 @@ $conn = $db->connect();
                 }
             });
         }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            window.onload = adjustContentHeight;
+
+            window.onresize = adjustContentHeight;
+
+            const navAd = document.querySelectorAll(".adnav");
+            let idActiveAd = "home";
+
+            navAd.forEach(function (item) {
+                item.addEventListener("click", () => {
+                    navAd.forEach((i) => i.classList.remove("activeAd"));
+                });
+            });
+
+            if (window.location.search != "")
+                if (window.location.search.slice(3).includes("create"))
+                    idActiveAd = "create";
+                else idActiveAd = window.location.search.slice(3);
+
+
+            window.addEventListener("load", () => {
+                navAd.forEach(function (item) {
+                    if (item.id == idActiveAd) item.classList.add("activeAd");
+                    else item.classList.remove("activeAd");
+                });
+            });
+        });
     </script>
 </body>
 

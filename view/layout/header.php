@@ -136,11 +136,23 @@
             color: #fff;
             background-color: rgba(129, 103, 169, .6);
         }
+
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 4px;
+            background-color: #EF5350;
+            z-index: 9999;
+            transition: width 0.4s ease-out;
+        }
     </style>
 </head>
 
 <body
     style="scroll-behavior: smooth; font-family: 'Playwrite DE Grund', cursive; background-color: var(--third-color);">
+    <div id="progress-bar"></div>
     <header class="fixed w-full top-0 z-50">
         <div class="container mx-auto px-6">
             <nav class="navbar navbar-expand-md">
@@ -175,7 +187,8 @@
                 <ul class="nav ml-auto py-4 py-md-0">
                     <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4" data-bs-toggle="modal" data-bs-target="#cartModal"
                         title="Giỏ hàng">
-                        <a class="nav-link" href="view/page/dish/cart.php" id="cart"><i class="fas fa-shopping-cart text-xl"> </i>
+                        <a class="nav-link" href="view/page/dish/cart.php" id="cart"><i
+                                class="fas fa-shopping-cart text-xl"> </i>
                             <?php
                             if (isset($_SESSION["cart"])) {
                                 echo "<span class='h-fit w-fit px-1.5 py-0.5 absolute -top-0.5 right-1 bg-gray-100 rounded-full text-xs'>" . count($_SESSION["cart"]) . "</span>";

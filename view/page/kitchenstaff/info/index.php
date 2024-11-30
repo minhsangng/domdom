@@ -20,7 +20,7 @@
                         $startW = date("Y-m-d", strtotime("monday this week"));
                         $endW = date("Y-m-d", strtotime("sunday this week"));
 
-                        $userID = $_SESSION["user"][2];
+                        $userID = $_SESSION["user"][0];
                         $ctrl = new cEmployees;
 
                         if ($ctrl->cGetEmployeeShiftInfo($userID, $startW, $endW) != 0) {

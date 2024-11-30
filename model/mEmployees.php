@@ -6,7 +6,18 @@ class mEmployees
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT * FROM `user` AS U JOIN `role` AS R ON U.roleID = R.roleID WHERE U.roleID IN (3, 4)";
+        $sql = "SELECT * FROM `user` AS U JOIN `role` AS R ON U.roleID = R.roleID WHERE U.roleID != 1";
+        if ($conn != null) 
+            return $conn->query($sql);
+        return 0;
+    }
+    
+    public function mGetAllEmployeeForRevenue()
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT *, COUNT(U.roleID) AS quantityEmployee, SUM(TIMESTAMPDIFF(HOUR, S.startTime, S.endTime)) AS totalHours FROM `user` AS U JOIN `role` AS R ON U.roleID = R.roleID
+            JOIN `employee_shift` AS ES ON ES.userID = U.userID JOIN `shift` AS S ON S.shiftID = ES.shiftID WHERE U.roleID IN (3, 4)";
         if ($conn != null) 
             return $conn->query($sql);
         return 0;
@@ -27,6 +38,16 @@ class mEmployees
         $db = new Database;
         $conn = $db->connect();
         $sql = "SELECT * FROM `user` WHERE userID = $id";
+        if ($conn != null) 
+            return $conn->query($sql);
+        return 0;
+    }
+    
+    public function mGetManagerByStoreID($storeID)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT * FROM user WHERE storeID = $storeID";
         if ($conn != null) 
             return $conn->query($sql);
         return 0;
@@ -78,5 +99,23 @@ class mEmployees
         if ($conn != null) 
             return $conn->query($sql);
         return 0;
+    }
+    
+    public function mGetAllShift()
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT * FROM `shift`";
+        
+        return $conn->query($sql);
+    }
+    
+    public function mGetShiftIDByName($shiftName)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT shiftID FROM `shift` WHERE shiftName = '$shiftName'";
+        
+        return $conn->query($sql);
     }
 }
