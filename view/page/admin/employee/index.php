@@ -103,7 +103,7 @@ if (isset($_POST["btnthemnv"])) {
         move_uploaded_file($_FILES["image"]["tmp_name"], $targetFile);
     }
 
-    $ctrl->cInsertUser($userName, $dateBirth, $phoneNumber, $email, $sex, $roleID, $pass, $targetFile, $storeID);
+    $ctrl->cInsertUser($userName, $dateBirth, $phoneNumber, $email, $sex, $roleID, $pass, removeVietnameseAccents($userName) . ".png", $storeID);
     $ctrlMessage->successMessage("Thêm nhân viên ");
 }
 
