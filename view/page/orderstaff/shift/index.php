@@ -1,5 +1,5 @@
     <?php
-    // Lấy dữ liệu ca làm từ cơ sở dữ liệu
+
     $sql = "SELECT * FROM `shift`";
     $result = $conn->query($sql);
     $workShifts = [];
@@ -7,42 +7,44 @@
         $workShifts[] = $row; 
     }
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['shift'])) {
-        $userID = $_SESSION['userID'];
-        $selectedShifts = $_POST['shift']; // Dữ liệu ca làm đã chọn
-        $totalShifts = 0; // Đếm tổng số ca làm
-
-        // Đếm tổng số ca làm được chọn
-        foreach ($selectedShifts as $date => $shifts) {
-            $totalShifts += count($shifts);
-        }
-
-        if ($totalShifts >= 4) {
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if (isset($_POST['shift']) && !empty($_POST['shift'])) {
+            $userID = $_SESSION['userID'];
+            $selectedShifts = $_POST['shift']; 
+            $totalShifts = 0; 
+    
+            // Đếm tổng số ca làm được chọn
             foreach ($selectedShifts as $date => $shifts) {
-                foreach ($shifts as $shiftName) {
-                    // Lấy shiftID từ shiftName
-                    $query = "SELECT shiftID FROM shift WHERE shiftName = '$shiftName'";
-                    $result = $conn->query($query);
+                $totalShifts += count($shifts);
+            }
+    
+            if ($totalShifts >= 4) {
+                foreach ($selectedShifts as $date => $shifts) {
+                    foreach ($shifts as $shiftName) {
+                        // Lấy shiftID từ shiftName
+                        $query = "SELECT shiftID FROM shift WHERE shiftName = '$shiftName'";
+                        $result = $conn->query($query);
+    
+                        if ($result && $row = $result->fetch_assoc()) {
+                            $shiftID = $row['shiftID'];
 
-                    if ($result && $row = $result->fetch_assoc()) {
-                        $shiftID = $row['shiftID'];
-
-                        // Thêm thông tin vào bảng employee_shift
-
-                        $dateForDatabase = DateTime::createFromFormat('d-m-Y', $date)->format('Y-m-d');
-
-                        $insertQuery = "INSERT INTO employee_shift (userID, shiftID, date) VALUES ($userID, $shiftID, '$dateForDatabase')";
-                        $conn->query($insertQuery);
-                    } else {
-                        echo "<script>alert('Ca làm không tồn tại: $shiftName');</script>";
+                            $dateForDatabase = DateTime::createFromFormat('d-m-Y', $date)->format('Y-m-d');
+                            $insertQuery = "INSERT INTO employee_shift (userID, shiftID, date) VALUES ($userID, $shiftID, '$dateForDatabase')";
+                            $conn->query($insertQuery);
+                        } else {
+                            echo "<script>alert('Ca làm không tồn tại: $shiftName');</script>";
+                        }
                     }
                 }
+                echo "<script>alert('Đăng ký ca làm thành công!');</script>";
+            } else {
+                echo "<script>alert('Vui lòng chọn ít nhất 4 ca làm!');</script>";
             }
-            echo "<script>alert('Đăng ký ca làm thành công!');</script>";
         } else {
-            echo "<script>alert('Vui lòng chọn ít nhất 4 ca làm!');</script>";
+            echo "<script>alert('Chưa chọn ca làm nào!');</script>";
         }
     }
+    
 
     ?>
 
@@ -69,7 +71,6 @@
                         $days[] = $day;
                     }
 
-                    // Hiển thị các ngày trong tuần và ca làm cho từng ngày
                     foreach ($days as $day) {
                         $dateString = $day->format('d-m-Y'); // Định dạng ngày
                         echo "<div class='day p-2 border rounded-md mb-2'>";
