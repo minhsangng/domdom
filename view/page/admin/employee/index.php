@@ -50,9 +50,8 @@ if (isset($_POST["btncapnhat"])) {
         $dateBirth = $row["dateBirth"];
         $sex = $row["sex"];
         $roleID = $row["roleID"];
-        $ctrlMessage->successMessage("Cập nhật trạng thái nhân viên ");
     } else
-        $ctrlMessage->errorMessage("Cập nhật trạng thái nhân viên ");
+        echo "Không có dữ liệu!";
 }
 
 if (isset($_POST["btnsuanv"])) {
@@ -97,14 +96,24 @@ if (isset($_POST["btnthemnv"])) {
     $image = $_FILES["image"]["name"];
     $storeID = $_SESSION["user"][1];
 
-    if ($image) {
-        $targetDir = "../../../images/user/";
-        $targetFile = $targetDir . removeVietnameseAccents($userName) . ".png";
-        move_uploaded_file($_FILES["image"]["tmp_name"], $targetFile);
+    if (!empty($sex) || !empty($roleID)) {
+        if ($image) {
+            $targetDir = "../../../images/user/";
+            $targetFile = $targetDir . removeVietnameseAccents($userName) . ".png";
+            move_uploaded_file($_FILES["image"]["tmp_name"], $targetFile);
+        }
+    
+        $ctrl->cInsertUser($userName, $dateBirth, $phoneNumber, $email, $sex, $roleID, $pass, removeVietnameseAccents($userName) . ".png", $storeID);
+        $ctrlMessage->successMessage("Thêm nhân viên ");
+    } else {
+        $ctrlMessage->emptyMessage();
+        echo "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var modalInsert = new bootstrap.Modal(document.getElementById('insertModal')); 
+                modalInsert.show();
+            });
+        </script>";
     }
-
-    $ctrl->cInsertUser($userName, $dateBirth, $phoneNumber, $email, $sex, $roleID, $pass, removeVietnameseAccents($userName) . ".png", $storeID);
-    $ctrlMessage->successMessage("Thêm nhân viên ");
 }
 
 ?>
@@ -204,42 +213,42 @@ if (isset($_POST["btnthemnv"])) {
                                 <td>
                                     <label for="userName" class="w-full py-2"><b>Tên nhân viên <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="userName">
+                                    <input type="text" class="w-full form-control" name="userName" required>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="dateBirth" class="w-full py-2"><b>Ngày sinh <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="date" class="w-full form-control" name="dateBirth">
+                                    <input type="date" class="w-full form-control" name="dateBirth" required>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="phone" class="w-full py-2"><b>Số điện thoại <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="phone">
+                                    <input type="text" class="w-full form-control" name="phone" required>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="email" class="w-full py-2"><b>Email <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="email">
+                                    <input type="text" class="w-full form-control" name="email" required>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="image" class="w-full py-2"><b>Hình ảnh <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="file" class="w-full form-control" name="image">
+                                    <input type="file" class="w-full form-control" name="image" required accept="image/*">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="pass" class="w-full py-2"><b>Mật khẩu đăng nhập <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="pass">
+                                    <input type="text" class="w-full form-control" name="pass" required>
                                 </td>
                             </tr>
                             <tr>
