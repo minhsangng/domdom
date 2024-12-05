@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php
+if (isset($_POST["store"])) {
+    $storeID = $_POST["store"];
+    setcookie("selectedStore", $_POST["store"], time() + 3600, "/");
+}
 
+$selectedStore = isset($_COOKIE["selectedStore"]) ? $_COOKIE["selectedStore"] : "";
+?>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -185,6 +192,18 @@
                     </li>
                 </ul>
                 <ul class="nav ml-auto py-4 py-md-0">
+                    <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4">
+                        <form action="" method="POST">
+                            <select name="store" id="" class="form-control" onchange="this.form.submit()">
+                                <option value="">Chọn cửa hàng</option>
+                                <option value="1" <?php echo $selectedStore == "1" ? "selected" : ""; ?>>Quận 1</option>
+                                <option value="4" <?php echo $selectedStore == "4" ? "selected" : ""; ?>>Quận 3</option>
+                                <option value="3" <?php echo $selectedStore == "3" ? "selected" : ""; ?>>Quận 5</option>
+                                <option value="5" <?php echo $selectedStore == "5" ? "selected" : ""; ?>>Quận 10</option>
+                                <option value="2" <?php echo $selectedStore == "2" ? "selected" : ""; ?>>Quận Tân Bình</option>
+                            </select>
+                        </form>
+                    </li>
                     <li class="nav-item pl-4 pl-md-0 ml-0 ml-md-4" data-bs-toggle="modal" data-bs-target="#cartModal"
                         title="Giỏ hàng">
                         <a class="nav-link" href="view/page/dish/cart.php" id="cart"><i

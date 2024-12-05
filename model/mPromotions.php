@@ -72,6 +72,16 @@ class mPromotions
         return 0;
     }
     
+    public function mUpdateQuantityPromotion($promotionID, $quantity)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "UPDATE `promotion` SET quantity = quantity - $quantity WHERE promotionID = $promotionID AND quantity > 0";
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+    
     public function mLockPromotion($proID) {
         $db = new Database;
         $conn = $db->connect();

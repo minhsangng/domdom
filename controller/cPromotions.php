@@ -62,6 +62,10 @@ class cPromotions extends mPromotions
         }
     }
     
+    public function cUpdateQuantityPromotion($promotionID, $quantity) {
+        return $this->mUpdateQuantityPromotion($promotionID, $quantity);
+    }
+    
     public function cLockPromotion($proID) {  
         if ($this->mLockPromotion($proID) != 0) {
             echo "<script>

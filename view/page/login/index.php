@@ -1442,21 +1442,23 @@ if (isset($_POST["btndn"])) {
             </div>
             <div class="w-full max-w-sm">
                 <form action="" method="POST">
-                    <div class="relative mb-4 group">
-                        <input type="email" id="email"
-                            class="w-full border border-gray-300 pb-2 pt-10 pl-8 pr-5 rounded-lg form-control"
-                            name="email" />
+                    <div class="relative mt-2 mb-3 group">
                         <label for="email"
-                            class="absolute top-2 left-3 font-bold text-gray-600 transition-all ease">Email</label>
+                            class="ml-3 mb-2 font-bold text-gray-600">Email</label>
+                        <i class="absolute top-10 left-3 text-2xl text-gray-600 fa-solid fa-envelope"></i>
+                        <input type="email" id="email"
+                            class="w-full border border-gray-300 py-2 pl-12 pr-5 rounded-lg form-control"
+                            name="email" />
                     </div>
-                    <div class="relative my-4">
-                        <input type="password" id="psw"
-                            class="w-full border border-gray-300 pb-2 pt-10 pl-8 pr-5 rounded-lg form-control"
-                            name="psw" />
-                        <label for="psw" class="absolute top-2 left-3 font-bold text-gray-600 transition-all ease">Mật
+                    <div class="relative mb-10 mt-2">
+                        <label for="psw" class="ml-3 mb-2 font-bold text-gray-600">Mật
                             khẩu</label>
+                        <i class="absolute top-10 left-3 text-2xl text-gray-600 fa-solid fa-lock"></i>
+                        <input type="password" id="psw"
+                            class="w-full border border-gray-300 py-2 pl-12 pr-5 rounded-lg form-control"
+                            name="psw" />
                     </div>
-                    <button type="submit" class="w-full text-white py-2 px-4 rounded-lg btn btn-danger cursor-pointer"
+                    <button type="submit" class="w-full text-white py-2 px-4 rounded-lg btn btn-danger hover:cursor-pointer"
                         name="btndn">Đăng
                         nhập</button>
                 </form>

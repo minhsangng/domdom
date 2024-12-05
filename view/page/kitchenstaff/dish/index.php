@@ -148,5 +148,3 @@ if (isset($_POST["btnhet"])) {
             </div>
         </div>
     </div>
-
-</div>

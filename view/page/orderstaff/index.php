@@ -11,6 +11,7 @@ include("../../../controller/cIngredients.php");
 include("../../../controller/cOrders.php");
 include("../../../controller/cEmployees.php");
 include("../../../controller/cUsers.php");
+include("../../../controller/cCustomers.php");
 include("../../../controller/cStores.php");
 include("../../../controller/cMessage.php");
 
@@ -217,7 +218,6 @@ $conn = $db->connect();
                 require("home/index.php");
             ?>
         </div>
-    </div>
     </div>
 
     <script>

@@ -43,23 +43,19 @@ class cOrders extends mOrders
     }
     
     public function cUpdateOrderDish($orderID, $dishID) {
-        if ($this->mUpdateOrderDish($orderID, $dishID) != 0) {
-            $result = $this->mUpdateOrderDish($orderID, $dishID);
-            
-            return $result;
-        } return 0;
+        return $this->mUpdateOrderDish($orderID, $dishID);
+    }
+    
+    public function cUpdateAmountOrderDish($orderID, $dishID) {
+        return $this->mUpdateAmountOrderDish($orderID, $dishID);
     }
     
     public function cUpdateStatusOrder($orderID, $status) {
-        if ($this->mUpdateStatusOrder($orderID, $status) != 0) {
-            $result = $this->mUpdateStatusOrder($orderID, $status);
-            
-            return $result;
-        } return 0;
+        return $this->mUpdateStatusOrder($orderID, $status);
     }
     
-    public function cInsertOrder($customerID, $paymentMethod) {
-        return $this->mInsertOrder($customerID, $paymentMethod);
+    public function cInsertOrder($customerID, $paymentMethod, $storeID) {
+        return $this->mInsertOrder($customerID, $paymentMethod, $storeID);
     }
     
     public function cInsertOrderDish($orderID, $dishID, $quantity) {
@@ -72,5 +68,21 @@ class cOrders extends mOrders
             
             return $result;
         } return 0;
-    }    
+    } 
+    
+    public function cGetOrderIDNew() {
+        if ($this->mGetOrderIDNew() != 0) {
+            $result = $this->mGetOrderIDNew();
+            
+            return $result;
+        } return 0;
+    }  
+    
+    public function cGetPromotionIDNew($orderID, $dishID) {
+        if ($this->mGetPromotionIDNew($orderID, $dishID) != 0) {
+            $result = $this->mGetPromotionIDNew($orderID, $dishID);
+            
+            return $result;
+        } return 0;
+    }
 }

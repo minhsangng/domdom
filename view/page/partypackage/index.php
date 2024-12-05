@@ -142,7 +142,7 @@ if (isset($_POST["btnxn"])) {
     $row1 = $conn->query($sql1)->fetch_assoc();
     $customerID = $row1["customerID"];
 
-    $ctrlOrder->cInsertOrder($customerID, $paymentMethod);
+    $ctrlOrder->cInsertOrder($customerID, $paymentMethod, $_COOKIE["selectedStore"]);
 
     $sql2 = "SELECT orderID FROM `order` ORDER BY orderID DESC LIMIT 1";
     $row2 = $conn->query($sql2)->fetch_assoc();
