@@ -135,7 +135,6 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                 </div>
             </div>
 
-
             <div class="modal modalCheckout" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
@@ -220,9 +219,9 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                 <?php endforeach; ?>
 
                                 <!-- Hiển thị tổng tiền của đơn hàng -->
-                                <p class="text-lg font-semibold text-right">Tổng cộng: <span id="totalAmount"><?php echo number_format($totalAmount, 0, ".", ","); ?></span> đ</p>
-                                <p class="text-lg font-semibold text-right">Số tiền giảm giá: <span id="discountAmount">0</span> đ</p>
-                                <p class="text-lg font-semibold text-right">Tổng sau giảm giá: <span id="finalAmount"><?php echo number_format($totalAmount, 0, ".", ","); ?></span> đ</p>
+                                <p class="text-lg font-semibold text-right">Tổng cộng: <span name="totalAmount" id="totalAmount"><?php echo number_format($totalAmount, 0, ".", ","); ?></span> đ</p>
+                                <p class="text-lg font-semibold text-right">Số tiền giảm giá: <span name="discountAmount" id="discountAmount">0</span> đ</p>
+                                <p class="text-lg font-semibold text-right">Tổng sau giảm giá: <span name="finalAmount" id="finalAmount"><?php echo number_format($totalAmount, 0, ".", ","); ?></span> đ</p>
                             </div>
 
 
@@ -264,9 +263,9 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                 if ($promotions) {
                                     echo '<select class="form-control" name="promotionID" id="promotionID">';
                                     echo '<option value="" disabled selected>Chọn mã giảm giá</option>';
+                                    echo '<option value="0" data-max-discount="0">--</option>';
                                     foreach ($promotions as $promotion) {
-                                        // Thêm thuộc tính data-max-discount để lưu giá trị maxDiscountAmount
-                                        echo '<option value="' . $promotion['discountPercentage'] . '" data-max-discount="' . $promotion['maxDiscountAmount'] . '">';
+                                        echo '<option value="' . $promotion['promotionID'] . '" data-p-d="' . $promotion['discountPercentage'] . '" data-max-discount="' . $promotion['maxDiscountAmount'] . '">';
                                         echo substr($promotion['promotionName'], 0, 50) . '</option>';
                                     }
                                     echo '</select>';
@@ -274,27 +273,30 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                     echo 'Không có mã giảm giá';
                                 }
                                 ?>
+                                <!-- Input ẩn để gửi giá trị qua POST -->
+                                <input type="hidden" name="hiddenDiscountAmount" id="hiddenDiscountAmount" value="0">
+                                <input type="hidden" name="hiddenFinalAmount" id="hiddenFinalAmount" value="0">
                             </div>
-
 
 
                             <script>
                                 document.getElementById('promotionID').addEventListener('change', function() {
-                                    let discountPercentage = parseFloat(this.value); // Lấy giá trị discountPercentage từ mã giảm giá
-                                    let maxDiscountAmount = parseFloat(this.options[this.selectedIndex].getAttribute('data-max-discount')); // Lấy giá trị maxDiscountAmount từ thuộc tính data-max-discount
-                                    let totalAmount = parseFloat(document.getElementById('totalAmount').innerText.replace(/,/g, '')); // Lấy tổng hóa đơn, loại bỏ dấu phẩy
+                                    // Lấy discountPercentage và maxDiscountAmount từ thuộc tính của option được chọn
+                                    let selectedOption = this.options[this.selectedIndex];
+                                    let discountPercentage = parseFloat(selectedOption.getAttribute('data-p-d'));
+                                    let maxDiscountAmount = parseFloat(selectedOption.getAttribute('data-max-discount'));
+                                    let totalAmount = parseFloat(document.getElementById('totalAmount').innerText.replace(/,/g, '')); // Tổng hóa đơn
 
                                     if (!isNaN(discountPercentage)) {
-                                        let discountAmount = totalAmount * (discountPercentage / 100); 
-
-                                        
+                                        // Tính toán giảm giá
+                                        let discountAmount = totalAmount * (discountPercentage / 100);
                                         if (discountAmount > maxDiscountAmount) {
                                             discountAmount = maxDiscountAmount;
                                         }
 
-                                        let finalAmount = totalAmount - discountAmount; // Tính số tiền sau khi giảm
+                                        let finalAmount = totalAmount - discountAmount;
 
-                                        // Định dạng số với dấu phân cách hàng nghìn, không có thập phân
+                                        // Format số để hiển thị
                                         const formatNumber = (num) => {
                                             return new Intl.NumberFormat('en-US', {
                                                 style: 'decimal',
@@ -302,37 +304,101 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                             }).format(num);
                                         };
 
-                                        // Cập nhật giao diện với số tiền giảm và tổng tiền sau giảm
-                                        document.getElementById('discountAmount').innerText = formatNumber(discountAmount); // Hiển thị số tiền giảm giá (không có thập phân)
-                                        document.getElementById('finalAmount').innerText = formatNumber(finalAmount); // Hiển thị tổng số tiền sau khi giảm (không có thập phân)
+                                        // Cập nhật UI
+                                        document.getElementById('discountAmount').innerText = formatNumber(discountAmount);
+                                        document.getElementById('finalAmount').innerText = formatNumber(finalAmount);
+
+                                        // Gán giá trị vào input ẩn để gửi qua POST
+                                        document.getElementById('hiddenDiscountAmount').value = discountAmount.toFixed(0);
+                                        document.getElementById('hiddenFinalAmount').value = finalAmount.toFixed(0);
                                     }
                                 });
                             </script>
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#ttpayModal">Tiếp tục</button>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#payModal">Tiếp tục</button>
                             </div>
                         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                     </div>
                 </div>
             </div>
+
+            <div class="modal modalPay" id="payModal" tabindex="1" aria-labelledby="payModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header flex justify-center">
+                            <h2 class="modal-title fs-5 font-bold text-3xl" id="payModalLabel" style="color: #E67E22;">
+                                Phương thức thanh toán</h2>
+                        </div>
+                        <div class="modal-body">
+                            <div class="border-b pb-4 mb-4">
+                                <label for="" class="font-bold w-full mb-2">Phương thức thanh toán</label>
+                                <ul class="w-full">
+                                    <li><input type="radio" name="payment_method" id="1" class="mr-2" value="1" required>Ví điện tử</li>
+                                    <li><input type="radio" name="payment_method" id="2" class="mr-2" value="2" required>Thẻ ngân hàng</li>
+                                </ul>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <p class="font-bold text-xl">Tổng đơn</p>
+                                </div>
+                                <div>
+                                    <p class="text-lg font-semibold"><?php echo number_format($total, 0, ".", ",") . " đ"; ?></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                data-bs-target="#ttpayModal">Tiếp tục</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal modalTTPay" id="ttpayModal" tabindex="1" aria-labelledby="ttpayModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header flex justify-center">
+                            <h2 class="modal-title fs-5 font-bold text-3xl" id="payModalLabel" style="color: #E67E22;">
+                                Chuyển khoản</h2>
+                        </div>
+                        <div class="modal-body">
+                            <div class="flex flex-wrap">
+                                <div class="w-full md:w-1/2 mb-4 pr-4">
+                                    <div>
+                                        <h5 class="font-bold text-lg" style="color: #E67E22;">Ngân hàng</h5>
+                                        <p>VietinBank</p>
+                                        <h5 class="font-bold text-lg" style="color: #E67E22;">Số tài khoản</h5>
+                                        <p>8386</p>
+                                    </div>
+                                    <div class="mt-4">
+                                        <h5 class="font-bold text-lg" style="color: #E67E22;">Mã QR</h5>
+                                        <img src="path_to_qr_image" alt="QR Code" class="w-40 h-40" />
+                                    </div>
+                                </div>
+                                <div class="w-full md:w-1/2 mb-4 pl-4">
+                                    <div>
+                                        <h5 class="font-bold text-lg" style="color: #E67E22;">Ví Momo</h5>
+                                        <p>Số điện thoại: <strong>0123456789</strong></p>
+                                    </div>
+                                    <div class="mt-4">
+                                        <h5 class="font-bold text-lg" style="color: #E67E22;">Mã QR</h5>
+                                        <img src="path_to_momo_qr_image" alt="Momo QR Code" class="w-40 h-40" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-danger" id="confirmPay" name="btntt">Thanh toán</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </form>
     <script>
         function fillModal() {
@@ -365,6 +431,9 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
             $note = $_POST['note'] ?? '';
             $storeID = $_POST['store'] ?? '';
             $promotionID = $_POST['promotionID'] ?? '';
+            $discountAmount = $_POST['hiddenDiscountAmount'] ?? 0;
+            $finalAmount = $_POST['hiddenFinalAmount'] ?? 0;
+            $partyPackageID = "Null";
 
             /*// In ra các giá trị để kiểm tra
             echo "<h4>Kiểm tra dữ liệu:</h4>";
@@ -375,7 +444,10 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
             echo "<p><strong>Ghi chú:</strong> $note</p>";
             echo "<p><strong>PTTT:</strong> $payment_method </p>";
             echo "<p><strong>Cửa hàng ID:</strong> $storeID</p>";
-            echo "<p><strong>Mã khuyến mãi ID:</strong> $promotionID</p>";*/
+            echo "<p><strong>Mã khuyến mãi ID:</strong> $promotionID</p>";
+            echo "<p><strong>Số tiền giảm giá:</strong> $discountAmount</p>";
+            echo "<p><strong>Tổng tiền sau giảm giá:</strong> $finalAmount</p>";
+            echo "<p><strong>gói tiệc</strong> $partyPackageID</p>";*/
 
             $sql_check = "SELECT * FROM customer WHERE phone = '$phone'";
             $result = $conn->query($sql_check);
@@ -392,9 +464,6 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
             $sql_check_orders = "SELECT COUNT(*) AS order_count FROM `order` WHERE customerID = '$phone' AND status = 4";
             $order_result = $conn->query($sql_check_orders);
 
-            $discountAmount = isset($discountAmount) ? $discountAmount : "NULL";
-            $finalAmount = isset($finalAmount) ? $finalAmount : "NULL";
-            $partyPackageID = isset($partyPackageID) ? $partyPackageID : "NULL";
 
 
 
@@ -409,9 +478,9 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                 $order_count = $order_row['order_count'];
 
                 if ($order_count > 3) {
-                    echo "<p>Không thể đặt hàng: Khách hàng đã hủy đơn quá 3 lần.</p>";
+                    echo "<script>alert('Không thể đặt hàng: Khách hàng đã hủy đơn quá 3 lần.');</script>";
                 } else {
-                    // echo "$total, $sumOfQuantity, $payment_method, $note, '1', $phone, $discountAmount, $finalAmount, $partyPackageID, $storeID";
+                    //echo "$total, $sumOfQuantity, $payment_method, $note, '1', $phone, $discountAmount, $finalAmount, $partyPackageID, $storeID";
                     $sql_insert_order = "INSERT INTO `order` (orderDate, total, sumOfQuantity, paymentMethod, note, status, customerID, discountAmount, finalAmount, partyPackageID, storeID) 
                     VALUES (NOW(), $total, $sumofQuantity, '$payment_method', '$note', '1', '$phone', $discountAmount, $finalAmount, $partyPackageID, '$storeID')";
 
@@ -422,14 +491,14 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                         foreach ($_SESSION["cart"] as $cart) {
                             $dishID = $cart['id'];
                             $quantity = $cart['quantity'];
-                            $unitPrice = $cart['unitPrice'];
+                            $unitPrice = $cart['price'];
                             $discountAmount = isset($cart['discountAmount']) ? $cart['discountAmount'] : "NULL";
                             $lineTotal = $cart['total'];
 
                             $sql_insert_order_detail = "INSERT INTO order_dish (orderID, dishID, quantity, unitPrice, discountAmount, lineTotal, promotionID) 
-                                                        VALUES ('$orderID', '$dishID', '$quantity', '$unitPrice', $discountAmount, '$lineTotal', 'Null')";
+                                                        VALUES ('$orderID', '$dishID', '$quantity', '$unitPrice', $discountAmount, '$lineTotal', '$promotionID')";
 
-                            echo "<p>Câu truy vấn SQL: $sql_insert_order_detail</p>";
+                            //echo "<p>Câu truy vấn SQL: $sql_insert_order_detail</p>";
                             if ($conn->query($sql_insert_order_detail) === TRUE) {
                                 echo "<p>Đơn hàng đã được thêm thành công!</p>";
                             } else {
