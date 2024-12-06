@@ -1,3 +1,6 @@
+<?php
+    session_start();
+?>
 <title>Danh sách sản phẩm | DOMDOM - Chuỗi cửa hàng thức ăn nhanh</title>
 
 <?php
@@ -100,10 +103,12 @@ if (isset($_POST["addcart"])) {
 
             while ($row = $result->fetch_assoc()) {
                 $img_dish = "images/dish/" . $row["image"];
-                if (!file_exists($img_dish))
+                if (!file_exists($img_dish)) {
                     $img_dish = "images/nodish.png";
-
+                }
+            
                 $price = str_replace(".00", "", number_format($row["price"], "2", ".", ","));
+            
                 echo "<div class='w-full bg-white shadow rounded-lg hover:scale-105 transition delay-150'>
                         <form action='' method='POST'>
                             <div class='h-40 w-full bg-gray-200 flex flex-col justify-between p-4 bg-cover bg-center border-2 border-red-100 rounded-t-lg' style='background-image: url(" . $img_dish . ")'>
