@@ -79,4 +79,32 @@ class mEmployees
             return $conn->query($sql);
         return 0;
     }
+
+    public function mGetRevenueEmployeeShiftByStore($storeID, $startM, $endM)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "
+                SELECT 
+                    u.roleID,
+                    r.roleName,
+                    COUNT(DISTINCT u.userID) AS totalEmployees,
+                    SUM(TIMESTAMPDIFF(HOUR, s.startTime, s.endTime)) AS totalHours,
+                    CASE 
+                        WHEN u.roleID = 3 THEN SUM(TIMESTAMPDIFF(HOUR, s.startTime, s.endTime)) * 25000
+                        WHEN u.roleID = 4 THEN SUM(TIMESTAMPDIFF(HOUR, s.startTime, s.endTime)) * 35000
+                        ELSE 0
+                    END AS totalSalary
+                FROM employee_shift es
+                JOIN User u ON es.userID = u.userID
+                JOIN Shift s ON es.shiftID = s.shiftID
+                JOIN Role r ON u.roleID = r.roleID
+                WHERE u.roleID IN (3, 4) 
+                AND u.storeID = $storeID
+                AND es.date BETWEEN $startM AND $endM
+                GROUP BY u.roleID, r.roleName";
+        if ($conn != null) 
+            return $conn->query($sql);
+        return 0;
+    }
 }

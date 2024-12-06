@@ -50,6 +50,14 @@ class cIngredients extends mIngredients
             return $result;
         } return 0;
     }
+
+    public function cGetRevenueIngredientByStore($storeID, $startDate, $endDate) {
+        if ($this->mGetRevenueIngredientByStore($storeID, $startDate, $endDate) != 0) {
+            $result = $this->mGetRevenueIngredientByStore($storeID, $startDate, $endDate);
+           
+            return $result;
+        } return 0;
+    }
     
     public function cInsertIngredient($ingreName, $unit, $price, $type)
     {

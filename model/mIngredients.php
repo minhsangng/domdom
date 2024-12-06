@@ -77,4 +77,34 @@ class mIngredients
             return $conn->query($sql);
         return 0;
     }
+
+public function mGetRevenueIngredientByStore($storeID, $startDate, $endDate)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "
+                SELECT 
+                    i.ingredientName AS 'ingredientName', 
+                    i.unitOfcalculation AS 'unit', 
+                    si.quantityInStock AS 'quantityInStock', 
+                    SUM(ni.quantity) AS 'quantityImported', 
+                    i.price
+                FROM 
+                    NeedIngredient ni
+                JOIN 
+                    ImportOrder io ON ni.importOrderID = io.importOrderID
+                JOIN 
+                    Ingredient i ON ni.ingredientID  = i.ingredientID 
+                JOIN 
+                    Store_Ingredient si ON si.ingredientID  = i.ingredientID  AND si.storeID = $storeID
+                WHERE 
+                    io.importOrderDate BETWEEN $startDate AND $endDate
+                GROUP BY 
+                    i.ingredientID
+            ";
+        if ($conn != null) 
+            return $conn->query($sql);
+        return 0;
+    }
+
 }

@@ -69,4 +69,12 @@ class cEmployees extends mEmployees
         }
         return 0;
     }
+
+    public function cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM) {
+        if ($this->mGetRevenueEmployeeShiftByStore($storeID, $startM, $endM) != 0) {
+            $result = $this->mGetRevenueEmployeeShiftByStore($storeID, $startM, $endM); 
+            return $result;
+        }
+        return 0;
+    }
 }

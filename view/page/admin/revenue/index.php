@@ -47,7 +47,7 @@ if (isset($_POST["btnxem"])) {
         </form>
 
         <hr>
-
+<!-- //////////////////// -->
         <?php
         if ($revenue == 1 || $revenue == 0) {
 
@@ -77,7 +77,7 @@ if (isset($_POST["btnxem"])) {
             $ctrl = new cOrders;
             if ($ctrl->cGetRevenueOrderByStore($storeID, $startM, $endM) != 0) {
                 $result = $ctrl->cGetRevenueOrderByStore($storeID, $startM, $endM);
-                $revenue = 0;
+                $revenueType = 0;
 
                 while ($row = $result->fetch_assoc()) {
                     echo "
@@ -88,7 +88,7 @@ if (isset($_POST["btnxem"])) {
                             <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["total"], "2", ".", ",")) . "</td>
                         </tr>
                         ";
-                    $revenue += $row["finalAmount"];
+                    $revenueType += $row["finalAmount"];
                 }
 
             } else
@@ -111,6 +111,7 @@ if (isset($_POST["btnxem"])) {
     </div>";
         }
         ?>
+<!-- //////////////////// -->
         <div class="flex justify-between items-center my-4 w-full">
             <h2 class="text-xl font-semibold">Chi phí nhân công</h2>
             <div class="flex items-center">
@@ -122,6 +123,7 @@ if (isset($_POST["btnxem"])) {
                     <i class="fa-solid fa-print"></i></button>
             </div>
         </div>
+
         <div class="h-fit bg-gray-100 rounded-lg p-6">
             <table class="text-base w-full text-center">
                 <thead>
@@ -132,36 +134,41 @@ if (isset($_POST["btnxem"])) {
                         <th class="text-gray-600 border-2 py-2">Lương</th>
                     </tr>
                 </thead>
+
                 <tbody>
-                    <tr>
-                        <td class="border-2 py-2">Quản lý cửa hàng</td>
-                        <td class="border-2 py-2">5</td>
-                        <td class="border-2 py-2">200</td>
-                        <td class="border-2 py-2">100,000,000</td>
-                    </tr>
-                    <tr>
-                        <td class="border-2 py-2">Nhân viên nhân đơn</td>
-                        <td class="border-2 py-2">5</td>
-                        <td class="border-2 py-2">220</td>
-                        <td class="border-2 py-2">70,000,000</td>
-                    </tr>
-                    <tr>
-                        <td class="border-2 py-2">Quản lý cửa hàng</td>
-                        <td class="border-2 py-2">5</td>
-                        <td class="border-2 py-2">220</td>
-                        <td class="border-2 py-2">60,000,000</td>
-                    </tr>
-                </tbody>
+                <?php
+                $ctrl = new cEmployees;
+                if ($ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM) != 0) {
+                $result = $ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM);
+                $totalCost = 0;
+                    while ($row = $result->fetch_assoc()) {
+                        $totalCost += $cost['totalSalary'];
+                        echo "<tr>
+                            <td class='border-2 py-2'>{$cost['roleName']}</td>
+                            <td class='border-2 py-2'>{$cost['totalEmployees']}</td>
+                            <td class='border-2 py-2'>{$cost['totalHours']}</td>
+                            <td class='border-2 py-2'>" . number_format($cost['totalSalary'], 2, ',', '.') . " đồng</td>
+                        </tr>";
+                    }
+                } else {
+                    echo "<tr>
+                            <td colspan='7' class='border-2 py-2'>Không có dữ liệu trong thời gian này!</td>
+                        </tr>";
+                }
+                echo '</tbody>
                 <tfoot>
                     <tr>
                         <td colspan="3" class="font-bold text-lg text-left p-2 border-2">
                             <p>Tổng chi phí:</p>
                         </td>
-                        <td class="text-center border-2">230,000,000 đồng</td>
+                        <td class="text-center border-2">'.number_format($cost['totalSalary'], 2, ',', '.').'đồng</td>
                     </tr>
-                </tfoot>
+                </tfoot>';
+                ?>
             </table>
         </div>
+
+        <!-- //////////////////// -->
         <div class="flex justify-between items-center my-4 w-full">
             <h2 class="text-xl font-semibold">Chi phí nguyên liệu</h2>
             <div class="flex items-center">
@@ -188,38 +195,37 @@ if (isset($_POST["btnxem"])) {
                 </thead>
                 <tbody>
                     <?php
-                    $sql = "SELECT * FROM `ingredient`";
-                    $result = $conn->query($sql);
-                    $revenue = 0;
-
-                    if ($result->num_rows > 0)
+                    $ctrl = new cIngredients;
+                    if ($ctrl->cGetRevenueIngredientByStore($storeID, $startM, $endM) != 0) {
+                    $result = $ctrl->cGetRevenueIngredientByStore($storeID, $startM, $endM);
                         while ($row = $result->fetch_assoc()) {
-                            echo "
-                                        <tr>
-                                            <td class='py-2 border-2'>" . $row["ingredientName"] . "</td>
-                                            <td class='py-2 border-2'>" . $row["unitOfcalculaton"] . "</td>
-                                            <td class='py-2 border-2'>" . 10 . "</td>
-                                            <td class='py-2 border-2'>" . 50 . "</td>
-                                            <td class='py-2 border-2'>" . 0 . "</td>
-                                            <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
-                                            <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"] * 40, "2", ".", ",")) . "</td>
-                                        </tr>
-                                        ";
-                            $revenue += $row["total"];
-                        } else
+                            $exportQuantity = $row['quantityImported'] - $row['quantityInStock']; // Tính sl xuất
+                            $totalCost = $row['price'] * $row['quantityImported']; // Tính tổng chi phí
+                            echo "<tr>
+                                    <td class='border-2 py-2'>{$row['ingredientName']}</td>
+                                    <td class='border-2 py-2'>{$row['unit']}</td>
+                                    <td class='border-2 py-2'>{$row['stockQuantity']}</td>
+                                    <td class='border-2 py-2'>{$row['importQuantity']}</td>
+                                    <td class='border-2 py-2'>{$exportQuantity}</td>
+                                    <td class='border-2 py-2'>" . number_format($row['price'], 2, '.', ',') . " đồng</td>
+                                    <td class='border-2 py-2'>" . number_format($totalCost, 2, '.', ',') . " đồng</td>
+                                </tr>";
+                        }
+                    } else {
                         echo "<tr>
-                                <td colspan='4' class='py-2 border-2'>Không có dữ liệu trong thời gian này!</td>
+                                <td colspan='7' class='border-2 py-2'>Không có dữ liệu trong thời gian này!</td>
                             </tr>";
-                    ?>
-                </tbody>
+                    }
+                echo '</tbody>
                 <tfoot>
                     <tr>
                         <td colspan="6" class="font-bold text-lg text-left p-2 border-2">
                             <p>Tổng chi phí:</p>
                         </td>
-                        <td class="text-center border-2">9,960,000 đồng</td>
+                        <td class="text-center border-2">'.number_format($totalCost, 2, '.', ',').'đồng</td>
                     </tr>
-                </tfoot>
+                </tfoot>';
+                ?>
             </table>
         </div>
         <div class="flex justify-between items-center my-4 w-full">
@@ -244,12 +250,50 @@ if (isset($_POST["btnxem"])) {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="border-2 py-2">552,250,000</td>
-                        <td class="border-2 py-2">230,000,000</td>
-                        <td class="border-2 py-2">9,960,000</td>
-                        <td class="border-2 py-2">312,290,000</td>
-                    </tr>
+                <?php
+                    $revenueSales = 0; // Doanh thu bán hàng
+                    $costLabor = 0; // Chi phí nhân công
+                    $costIngredients = 0; // Chi phí nguyên liệu
+
+                    // Doanh thu bán hàng
+                    if ($revenue == 1 || $revenue == 0) {
+                        $ctrlOrder = new cOrders;
+                        if ($ctrlOrder->cGetRevenueOrderByStore($storeID, $startM, $endM) != 0) {
+                            $resultOrder = $ctrlOrder->cGetRevenueOrderByStore($storeID, $startM, $endM);
+                            while ($row = $resultOrder->fetch_assoc()) {
+                                $revenueSales += $row["finalAmount"]; // Tổng doanh thu bán hàng
+                            }
+                        }
+                    }
+
+                    // Chi phí nhân công
+                    $ctrlEmployee = new cEmployees;
+                    if ($ctrlEmployee->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM) != 0) {
+                        $resultEmployee = $ctrlEmployee->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM);
+                        while ($row = $resultEmployee->fetch_assoc()) {
+                            $costLabor += $row["totalSalary"]; // Tổng chi phí nhân công
+                        }
+                    }
+
+                    // Chi phí nguyên liệu
+                    $ctrlIngredient = new cIngredients;
+                    if ($ctrlIngredient->cGetRevenueIngredientByStore($storeID, $startM, $endM) != 0) {
+                        $resultIngredient = $ctrlIngredient->cGetRevenueIngredientByStore($storeID, $startM, $endM);
+                        while ($row = $resultIngredient->fetch_assoc()) {
+                            $costIngredients += $row['price'] * $row['quantityImported']; // Tổng chi phí nguyên liệu
+                        }
+                    }
+
+                    // lợi nhuận
+                    $profit = $revenueSales - $costLabor - $costIngredients;
+
+                    echo '<tr>
+                    <td class="border-2 py-2"><?php echo number_format($revenueSales, 2, ',', '.'); ?> đồng</td>
+                    <td class="border-2 py-2"><?php echo number_format($costLabor, 2, ',', '.'); ?> đồng</td>
+                    <td class="border-2 py-2"><?php echo number_format($costIngredients, 2, ',', '.'); ?> đồng</td>
+                    <td class="border-2 py-2"><?php echo number_format($profit, 2, ',', '.'); ?> đồng</td>
+                    </tr>'
+                    ?>
                 </tbody>
             </table>
         </div>
