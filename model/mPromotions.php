@@ -52,6 +52,20 @@ class mPromotions
         return 0;
     }
     
+    public function mGetPromotionByDishID($dishID) {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT promotionID FROM promotiondish WHERE dishID = $dishID";
+    
+        if ($conn != null) {
+            return $conn->query($sql); // Trả về kết quả truy vấn trực tiếp
+        }
+        return null; // Trả về null nếu không kết nối được
+    }
+    
+    
+    
+    
     public function mInsertPromotion($proName, $des, $percent, $start, $end, $image, $status) {
         $db = new Database;
         $conn = $db->connect();

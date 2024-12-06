@@ -49,6 +49,24 @@ class cPromotions extends mPromotions
             return $result->fetch_assoc();
         }
     }
+
+    public function cGetPromotionByDishID($dishID) {
+        $result = $this->mGetPromotionByDishID($dishID);
+        
+        if ($result != null && $result->num_rows > 0) {
+            $promotions = [];
+            while ($row = $result->fetch_assoc()) {
+                $promotions[] = $row['promotionID'];
+            }
+            return $promotions; // Trả về danh sách promotionID
+        }
+    
+        return []; // Trả về mảng rỗng nếu không tìm thấy khuyến mãi nào
+    }
+    
+    
+    
+    
     
     public function cInsertPromotion($proName, $des, $percent, $start, $end, $image, $status) {
         if ($this->mInsertPromotion($proName, $des, $percent, $start, $end, $image, $status) != 0) {
