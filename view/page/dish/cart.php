@@ -74,7 +74,7 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
     </div>
 
     <h2 class="my-8 font-bold text-center text-3xl text-[#EF5350] w-3/5 mx-auto">Giỏ Hàng</h2>
-    <form action="" method="POST" class="">
+    <form action="" method="POST" class="" novalidate>
         <div class="w-2/3 flex mx-auto shadow rounded-lg border-amber-400 border-2">
             <div class="p-8 w-2/3 border-r-2 border-amber-400 flex flex-col">
                 <?php
@@ -111,19 +111,27 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                     echo "<div class='flex justify-center items-center w-full h-full text-gray-400'>Giỏ hàng đang trống!</div>";
                 }
                 ?>
-
             </div>
+
             <div class="w-1/3 p-8">
                 <h3 class="font-bold text-2xl mb-3 pb-2 pl-3 border-b-2 border-l-8 border-amber-200">Thông tin thanh toán</h3>
                 <div>
                     <label for="name" class="form-label">Họ tên:</label>
-                    <input type="text" name="name" id="name" class="form-control mb-3">
+                    <input type="text" name="name" id="name" class="form-control mb-3" required pattern="^[a-zA-ZÀ-ỹ\s]+$">
+                    <div id="name-error" class="text-red-500 text-sm"></div>
+
                     <label for="phone" class="form-label">Số điện thoại:</label>
-                    <input type="text" name="phone" id="phone" class="form-control mb-4">
+                    <input type="text" name="phone" id="phone" class="form-control mb-4" required pattern="^((0[1-9]{1}[0-9]{8})|(\+84[1-9]{1}[0-9]{8}))$">
+                    <div id="phone-error" class="text-red-500 text-sm"></div>
+
+
                     <label for="email" class="form-label">Email:</label>
-                    <input type="text" name="email" id="email" class="form-control mb-4">
+                    <input type="text" name="email" id="email" class="form-control mb-4" required pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
+                    <div id="email-error" class="text-red-500 text-sm"></div>
+
                     <label for="address" class="form-label">Địa chỉ nhận:</label>
-                    <input type="text" name="address" id="address" class="form-control mb-4">
+                    <input type="text" name="address" id="address" class="form-control mb-4" required>
+                    <div id="address-error" class="text-red-500 text-sm"></div>
                 </div>
                 <div class="flex justify-between">
                     <h2 class='font-bold text-xl'>Tổng đơn:</h2>
@@ -131,11 +139,132 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                 </div>
                 <div class="mt-3 flex justify-between">
                     <button class="btn btn-secondary" name="clear">Xóa tất cả</button>
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#checkoutModal" onclick="fillModal()">Xác nhận</button>
+                    <button type="button" class="btn btn-danger" id="submitButton" onclick="validateAndFillModal()">Xác nhận</button>
                 </div>
             </div>
 
-            <div class="modal modalCheckout" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+            <script>
+                function validateAndFillModal() {
+                    var isValid = true;
+
+                    var name = document.getElementById('name');
+                    var phone = document.getElementById('phone');
+                    var email = document.getElementById('email');
+                    var address = document.getElementById('address');
+
+                    var nameError = document.getElementById('name-error');
+                    var phoneError = document.getElementById('phone-error');
+                    var emailError = document.getElementById('email-error');
+                    var addressError = document.getElementById('address-error');
+
+                    nameError.innerText = '';
+                    phoneError.innerText = '';
+                    emailError.innerText = '';
+                    addressError.innerText = '';
+
+                    if (!name.value.trim()) {
+                        nameError.innerText = 'Họ tên không được bỏ trống.';
+                        isValid = false;
+                    } else if (!name.value.match(name.pattern)) {
+                        nameError.innerText = 'Tên phải bắt đầu bằng chữ cái. Vui lòng nhập lại.';
+                        isValid = false;
+                    }
+
+                    if (!phone.value.trim()) {
+                        phoneError.innerText = 'Số điện thoại không được bỏ trống.';
+                        isValid = false;
+                    } else if (!phone.value.match(phone.pattern)) {
+                        phoneError.innerText = 'Số điện thoại gồm 10 chữ số và bắt đầu bằng số 0 hoặc +84. Vui lòng nhập lại.';
+                        isValid = false;
+                    }
+
+                    if (!email.value.trim()) {
+                        emailError.innerText = 'Email không được bỏ trống.';
+                        isValid = false;
+                    } else if (!email.value.match(email.pattern)) {
+                        emailError.innerText = 'Email phải có định dạng abc@gmail.com. Vui lòng nhập lại.';
+                        isValid = false;
+                    }
+
+                    if (!address.value.trim()) {
+                        addressError.innerText = 'Địa chỉ không được bỏ trống.';
+                        isValid = false;
+                    }
+
+                    if (isValid) {
+                        fillModal(name.value, phone.value, email.value, address.value);
+                        var modal = new bootstrap.Modal(document.getElementById('checkoutModal'));
+                        modal.show();
+                    }
+                }
+
+                function validateStore() {
+                    var store = document.getElementById('store');
+                    var storeError = document.getElementById('store-error');
+                    storeError.innerText = '';
+                    if (store.value === "") {
+                        storeError.innerText = 'Vui lòng chọn cửa hàng.';
+                    } else {
+                        var checkoutModalElement = document.getElementById('checkoutModal');
+                        var checkoutModal = bootstrap.Modal.getInstance(checkoutModalElement);
+                        checkoutModal.hide();
+
+                        var payModal = new bootstrap.Modal(document.getElementById('payModal'));
+                        payModal.show();
+                    }
+                }
+
+                function checkPaymentMethod() {
+                    console.log("Checking payment method...");
+                    var paymentMethods = document.getElementsByName('payment_method');
+                    var selectedMethod = null;
+
+                    for (var i = 0; i < paymentMethods.length; i++) {
+                        if (paymentMethods[i].checked) {
+                            selectedMethod = paymentMethods[i].value;
+                            break;
+                        }
+                    }
+
+                    if (!selectedMethod) {
+                        var errorMessage = document.getElementById('payment-error');
+                        if (errorMessage) {
+                            errorMessage.textContent = 'Vui lòng chọn phương thức thanh toán!';
+                        }
+                    } else {
+                        var errorMessage = document.getElementById('payment-error');
+                        if (errorMessage) {
+                            errorMessage.textContent = '';
+                        }
+
+                        var payModalElement = document.getElementById('payModal');
+                        if (payModalElement) {
+                            var payModal = bootstrap.Modal.getInstance(payModalElement);
+                            payModal.hide();
+                        }
+                        var ttpayModalElement = document.getElementById('ttpayModal');
+                        if (ttpayModalElement) {
+                            var ttpayModal = new bootstrap.Modal(ttpayModalElement);
+                            ttpayModal.show();
+                        }
+                    }
+                }
+
+                function fillModal(name, phone, email, address) {
+                    document.getElementById('modalName').innerText = name;
+                    document.getElementById('modalPhone').innerText = phone;
+                    document.getElementById('modalEmail').innerText = email;
+                    document.getElementById('modalAddress').innerText = address;
+                }
+
+                document.addEventListener("DOMContentLoaded", () => {
+                    document.getElementById("confirmPay").addEventListener("click", function() {
+                        document.querySelector("form").submit();
+                    });
+                });
+            </script>
+
+            <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
 
@@ -243,7 +372,7 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                 }
                                 ?>
                                 <select name="store" id="store" class="form-control">
-                                    <option value="">Chọn cửa hàng</option>
+                                    <option value="">Chọn cửa hàng</option> <!-- Không có giá trị mặc định nào được chọn -->
                                     <?php
                                     foreach ($store as $row) {
                                         $store_id = $row['storeID'];
@@ -253,7 +382,10 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                     }
                                     ?>
                                 </select>
+                                <div id="store-error" class="text-red-500 text-sm"></div>
                             </div>
+
+
 
                             <div class="KM">
                                 <h3 style="color: #E67E22;">Khuyến mãi</h3>
@@ -262,7 +394,7 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                 $promotions = $ctrl->cGetAllPromotionGoingOn();
                                 if ($promotions) {
                                     echo '<select class="form-control" name="promotionID" id="promotionID">';
-                                    echo '<option value="" disabled selected>Chọn mã giảm giá</option>';
+                                    echo '<option value="" disabled readonly selected>Chọn mã giảm giá</option>';
                                     echo '<option value="0" data-max-discount="0">--</option>';
                                     foreach ($promotions as $promotion) {
                                         echo '<option value="' . $promotion['promotionID'] . '" data-p-d="' . $promotion['discountPercentage'] . '" data-max-discount="' . $promotion['maxDiscountAmount'] . '">';
@@ -278,17 +410,14 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                 <input type="hidden" name="hiddenFinalAmount" id="hiddenFinalAmount" value="0">
                             </div>
 
-
                             <script>
                                 document.getElementById('promotionID').addEventListener('change', function() {
-                                    // Lấy discountPercentage và maxDiscountAmount từ thuộc tính của option được chọn
                                     let selectedOption = this.options[this.selectedIndex];
                                     let discountPercentage = parseFloat(selectedOption.getAttribute('data-p-d'));
                                     let maxDiscountAmount = parseFloat(selectedOption.getAttribute('data-max-discount'));
-                                    let totalAmount = parseFloat(document.getElementById('totalAmount').innerText.replace(/,/g, '')); // Tổng hóa đơn
+                                    let totalAmount = parseFloat(document.getElementById('totalAmount').innerText.replace(/,/g, '')); 
 
                                     if (!isNaN(discountPercentage)) {
-                                        // Tính toán giảm giá
                                         let discountAmount = totalAmount * (discountPercentage / 100);
                                         if (discountAmount > maxDiscountAmount) {
                                             discountAmount = maxDiscountAmount;
@@ -296,7 +425,6 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
 
                                         let finalAmount = totalAmount - discountAmount;
 
-                                        // Format số để hiển thị
                                         const formatNumber = (num) => {
                                             return new Intl.NumberFormat('en-US', {
                                                 style: 'decimal',
@@ -304,7 +432,6 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                             }).format(num);
                                         };
 
-                                        // Cập nhật UI
                                         document.getElementById('discountAmount').innerText = formatNumber(discountAmount);
                                         document.getElementById('finalAmount').innerText = formatNumber(finalAmount);
 
@@ -317,15 +444,14 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#payModal">Tiếp tục</button>
+                                <button type="button" class="btn btn-danger" onclick="validateStore()">Tiếp tục</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="modal modalPay" id="payModal" tabindex="1" aria-labelledby="payModalLabel"
-                aria-hidden="true">
+            <div class="modal fade" id="payModal" tabindex="-1" aria-labelledby="payModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header flex justify-center">
@@ -339,6 +465,7 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                     <li><input type="radio" name="payment_method" id="1" class="mr-2" value="1" required>Ví điện tử</li>
                                     <li><input type="radio" name="payment_method" id="2" class="mr-2" value="2" required>Thẻ ngân hàng</li>
                                 </ul>
+                                <div id="payment-error" class="text-red-500 text-sm"></div>
                             </div>
                             <div class="flex justify-between items-center">
                                 <div>
@@ -351,14 +478,13 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                data-bs-target="#ttpayModal">Tiếp tục</button>
+                            <button type="button" class="btn btn-danger" onclick="checkPaymentMethod()">Tiếp tục</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal modalTTPay" id="ttpayModal" tabindex="1" aria-labelledby="ttpayModalLabel"
-                aria-hidden="true">
+
+            <div class="modal fade" id="ttpayModal" tabindex="-1" aria-labelledby="ttpayModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header flex justify-center">
@@ -400,26 +526,7 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
             </div>
         </div>
     </form>
-    <script>
-        function fillModal() {
 
-            const name = document.getElementById("name").value;
-            const phone = document.getElementById("phone").value;
-            const email = document.getElementById("email").value;
-            const address = document.getElementById("address").value;
-
-            document.getElementById("modalName").innerText = name || "Chưa nhập";
-            document.getElementById("modalPhone").innerText = phone || "Chưa nhập";
-            document.getElementById("modalEmail").innerText = email || "Chưa nhập";
-            document.getElementById("modalAddress").innerText = address || "Chưa nhập";
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            document.getElementById("confirmPay").addEventListener("click", function() {
-                document.querySelector("form").submit();
-            });
-        });
-    </script>
     <?php
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (isset($_POST['payment_method'])) {
@@ -463,15 +570,10 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
             // Kiểm tra số đơn hàng có status = 4 của khách hàng
             $sql_check_orders = "SELECT COUNT(*) AS order_count FROM `order` WHERE customerID = '$phone' AND status = 4";
             $order_result = $conn->query($sql_check_orders);
-
-
-
-
             $sumofQuantity = 0;
             foreach ($_SESSION["cart"] as $cart) {
                 $sumofQuantity += $cart["quantity"];
             }
-
 
             if ($order_result) {
                 $order_row = $order_result->fetch_assoc();
@@ -500,7 +602,7 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
 
                             //echo "<p>Câu truy vấn SQL: $sql_insert_order_detail</p>";
                             if ($conn->query($sql_insert_order_detail) === TRUE) {
-                                echo "<p>Đơn hàng đã được thêm thành công!</p>";
+                                echo "<script>alert('Đã đặt hàng thành công!');</script>";
                             } else {
                                 echo "<p>Lỗi khi thêm chi tiết món $dishID: " . $conn->error . "</p>";
                             }
@@ -515,8 +617,6 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
         }
     }
     ?>
-
-
 </body>
 
 </html>
