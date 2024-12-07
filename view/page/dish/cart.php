@@ -11,25 +11,21 @@
     <script src="../../../view/js/tailwindcss.js"></script>
     <script src="../../../view/js/all.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script src="../../../view/js/order.js" defer></script>
 </head>
+
 <?php
 session_start();
 error_reporting(1);
-
-
 
 include("../../../model/connect.php");
 include("../../../model/mPromotions.php");
 include("../../../controller/cPromotions.php");
 
-
-
 if (isset($_POST["action"])) {
     $value = explode("/", $_POST["action"]);
     $action = $value[0];
     $dishID = $value[1];
-
     foreach ($_SESSION["cart"] as &$item) {
         if ($item["id"] == $dishID) {
             if ($action == "increase") {
@@ -37,7 +33,6 @@ if (isset($_POST["action"])) {
             } elseif ($action == "decrease" && $item["quantity"] > 1) {
                 $item["quantity"]--;
             }
-
             $item["total"] = $item["quantity"] * $item["price"];
             break;
         }
@@ -53,7 +48,6 @@ if (isset($_POST["btndel"])) {
             break;
         }
     }
-
     if (count($_SESSION["cart"]) == 0)
         unset($_SESSION["cart"]);
 }
@@ -116,21 +110,21 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
             <div class="w-1/3 p-8">
                 <h3 class="font-bold text-2xl mb-3 pb-2 pl-3 border-b-2 border-l-8 border-amber-200">Thông tin thanh toán</h3>
                 <div>
-                    <label for="name" class="form-label">Họ tên:</label>
-                    <input type="text" name="name" id="name" class="form-control mb-3" required pattern="^[a-zA-ZÀ-ỹ\s]+$">
+                    <label for="name" class="form-label mt-3">Họ tên:</label>
+                    <input type="text" name="name" id="name" class="form-control" required pattern="^[a-zA-ZÀ-ỹ\s]+$">
                     <div id="name-error" class="text-red-500 text-sm"></div>
 
-                    <label for="phone" class="form-label">Số điện thoại:</label>
-                    <input type="text" name="phone" id="phone" class="form-control mb-4" required pattern="^((0[1-9]{1}[0-9]{8})|(\+84[1-9]{1}[0-9]{8}))$">
+                    <label for="phone" class="form-label mt-3">Số điện thoại:</label>
+                    <input type="text" name="phone" id="phone" class="form-control" required pattern="^((0[1-9]{1}[0-9]{8})|(\+84[1-9]{1}[0-9]{8}))$">
                     <div id="phone-error" class="text-red-500 text-sm"></div>
 
 
-                    <label for="email" class="form-label">Email:</label>
-                    <input type="text" name="email" id="email" class="form-control mb-4" required pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
+                    <label for="email" class="form-label mt-3">Email:</label>
+                    <input type="text" name="email" id="email" class="form-control" required pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
                     <div id="email-error" class="text-red-500 text-sm"></div>
 
-                    <label for="address" class="form-label">Địa chỉ nhận:</label>
-                    <input type="text" name="address" id="address" class="form-control mb-4" required>
+                    <label for="address" class="form-label mt-3">Địa chỉ nhận:</label>
+                    <input type="text" name="address" id="address" class="form-control" required>
                     <div id="address-error" class="text-red-500 text-sm"></div>
                 </div>
                 <div class="flex justify-between">
@@ -142,127 +136,6 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                     <button type="button" class="btn btn-danger" id="submitButton" onclick="validateAndFillModal()">Xác nhận</button>
                 </div>
             </div>
-
-            <script>
-                function validateAndFillModal() {
-                    var isValid = true;
-
-                    var name = document.getElementById('name');
-                    var phone = document.getElementById('phone');
-                    var email = document.getElementById('email');
-                    var address = document.getElementById('address');
-
-                    var nameError = document.getElementById('name-error');
-                    var phoneError = document.getElementById('phone-error');
-                    var emailError = document.getElementById('email-error');
-                    var addressError = document.getElementById('address-error');
-
-                    nameError.innerText = '';
-                    phoneError.innerText = '';
-                    emailError.innerText = '';
-                    addressError.innerText = '';
-
-                    if (!name.value.trim()) {
-                        nameError.innerText = 'Họ tên không được bỏ trống.';
-                        isValid = false;
-                    } else if (!name.value.match(name.pattern)) {
-                        nameError.innerText = 'Tên phải bắt đầu bằng chữ cái. Vui lòng nhập lại.';
-                        isValid = false;
-                    }
-
-                    if (!phone.value.trim()) {
-                        phoneError.innerText = 'Số điện thoại không được bỏ trống.';
-                        isValid = false;
-                    } else if (!phone.value.match(phone.pattern)) {
-                        phoneError.innerText = 'Số điện thoại gồm 10 chữ số và bắt đầu bằng số 0 hoặc +84. Vui lòng nhập lại.';
-                        isValid = false;
-                    }
-
-                    if (!email.value.trim()) {
-                        emailError.innerText = 'Email không được bỏ trống.';
-                        isValid = false;
-                    } else if (!email.value.match(email.pattern)) {
-                        emailError.innerText = 'Email phải có định dạng abc@gmail.com. Vui lòng nhập lại.';
-                        isValid = false;
-                    }
-
-                    if (!address.value.trim()) {
-                        addressError.innerText = 'Địa chỉ không được bỏ trống.';
-                        isValid = false;
-                    }
-
-                    if (isValid) {
-                        fillModal(name.value, phone.value, email.value, address.value);
-                        var modal = new bootstrap.Modal(document.getElementById('checkoutModal'));
-                        modal.show();
-                    }
-                }
-
-                function validateStore() {
-                    var store = document.getElementById('store');
-                    var storeError = document.getElementById('store-error');
-                    storeError.innerText = '';
-                    if (store.value === "") {
-                        storeError.innerText = 'Vui lòng chọn cửa hàng.';
-                    } else {
-                        var checkoutModalElement = document.getElementById('checkoutModal');
-                        var checkoutModal = bootstrap.Modal.getInstance(checkoutModalElement);
-                        checkoutModal.hide();
-
-                        var payModal = new bootstrap.Modal(document.getElementById('payModal'));
-                        payModal.show();
-                    }
-                }
-
-                function checkPaymentMethod() {
-                    console.log("Checking payment method...");
-                    var paymentMethods = document.getElementsByName('payment_method');
-                    var selectedMethod = null;
-
-                    for (var i = 0; i < paymentMethods.length; i++) {
-                        if (paymentMethods[i].checked) {
-                            selectedMethod = paymentMethods[i].value;
-                            break;
-                        }
-                    }
-
-                    if (!selectedMethod) {
-                        var errorMessage = document.getElementById('payment-error');
-                        if (errorMessage) {
-                            errorMessage.textContent = 'Vui lòng chọn phương thức thanh toán!';
-                        }
-                    } else {
-                        var errorMessage = document.getElementById('payment-error');
-                        if (errorMessage) {
-                            errorMessage.textContent = '';
-                        }
-
-                        var payModalElement = document.getElementById('payModal');
-                        if (payModalElement) {
-                            var payModal = bootstrap.Modal.getInstance(payModalElement);
-                            payModal.hide();
-                        }
-                        var ttpayModalElement = document.getElementById('ttpayModal');
-                        if (ttpayModalElement) {
-                            var ttpayModal = new bootstrap.Modal(ttpayModalElement);
-                            ttpayModal.show();
-                        }
-                    }
-                }
-
-                function fillModal(name, phone, email, address) {
-                    document.getElementById('modalName').innerText = name;
-                    document.getElementById('modalPhone').innerText = phone;
-                    document.getElementById('modalEmail').innerText = email;
-                    document.getElementById('modalAddress').innerText = address;
-                }
-
-                document.addEventListener("DOMContentLoaded", () => {
-                    document.getElementById("confirmPay").addEventListener("click", function() {
-                        document.querySelector("form").submit();
-                    });
-                });
-            </script>
 
             <div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -372,7 +245,7 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                 }
                                 ?>
                                 <select name="store" id="store" class="form-control">
-                                    <option value="">Chọn cửa hàng</option> <!-- Không có giá trị mặc định nào được chọn -->
+                                    <option value="">Chọn cửa hàng</option>
                                     <?php
                                     foreach ($store as $row) {
                                         $store_id = $row['storeID'];
@@ -405,42 +278,9 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                     echo 'Không có mã giảm giá';
                                 }
                                 ?>
-                                <!-- Input ẩn để gửi giá trị qua POST -->
                                 <input type="hidden" name="hiddenDiscountAmount" id="hiddenDiscountAmount" value="0">
                                 <input type="hidden" name="hiddenFinalAmount" id="hiddenFinalAmount" value="0">
                             </div>
-
-                            <script>
-                                document.getElementById('promotionID').addEventListener('change', function() {
-                                    let selectedOption = this.options[this.selectedIndex];
-                                    let discountPercentage = parseFloat(selectedOption.getAttribute('data-p-d'));
-                                    let maxDiscountAmount = parseFloat(selectedOption.getAttribute('data-max-discount'));
-                                    let totalAmount = parseFloat(document.getElementById('totalAmount').innerText.replace(/,/g, '')); 
-
-                                    if (!isNaN(discountPercentage)) {
-                                        let discountAmount = totalAmount * (discountPercentage / 100);
-                                        if (discountAmount > maxDiscountAmount) {
-                                            discountAmount = maxDiscountAmount;
-                                        }
-
-                                        let finalAmount = totalAmount - discountAmount;
-
-                                        const formatNumber = (num) => {
-                                            return new Intl.NumberFormat('en-US', {
-                                                style: 'decimal',
-                                                maximumFractionDigits: 0
-                                            }).format(num);
-                                        };
-
-                                        document.getElementById('discountAmount').innerText = formatNumber(discountAmount);
-                                        document.getElementById('finalAmount').innerText = formatNumber(finalAmount);
-
-                                        // Gán giá trị vào input ẩn để gửi qua POST
-                                        document.getElementById('hiddenDiscountAmount').value = discountAmount.toFixed(0);
-                                        document.getElementById('hiddenFinalAmount').value = finalAmount.toFixed(0);
-                                    }
-                                });
-                            </script>
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
@@ -535,39 +375,24 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
             $phone = $_POST['phone'] ?? '';
             $email = $_POST['email'] ?? '';
             $address = $_POST['address'] ?? '';
-            $note = $_POST['note'] ?? '';
+            $note = $_POST['note'] ?? null;
             $storeID = $_POST['store'] ?? '';
             $promotionID = $_POST['promotionID'] ?? '';
             $discountAmount = $_POST['hiddenDiscountAmount'] ?? 0;
             $finalAmount = $_POST['hiddenFinalAmount'] ?? 0;
-            $partyPackageID = "Null";
+            $partyPackageID = null;
 
-            /*// In ra các giá trị để kiểm tra
-            echo "<h4>Kiểm tra dữ liệu:</h4>";
-            echo "<p><strong>Họ tên:</strong> $name</p>";
-            echo "<p><strong>Số điện thoại:</strong> $phone</p>";
-            echo "<p><strong>Email:</strong> $email</p>";
-            echo "<p><strong>Địa chỉ nhận:</strong> $address</p>";
-            echo "<p><strong>Ghi chú:</strong> $note</p>";
-            echo "<p><strong>PTTT:</strong> $payment_method </p>";
-            echo "<p><strong>Cửa hàng ID:</strong> $storeID</p>";
-            echo "<p><strong>Mã khuyến mãi ID:</strong> $promotionID</p>";
-            echo "<p><strong>Số tiền giảm giá:</strong> $discountAmount</p>";
-            echo "<p><strong>Tổng tiền sau giảm giá:</strong> $finalAmount</p>";
-            echo "<p><strong>gói tiệc</strong> $partyPackageID</p>";*/
-
-            $sql_check = "SELECT * FROM customer WHERE phone = '$phone'";
+            $sql_check = "SELECT * FROM customer WHERE phoneNumber = '$phone'";
             $result = $conn->query($sql_check);
 
             if ($result->num_rows == 0) {
-                $sql_insert_customer = "INSERT INTO customer (phone, fullName, address, email, blackList) VALUES ('$phone', '$name', '$address', '$email', 0)";
+                $sql_insert_customer = "INSERT INTO customer (phoneNumber, fullName, address, email, blackList) VALUES ('$phone', '$name', '$address', '$email', 0)";
                 if ($conn->query($sql_insert_customer) !== TRUE) {
                     echo "<p>Lỗi khi thêm khách hàng: " . $conn->error . "</p>";
                     exit();
                 }
             }
 
-            // Kiểm tra số đơn hàng có status = 4 của khách hàng
             $sql_check_orders = "SELECT COUNT(*) AS order_count FROM `order` WHERE customerID = '$phone' AND status = 4";
             $order_result = $conn->query($sql_check_orders);
             $sumofQuantity = 0;
@@ -579,16 +404,13 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                 $order_row = $order_result->fetch_assoc();
                 $order_count = $order_row['order_count'];
 
-                if ($order_count > 3) {
+                if ($order_count > 3 || $order_count ==3 ) {
                     echo "<script>alert('Không thể đặt hàng: Khách hàng đã hủy đơn quá 3 lần.');</script>";
                 } else {
                     //echo "$total, $sumOfQuantity, $payment_method, $note, '1', $phone, $discountAmount, $finalAmount, $partyPackageID, $storeID";
-                    $sql_insert_order = "INSERT INTO `order` (orderDate, total, sumOfQuantity, paymentMethod, note, status, customerID, discountAmount, finalAmount, partyPackageID, storeID) 
-                    VALUES (NOW(), $total, $sumofQuantity, '$payment_method', '$note', '1', '$phone', $discountAmount, $finalAmount, $partyPackageID, '$storeID')";
-
+                    $sql_insert_order = "INSERT INTO `order` (orderDate, total, sumOfQuantity, paymentMethod, note, status, customerID, promotionID, storeID) 
+                    VALUES (NOW(), $total, $sumofQuantity, '$payment_method', '$note', '1', '$phone', '$promotionID', '$storeID')";
                     if ($conn->query($sql_insert_order) === TRUE) {
-                        // echo "<p>Đơn hàng đã được thêm thành công!</p>";
-
                         $orderID = $conn->insert_id;
                         foreach ($_SESSION["cart"] as $cart) {
                             $dishID = $cart['id'];
@@ -597,10 +419,9 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                             $discountAmount = isset($cart['discountAmount']) ? $cart['discountAmount'] : "NULL";
                             $lineTotal = $cart['total'];
 
-                            $sql_insert_order_detail = "INSERT INTO order_dish (orderID, dishID, quantity, unitPrice, discountAmount, lineTotal, promotionID) 
-                                                        VALUES ('$orderID', '$dishID', '$quantity', '$unitPrice', $discountAmount, '$lineTotal', '$promotionID')";
+                            $sql_insert_order_detail = "INSERT INTO order_dish (orderID, dishID, quantity) 
+                                                        VALUES ('$orderID', '$dishID', '$quantity')";
 
-                            //echo "<p>Câu truy vấn SQL: $sql_insert_order_detail</p>";
                             if ($conn->query($sql_insert_order_detail) === TRUE) {
                                 echo "<script>alert('Đã đặt hàng thành công!');</script>";
                             } else {
