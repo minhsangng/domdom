@@ -23,6 +23,16 @@ class mPartyPackages
         return 0;
     }
     
+    public function mGetPartyPackageByID($partyPackageID) {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT *, COUNT(PPD.quantity) AS sumQuantity FROM `partypackage` AS PP JOIN `partypackage_dish` AS PPD ON PP.partyPackageID = PPD.partyPackageID WHERE PP.partyPackageID = $partyPackageID GROUP BY PPD.partyPackageID";
+        
+        if ($conn != null) 
+            return $conn->query($sql);
+        return 0;
+    }
+    
     public function mGetDishFromPartyPackage($partyPackageID) {
         $db = new Database;
         $conn = $db->connect();

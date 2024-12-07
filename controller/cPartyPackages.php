@@ -27,6 +27,14 @@ class cPartyPackages extends mPartyPackages
         } return 0; 
     }
     
+    public function cGetPartyPackageByID($partyPackageID) {
+        if ($this->mGetPartyPackageByID($partyPackageID) != 0) {
+            $result = $this->mGetPartyPackageByID($partyPackageID);
+            
+            return $result;
+        } return 0; 
+    }
+    
     public function cGetDishFromPartyPacakge($partyPackageID) {
         if ($this->mGetDishFromPartyPackage($partyPackageID) != 0) {
             $result = $this->mGetDishFromPartyPackage($partyPackageID);

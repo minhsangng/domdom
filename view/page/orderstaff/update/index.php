@@ -1,5 +1,6 @@
 <?php
 if (isset($_POST["btnchuyen"])) {
+    $storeID = $_SESSION["user"][1];
     $arr = explode("/", $_POST["btnchuyen"]);
     $id = $arr[0];
     $status = $arr[1];
@@ -10,10 +11,10 @@ if (isset($_POST["btnchuyen"])) {
         $newStatus = 0;
 
     $ctrl = new cOrders;
-    $result = $ctrl->cUpdateStatusOrder($id, $newStatus);
+    $result = $ctrl->cUpdateStatusOrder($id, $newStatus, $storeID);
 
     $ctrlMessage = new cMessage;
-    if ($result != 0)
+    if ($result)
         $ctrlMessage->successMessage("Cập nhật trạng thái");
     else
         $ctrlMessage->errorMessage("Cập nhật trạng thái");
@@ -31,9 +32,10 @@ if (isset($_POST["btnchuyen"])) {
         <div class="h-fit bg-gray-100 rounded-lg p-6">
             <?php
             $ctrl = new cOrders;
-
-            if ($ctrl->cGetAllOrderFully() != 0) {
-                $result = $ctrl->cGetAllOrderFully();
+            $storeID = $_SESSION["user"][1];
+            
+            if ($ctrl->cGetAllOrderFully($storeID) != 0) {
+                $result = $ctrl->cGetAllOrderFully($storeID);
 
                 echo "
                         <table class='w-full text-base text-center'>

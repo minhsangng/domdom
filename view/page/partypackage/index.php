@@ -114,12 +114,37 @@
 
 <?php
 $ctrlParty = new cPartyPackages;
+$ctrlPromotion = new cPromotions;
 $ctrlCustomer = new cCustomers;
 $ctrlOrder = new cOrders;
 $ctrlMessage = new cMessage;
 
 if (isset($_POST["btndattiec"])) {
-    $_SESSION["ppID"] = $_POST["btndattiec"];
+    $_SESSION["ppID"] = (int)$_POST["btndattiec"];
+    
+    if ($ctrlPromotion->cGetAllPromotionGoingOn() != 0) {
+        $date = date("Y-m-d");
+        $discountRate = 0;
+    
+        $result = $ctrlPromotion->cGetAllPromotionGoingOn();
+        while ($row = $result->fetch_assoc()) {
+            if ($date >= $row["startDate"] && $date <= $row["endDate"]) {
+                $_SESSION["promotionID"] = $row["promotionID"];
+                
+                if ($discountRate < $row["discountPercentage"])
+                    $discountRate = $row["discountPercentage"];
+            }
+        }
+    }
+    
+    if ($ctrlParty->cGetPartyPackageByID($_SESSION["ppID"]) != 0) {
+        $result1 = $ctrlParty->cGetPartyPackageByID($_SESSION["ppID"]);
+        $row1 = $result1->fetch_assoc();
+        
+        $_SESSION["ppName"] = $row1["partyPackageName"];
+        $_SESSION["ppPrice"] = $row1["price"] * (1 - $discountRate / 100);
+        $_SESSION["quantity"] = $row1["sumQuantity"];
+    }
 
     echo "<script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -138,14 +163,11 @@ if (isset($_POST["btnxn"])) {
     $paymentMethod = $_POST["method"];
 
     $ctrlCustomer->cInsertCustomer($phone, $name, $address, $email);
-    $sql1 = "SELECT customerID FROM `customer` ORDER BY customerID DESC LIMIT 1";
-    $row1 = $conn->query($sql1)->fetch_assoc();
-    $customerID = $row1["customerID"];
+    $customerID = $ctrlCustomer->cGetCustomerIDNew()->fetch_assoc()["customerID"];
 
-    $ctrlOrder->cInsertOrder($customerID, $paymentMethod, $_COOKIE["selectedStore"]);
+    $ctrlOrder->cInsertOrderPartyPackage($customerID, $_SESSION["ppPrice"], $_SESSION["quantity"], $_SESSION["promotionID"], $paymentMethod, $_COOKIE["selectedStore"], $_SESSION["ppID"] );
 
-    $sql2 = "SELECT orderID FROM `order` ORDER BY orderID DESC LIMIT 1";
-    $row2 = $conn->query($sql2)->fetch_assoc();
+    $row2 = $ctrlOrder->cGetOrderIDNew()->fetch_assoc();
     $orderID = $row2["orderID"];
 
     if ($ctrlParty->cGetDishFromPartyPacakge($ppID) != 0) {
@@ -155,14 +177,14 @@ if (isset($_POST["btnxn"])) {
             $dishID = $row3["dishID"];
             $quantity = $row3["quantity"];
 
-            $ctrlOrder->cInsertOrderDish($orderID, $dishID, $quantity);
-            $ctrlOrder->cUpdateOrderDish($orderID, $dishID);
+            $resultOrderDish = $ctrlOrder->cInsertOrderDish($orderID, $dishID, $quantity);
+            
+            if ($resultOrderDish)
+                $ctrlMessage->successMessage("Đặt tiệc");
+            else $ctrlMessage->errorMessage("Đặt tiệc");
         }
-        $ctrlOrder->cUpdateOrder($orderID);
     } else
-        $ctrlMessage->errorMessage("Đặt tiệc");
-
-    $ctrlMessage->successMessage("Đặt tiệc");
+        $ctrlMessage->falseMessage("Không có dữ liệu!");
 }
 ?>
 

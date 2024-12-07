@@ -35,36 +35,28 @@ class cOrders extends mOrders
     }
     
     public function cUpdateOrder($orderID) {
-        if ($this->mUpdateOrder($orderID) != 0) {
-            $result = $this->mUpdateOrder($orderID);
-            
-            return $result;
-        } return 0;
+        return $this->mUpdateOrder($orderID);
     }
     
-    public function cUpdateOrderDish($orderID, $dishID) {
-        return $this->mUpdateOrderDish($orderID, $dishID);
+    public function cUpdateStatusOrder($orderID, $status, $storeID) {
+        return $this->mUpdateStatusOrder($orderID, $status, $storeID);
     }
     
-    public function cUpdateAmountOrderDish($orderID, $dishID) {
-        return $this->mUpdateAmountOrderDish($orderID, $dishID);
+    public function cInsertOrder($customerID, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID) {
+        return $this->mInsertOrder($customerID, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID);
     }
     
-    public function cUpdateStatusOrder($orderID, $status) {
-        return $this->mUpdateStatusOrder($orderID, $status);
-    }
-    
-    public function cInsertOrder($customerID, $paymentMethod, $storeID) {
-        return $this->mInsertOrder($customerID, $paymentMethod, $storeID);
+    public function cInsertOrderPartyPackage($customerID, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID, $partyPackageID) {
+        return $this->mInsertOrderPartyPackage($customerID, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID, $partyPackageID);
     }
     
     public function cInsertOrderDish($orderID, $dishID, $quantity) {
         return $this->mInsertOrderDish($orderID, $dishID, $quantity);
     }
     
-    public function cGetAllOrderFully() {
-        if ($this->mGetAllOrderFully() != 0) {
-            $result = $this->mGetAllOrderFully();
+    public function cGetAllOrderFully($storeID) {
+        if ($this->mGetAllOrderFully($storeID) != 0) {
+            $result = $this->mGetAllOrderFully($storeID);
             
             return $result;
         } return 0;
@@ -77,12 +69,4 @@ class cOrders extends mOrders
             return $result;
         } return 0;
     }  
-    
-    public function cGetPromotionIDNew($orderID, $dishID) {
-        if ($this->mGetPromotionIDNew($orderID, $dishID) != 0) {
-            $result = $this->mGetPromotionIDNew($orderID, $dishID);
-            
-            return $result;
-        } return 0;
-    }
 }

@@ -1,3 +1,9 @@
+<style>
+    .modal-backdrop .show {
+        /* opacity: 1 !important; */
+    }
+</style>
+
 <?php
 $ctrlOrder = new cOrders;
 $ctrlCustomer = new cCustomers;
@@ -11,8 +17,8 @@ echo "<script>document.addEventListener('DOMContentLoaded', () => {
 $storeID = $_SESSION["user"][1];
 
 /* Lưu đơn hàng theo cửa hàng */
-if (!isset($_SESSION["product.$storeID"])) {
-    $_SESSION["product.$storeID"] = [];
+if (!isset($_SESSION["product"])) {
+    $_SESSION["product"] = [];
 }
 
 if (isset($_GET["p"])) {
@@ -27,7 +33,7 @@ if (isset($_GET["p"])) {
     $quantity = isset($_POST["quantity"]) ? (int) $_POST["quantity"] : 1;
 
     $productExists = false;
-    foreach ($_SESSION["product.$storeID"] as $product) {
+    foreach ($_SESSION["product"] as $product) {
         if ($product["id"] == $productID) {
             $productExists = true;
             break;
@@ -35,7 +41,7 @@ if (isset($_GET["p"])) {
     }
 
     if (!$productExists) {
-        $_SESSION["product.$storeID"][$productID] = ["id" => $productID, "quantity" => $quantity];
+        $_SESSION["product"][$productID] = ["id" => $productID, "quantity" => $quantity];
     }
 }
 
@@ -44,8 +50,8 @@ if (isset($_POST["quantity"])) {
         $productID = (int) $productID;
         $quantity = (int) $quantity;
 
-        if (isset($_SESSION["product.$storeID"][$productID])) {
-            $_SESSION["product.$storeID"][$productID]["quantity"] = $quantity;
+        if (isset($_SESSION["product"][$productID])) {
+            $_SESSION["product"][$productID]["quantity"] = $quantity;
         }
     }
 }
@@ -111,7 +117,7 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
                 </div>
                 <div class="mb-8">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-[#EF5350]">Món ưa dùng</h2>
+                        <h2 class="text-xl font-bold text-[#EF5350]">Món HOT</h2>
                     </div>
                     <div class="grid grid-cols-4 gap-4">
                         <?php
@@ -154,21 +160,21 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
                     $ctrl = new cDishes;
 
                     if (isset($_POST["btnxoa"])) {
-                        foreach ($_SESSION["product.$storeID"] as $index => $product) {
+                        foreach ($_SESSION["product"] as $index => $product) {
                             if ($product["id"] == $_POST["btnxoa"]) {
-                                unset($_SESSION["product.$storeID"][$index]);
+                                unset($_SESSION["product"][$index]);
                                 break;
                             }
                         }
 
-                        $_SESSION["product.$storeID"] = array_values($_SESSION["product.$storeID"]);
+                        $_SESSION["product"] = array_values($_SESSION["product"]);
                     }
 
                     $total = 0;
 
-                    if (isset($_SESSION["product.$storeID"])) {
+                    if (isset($_SESSION["product"])) {
                         echo "<form action='' method='POST' class='m-0 form'>";
-                        foreach ($_SESSION["product.$storeID"] as $product) {
+                        foreach ($_SESSION["product"] as $product) {
                             $productID = (int) $product["id"];
                             $quantity = $product["quantity"];
 
@@ -193,7 +199,7 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
                         $_SESSION["total"] = $total;
                     }
 
-                    if (empty($_SESSION["product.$storeID"]))
+                    if (empty($_SESSION["product"]))
                         echo "<div class='flex justify-between items-center my-2'>
                                 <img src='../../../images/nodish.png' class='h-40 w-full'>    
                             </div>";
@@ -204,7 +210,7 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
                             <span
                                 class="text-lg font-bold finalTotal"><?php echo str_replace(".00", "", number_format($total, "2", ".", ",")) . " đ"; ?></span>
                         </div>
-                        <button class="btn btn-danger w-full p-2 rounded" id="tt" name="btntt" type="submit" <?php echo (empty($_SESSION["product.$storeID"]) ? "disabled" : ""); ?>>Thanh
+                        <button class="btn btn-danger w-full p-2 rounded" id="tt" name="btntt" type="submit" <?php echo (empty($_SESSION["product"]) ? "disabled" : ""); ?>>Thanh
                             toán</button>
                     </form>
                 </div>
@@ -213,6 +219,22 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
     </div>
 </div>
 <?php
+if ($ctrlPromotion->cGetAllPromotionGoingOn() != 0) {
+    $date = date("Y-m-d");
+    $discountRate = 0;
+
+    $result = $ctrlPromotion->cGetAllPromotionGoingOn();
+    while ($row = $result->fetch_assoc()) {
+        if ($date >= $row["startDate"] && $date <= $row["endDate"]) {
+            $_SESSION["promotionID"] = $row["promotionID"];
+            if ($discountRate < $row["discountPercentage"])
+                $discountRate = $row["discountPercentage"];
+        }
+    }
+
+    $_SESSION["discount"] = $discountRate;
+}
+
 $_SESSION["customerPay"] = [
     0 => isset($_POST["cash"]) ? (int) $_POST["cash"] : 0,
     1 => isset($_POST["momo"]) ? (int) $_POST["momo"] : 0,
@@ -232,32 +254,20 @@ if (isset($_POST["priceBtn"])) {
 
     $_SESSION["method"] = $method;
 
-    if ($value == "reset") {
+    if ($value == "reset")
         $_SESSION["customerPay"][$methodIndex] = 0;
-    } else {
+    else
         $_SESSION["customerPay"][$methodIndex] += (int) $value * 1000;
-    }
 
     $_SESSION["cusPay"] = $_SESSION["customerPay"][$methodIndex];
 
-    if (array_sum($_SESSION["customerPay"]) > $_SESSION["total"]) {
-        $_SESSION["charge"] = array_sum($_SESSION["customerPay"]) - $_SESSION["total"];
-    } else {
+    if ($_SESSION["customerPay"] > $_SESSION["totalAfterDiscount"])
+        $_SESSION["charge"] = array_sum($_SESSION["customerPay"]) - $_SESSION["totalAfterDiscount"];
+    else
         $_SESSION["charge"] = 0;
-    }
 }
 
-if (isset($_POST["promotionID"])) {
-    $promotionCode = $_POST["promotionID"] != "" ? $_POST["promotionID"] : "";
-    $promotionID = (int) substr($promotionCode, 5);
-
-    $row = $ctrlPromotion->cGetPromotionById($promotionID);
-    $promotionName = $row["promotionName"];
-    $_SESSION["discount"] = $row["discountPercentage"];
-
-    $_SESSION["totalAfterDiscount"] = $_SESSION["total"] * (1 - $_SESSION["discount"] / 100);
-} else
-    $_SESSION["totalAfterDiscount"] = $_SESSION["total"];
+$_SESSION["totalAfterDiscount"] = isset($_SESSION["discount"]) ? $_SESSION["total"] * (1 - $_SESSION["discount"] / 100) : $_SESSION["total"];
 ?>
 <div class="modalCheckout hidden justify-center items-center w-screen h-screen fixed top-0 left-0" id="checkoutModal">
     <div class="w-3/5 h-fit bg-white rounded-2xl shadow border">
@@ -269,8 +279,8 @@ if (isset($_POST["promotionID"])) {
             <div class="px-4 flex">
                 <div class="w-2/3 mr-2 p-2 border rounded-lg">
                     <table class="w-full">
-                        <form action="" method="POST" class="formCheckoutInfo">
-                            <tbody>
+                        <tbody>
+                            <form action="" method="POST" class="formCheckoutInfo">
                                 <tr>
                                     <td colspan="2" class="font-bold text-[#EF5350]">Hình thức
                                         thanh toán
@@ -374,27 +384,82 @@ if (isset($_POST["promotionID"])) {
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td class="font-bold pl-3 py-1 w-32 flex items-start">Khuyến mãi</td>
-                                    <td>
+                            </form>
+                            <?php
+                            if (!isset($_SESSION["exist"]))
+                                $_SESSION["exist"] = false;
+
+                            if (!isset($_SESSION["customer"]))
+                                $_SESSION["customer"] = [0, "", ""];
+
+                            if (isset($_POST["phone"]) && $_POST["phone"] != "" && !isset($_POST["customerName"])) {
+                                $phone = $_POST["phone"];
+                                $_SESSION["exist"] = false;
+
+                                if ($ctrlCustomer->cGetAllCustomer() != 0) {
+                                    $result = $ctrlCustomer->cGetAllCustomer();
+
+                                    while ($row = $result->fetch_assoc()) {
+                                        if ($phone == $row["phoneNumber"]) {
+                                            $_SESSION["customer"] = [$row["customerID"], $row["fullName"], $row["phoneNumber"]];
+                                            $_SESSION["exist"] = true;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if (!$_SESSION["exist"])
+                                    $_SESSION["customer"] = [0, "", $phone];
+                            }
+
+                            if (isset($_POST["customerName"]) && $_SESSION["customer"][1] == "") {
+                                $customerName = $_POST["customerName"];
+                                $phoneNumber = $_POST["phone"];
+                                $customerIDNew = $ctrlCustomer->cGetAllCustomer()->num_rows + 1;
+
+                                $_SESSION["customer"] = [$customerIDNew, $customerName, $phoneNumber];
+                                $ctrlCustomer->cInsertCustomer($phoneNumber, $customerName, NULL, NULL);
+                            }
+                            ?>
+
+                            <tr>
+                                <td colspan="2" class="font-bold text-[#EF5350]">Khách hàng
+                                    <hr class="mt-1 mb-2 text-gray-400">
+                                    </hr>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <form action="" method="POST">
                                         <div class="flex justify-between">
-                                            <input type="text" class="form-control m-0" style="width: 75%;"
-                                                name="promotionID" id="" value="<?php echo $promotionCode; ?>"
-                                                placeholder="Nhập mã khuyến mãi (nếu có)">
-                                            <button type="submit" class="btn btn-primary w-fit">Áp
-                                                dụng</button>
+                                            <input type="text" class="form-control m-0" style="width: 80%;" name="phone"
+                                                id="" value="<?php echo $_SESSION["customer"][2]; ?>"
+                                                placeholder="Nhập số điện thoại" required>
+                                            <button type="submit"
+                                                class="btn btn-primary w-fit <?php echo (($_SESSION["customer"][1] == '' && $_SESSION["customer"][2] == '') ? "block" : "hidden"); ?>">Xác
+                                                nhận</button>
                                         </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <p class="promotionID text-gray-500 italic text-sm mt-2">
-                                            <?php echo (isset($promotionName) ? "* Áp dụng thành công: " : "") . $promotionName; ?>
-                                        </p>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </form>
+                                    </form>
+                                </td>
+                            </tr>
+
+                            <?php
+                            if ((isset($_POST["phone"]) && !$_SESSION["exist"]) || $_SESSION["customer"][1] != "") {
+                                echo "<tr>
+                                        <form action='' method='POST'>
+                                            <td colspan='2'>
+                                                <div class='flex justify-between'>
+                                                    <input type='text' class='form-control m-0' style='width: 80%;' name='customerName'
+                                                        id='' value='" . $_SESSION["customer"][1] . "' placeholder='Nhập tên khách hàng' required>
+                                                    <button type='submit' class='btn btn-primary w-fit " . (($_SESSION["customer"][1] == '' && $_SESSION["customer"][2] != '') ? "block" : "hidden") . "'>Xác nhận</button>
+                                                </div>
+                                            </form>
+                                        </td>
+                                    </tr>";
+                            } else
+                                echo "";
+                            ?>
+                        </tbody>
                     </table>
                 </div>
                 <div class="w-1/3 ml-2 p-2 border rounded-lg">
@@ -438,41 +503,6 @@ if (isset($_POST["promotionID"])) {
                                             value="<?php echo number_format($_SESSION["charge"], 0, ",", ".") . " đ"; ?>">
                                     </td>
                                 </tr>
-                                <?php
-                                if (isset($_POST["btnxn"])) {
-                                    if ($_SESSION["method"] == "momo")
-                                        $type = "Momo";
-                                    else if ($_SESSION["method"] == "banking")
-                                        $type = "Ngân hàng";
-                                    else
-                                        $type = "Tiền mặt";
-
-                                    $ctrlOrder->cInsertOrder(2, $type, $storeID);
-                                    $row = $ctrlOrder->cGetOrderIDNew()->fetch_assoc();
-                                    $orderIDnew = $row["orderID"];
-
-                                    foreach ($_SESSION["product.$storeID"] as $product) {
-                                        $ctrlOrder->cInsertOrderDish($orderIDnew, $product["id"], $product["quantity"]);
-                                        $ctrlOrder->cUpdateOrderDish($orderIDnew, $product["id"]);
-                                        $ctrlOrder->cUpdateAmountOrderDish($orderIDnew, $product["id"]);
-                                        $ctrlOrder->cUpdateOrder($orderIDnew);
-
-                                        $row2 = $ctrlOrder->cGetPromotionIDNew($orderIDnew, $product["id"])->fetch_assoc();
-                                        $promotionID = $row2["promotionID"];
-                                        $quantity = $row2["quantity"];
-
-                                        if ($promotionID != NULL)
-                                            $ctrlPromotion->cUpdateQuantityPromotion($promotionID, $quantity);
-
-                                        echo "<script>
-                                            document.addEventListener('DOMContentLoaded', function() {
-                                                var modalPayment = new bootstrap.Modal(document.getElementById('paymentModal')); 
-                                                modalPayment.show();
-                                            });
-                                        </script>";
-                                    }
-                                }
-                                ?>
                             </tbody>
                         </table>
                     </form>
@@ -481,96 +511,155 @@ if (isset($_POST["promotionID"])) {
             <form action="" method="POST">
                 <div class="pt-2 px-4 mt-2 mb-8 border-t-2 flex justify-end">
                     <button type="button" class="btn btn-secondary mr-1 mt-2" id="cancel">Hủy</button>
-                    <button type="submit" class="btn btn-danger ml-1 mt-2" name="btnxn" <?php echo (!isset($_SESSION["cusPay"]) ? "disabled" : ""); ?>>Xác nhận</button>
+                    <button type="submit" class="btn btn-danger ml-1 mt-2" name="btnxn" <?php echo ((!isset($_SESSION["cusPay"]) || $_SESSION["customer"][0] == 0) ? "disabled" : ""); ?>>Xác
+                        nhận</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-<?php
-if (isset($_POST["btnxn"])) {
-    unset($_SESSION["product.$storeID"]);
-    unset($_SESSION["total"]);
-    unset($_SESSION["discount"]);
-    unset($_SESSION["method"]);
-    unset($_SESSION["customerPay"]);
-    unset($_SESSION["cusPay"]);
-    unset($_SESSION["charge"]);
-    unset($_SESSION["totalAfterDiscount"]);
 
-    echo "<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let timerInterval;
-            setTimeout(() => {
-                Swal.fire({
-                    title: 'Thanh toán thành công',
-                    html: '<b></b> milliseconds.',
-                    timer: 2000,
-                    icon: 'success',
-                    timerProgressBar: true,
-                    didOpen: () => {
-                        Swal.showLoading();
-                        const timer = Swal.getPopup().querySelector('b');
-                        timerInterval = setInterval(() => {
-                            timer.textContent = Swal.getTimerLeft();
-                        }, 100);
-                    },
-                    willClose: () => {
-                        clearInterval(timerInterval);
-                    }
-                }).then((result) => {
-                    if (result.dismiss === Swal.DismissReason.timer) {
-                        window.location.href = 'index.php?i=create';
-                    }
-                });
-            }, 5000);
-        });
-    </script>";
-}
-?>
-<div class="modal modalPayment fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header justify-center">
-                <h2 class="modal-title fs-5 font-bold text-3xl" id="paymentModalLabel" style="color: #E67E22;">Thanh
+<div class='modal modalPayment fade' id='paymentModal' tabindex='-1' aria-labelledby='paymentModalLabel'
+    aria-hidden='true'>
+    <div class='modal-dialog modal-dialog-centered'>
+        <div class='modal-content <?php echo $_SESSION["method"] == "cash" ? "opacity-0" : "opacity-1"; ?>'>
+            <div class='modal-header justify-center'>
+                <h2 class='modal-title fs-5 font-bold text-3xl' id='paymentModalLabel' style='color: #E67E22;'>Thanh
                     toán</h2>
             </div>
-            <div class="modal-body">
-                <div>
-                    <?php
-                    if (isset($_POST["btnxn"])) {
-                        if ($_SESSION["method"] == "momo") {
-                            $type = "momo";
-                            echo "<div class='relative'>
-                                    <div class='absolute mt-4 -top-2 left-36 w-44 h-44 border-2 border-[#a50064]'><h3 class='font-bold absolute -top-6 left-[50%] translate-x-[-50%] bg-white text-[#a50064] text-xl'>MOMO</h3></div>
-                                </div>";
-                        } else if ($_SESSION["method"] == "banking") {
-                            $type = "banking";
-                            echo "<div class='relative'>
-                                    <div class='absolute mt-4 -top-2 left-36 w-44 h-44 border-2 border-[#1a417d]'><h3 class='font-bold absolute -top-6 left-[50%] translate-x-[-50%] bg-white text-[#1a417d] text-xl'><span class='text-red-500'>VIET</span>QR</h3></div>
-                                </div>";
-                        }
+            <div class='modal-body'>
+                <?php
+                if (isset($_POST["btnxn"])) {
+                    echo "<script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            var modalPayment = new bootstrap.Modal(document.getElementById('paymentModal')); 
+                            modalPayment.show();
+                        });
+                    </script>";
+                    
+                    if ($_SESSION["method"] == "momo")
+                        $type = "Momo";
+                    else if ($_SESSION["method"] == "banking")
+                        $type = "Ngân hàng";
+                    else
+                        $type = "Tiền mặt";
 
-                        $totalAmount = $_SESSION["totalAfterDiscount"];
-
-                        if ($_SESSION["method"] != "cash")
-                            echo "<div>
-                                    <img class='block mx-auto mt-4' src='http://localhost/domdom/view/page/orderstaff/create/qrcode.php?type=" . $type . "&orderID=" . $orderIDnew . "&amount=" . $totalAmount . "' alt='Mã QR'>
-                                </div>
-                                <div class='w-full mt-8'>
-                                    <p>OrderID: #" . $orderIDnew . ". <br> Ngày: " . date("Y-m-d") . ". <br> Tổng tiền: " . $totalAmount . " VND</p>
-                                </div>";
+                    $sumQuantity = 0;
+                    foreach ($_SESSION["product"] as $product) {
+                        $sumQuantity += $product["quantity"];
                     }
-                    ?>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" name="btncancel"><a href="index.php?i=create">Huỷ thanh
-                        toán</a></button>
+
+                    $customerIDNew = $_SESSION["customer"][0];
+                    
+                    $ctrlOrder->cInsertOrder($customerIDNew, $_SESSION["totalAfterDiscount"], $sumQuantity, $_SESSION["promotionID"], $type, $storeID);
+                    $row = $ctrlOrder->cGetOrderIDNew()->fetch_assoc();
+                    $orderIDnew = $row["orderID"];
+
+                    foreach ($_SESSION["product"] as $product) {
+                        $ctrlOrder->cInsertOrderDish($orderIDnew, $product["id"], $product["quantity"]);
+                    }
+                    
+                    if ($_SESSION["method"] == "momo") {
+                        $type = "momo";
+                        echo "<div class='relative'>
+                            <div class='absolute mt-4 top-4 left-36 w-44 h-44 border-2 border-[#a50064]'><h3 class='font-bold absolute -top-6 left-[50%] translate-x-[-50%] bg-white text-[#a50064] text-xl'>MOMO</h3></div>
+                        </div>";
+                    } else if ($_SESSION["method"] == "banking") {
+                        $type = "banking";
+                        echo "<div class='relative'>
+                            <div class='absolute mt-4 top-4 left-36 w-44 h-44 border-2 border-[#1a417d]'><h3 class='font-bold absolute -top-6 left-[50%] translate-x-[-50%] bg-white text-[#1a417d] text-xl'><span class='text-red-500'>VIET</span>QR</h3></div>
+                        </div>";
+                    }
+
+                    if ($_SESSION["method"] == "momo" || $_SESSION["method"] = "banking") {
+                        echo "<div>
+                                <img class='block mx-auto mt-4'
+                                    src='http://localhost/domdom/view/page/orderstaff/create/qrcode.php?type=" . $type . "&orderID=" . $orderIDnew . "&amount=" . $totalAmount . "'
+                                    alt='Mã QR'>
+                            </div>
+                            <div class='w-full mt-8'>
+                                <p>OrderID: #" . $orderIDnew . ". <br> Ngày: " . date("Y-m-d") . ". <br> " . ($_SESSION["delivery"]
+                            == 1 ? "Dùng tại quán" : "Mang đi") . " <br> Tổng tiền: " . number_format(
+                                $_SESSION["totalAfterDiscount"],
+                            0,
+                            ",",
+                            "."
+                        ) . " VND</p>
+                            </div>";
+
+                        echo "<script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    let timerInterval;
+                                    setTimeout(() => {
+                                        Swal.fire({
+                                            title: 'Thanh toán thành công',
+                                            html: '<b></b> milliseconds.',
+                                            timer: 2000,
+                                            icon: 'success',
+                                            timerProgressBar: true,
+                                            didOpen: () => {
+                                                Swal.showLoading();
+                                                const timer = Swal.getPopup().querySelector('b');
+                                                timerInterval = setInterval(() => {
+                                                    timer.textContent = Swal.getTimerLeft();
+                                                }, 100);
+                                            },
+                                            willClose: () => {
+                                                clearInterval(timerInterval);
+                                            }
+                                        }).then((result) => {
+                                            if (result.dismiss === Swal.DismissReason.timer) {
+                                                window.location.href = 'index.php?i=create';
+                                            }
+                                        });
+                                    }, 5000);
+                                });
+                            </script>";
+                    } else {
+                        echo "<script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    let timerInterval;
+                                    Swal.fire({
+                                        title: 'Thanh toán thành công',
+                                        html: '<b></b> milliseconds.',
+                                        timer: 2000,
+                                        icon: 'success',
+                                        timerProgressBar: true,
+                                        didOpen: () => {
+                                            Swal.showLoading();
+                                            const timer = Swal.getPopup().querySelector('b');
+                                            timerInterval = setInterval(() => {
+                                                timer.textContent = Swal.getTimerLeft();
+                                            }, 100);
+                                        },
+                                        willClose: () => {
+                                            clearInterval(timerInterval);
+                                        }
+                                    }).then((result) => {
+                                        if (result.dismiss === Swal.DismissReason.timer) {
+                                            window.location.href = 'index.php?i=create';
+                                        }
+                                    });
+                                });
+                            </script>";
+                    }
+
+                    unset($_SESSION["customer"]);
+                    unset($_SESSION["product"]);
+                    unset($_SESSION["total"]);
+                    unset($_SESSION["promotionID"]);
+                    unset($_SESSION["discount"]);
+                    unset($_SESSION["method"]);
+                    unset($_SESSION["customerPay"]);
+                    unset($_SESSION["cusPay"]);
+                    unset($_SESSION["charge"]);
+                    unset($_SESSION["totalAfterDiscount"]);
+                }
+                ?>
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <script>
@@ -639,55 +728,4 @@ if (isset($_POST["btnxn"])) {
             });
         });
     });
-
-    /* let inputMoney = document.querySelectorAll(".money");
-
-    inputMoney.forEach(input => {
-        let inputPrice = parseFloat(input.value) || 0;
-
-        input.addEventListener("focus", () => {
-            input.addEventListener("change", () => {
-                document.querySelector(".formPaymentInfo").submit();
-            });
-
-            const existingSuggestion = document.querySelector(".suggestion-container");
-            if (existingSuggestion) {
-                existingSuggestion.remove();
-            }
-
-            const divContainer = document.createElement("div");
-            divContainer.classList.add("suggestion-container", "w-full", "h-fit", "mt-2");
-
-            const prices = [1, 2, 5, 10, 20, 50, 100, 200, 500];
-
-            prices.forEach(price => {
-                const priceButton = document.createElement("button");
-                priceButton.classList.add("btn", "btn-light", "m-1", "rounded");
-                priceButton.setAttribute("type", "button");
-                priceButton.textContent = price;
-
-                priceButton.addEventListener("click", () => {
-                    inputPrice += parseFloat(price) * 1000;
-                    input.value = inputPrice;
-                });
-
-                divContainer.appendChild(priceButton);
-            });
-
-            const deleteButton = document.createElement("button");
-            deleteButton.classList.add("btn", "btn-light", "m-1", "rounded");
-            deleteButton.setAttribute("type", "button");
-            deleteButton.textContent = "Nhập lại";
-            divContainer.appendChild(deleteButton);
-
-            deleteButton.addEventListener("click", () => {
-                input.value = "";
-            });
-
-            const inputContainer = input.parentNode;
-            if (!inputContainer.querySelector(".suggestion-container")) {
-                inputContainer.appendChild(divContainer);
-            }
-        });
-    }); */
 </script>

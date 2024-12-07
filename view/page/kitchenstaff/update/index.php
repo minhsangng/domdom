@@ -1,5 +1,6 @@
 <?php
 if (isset($_POST["btnchuyen"])) {
+    $storeID = $_SESSION["user"][1];
     $arr = explode("/", $_POST["btnchuyen"]);
     $id = $arr[0];
     $status = $arr[1];
@@ -10,10 +11,10 @@ if (isset($_POST["btnchuyen"])) {
         $newStatus = 0;
 
     $ctrl = new cOrders;
-    $result = $ctrl->cUpdateStatusOrder($id, $newStatus);
+    $result = $ctrl->cUpdateStatusOrder($id, $newStatus, $storeID);
 
     $ctrlMessage = new cMessage;
-    if ($result != 0)
+    if ($result)
         $ctrlMessage->successMessage("Cập nhật trạng thái");
     else
         $ctrlMessage->errorMessage("Cập nhật trạng thái");
@@ -29,17 +30,11 @@ if (isset($_POST["btnchuyen"])) {
 
         <div class="h-fit bg-gray-100 rounded-lg p-6">
             <?php
-            $id = $_POST["btnsua"];
-            $status = $_POST["status"];
-            if (isset($_POST["btnsua"])) {
-                $sql = "UPDATE ordee SET status = '$status' WHERE orderID = $id";
-                $result = $conn->query($sql);
-            }
-
             $ctrl = new cOrders;
+            $storeID = $_SESSION["user"][1];
 
-            if ($ctrl->cGetAllOrderFully() != 0) {
-                $result = $ctrl->cGetAllOrderFully();
+            if ($ctrl->cGetAllOrderFully($storeID) != 0) {
+                $result = $ctrl->cGetAllOrderFully($storeID);
 
                 echo "
                     <table class='w-full text-base text-center'>
@@ -81,21 +76,19 @@ if (isset($_POST["btnchuyen"])) {
                     }
 
                     echo "
-                <tr data-id='$orderID' data-cus='$cusName' data-name='$orderName' data-quan='$orderQuantity' data-date='$orderDate' data-amount='$amount' data-status='$status' class='cursor-pointer'>
-                    <td class='border-2 py-2'>#DH0" . ($row["orderID"] < 10 ? "0" . $row["orderID"] : $row["orderID"]) . "</td>
-                    <td class='border-2 py-2'>" . $row["orderDate"] . "</td>
-                    <td class='border-2 py-2'>" . str_replace(".00", "", $amount) . "</td>
-                    <td class='border-2 py-2'>
-                        <span class='bg-" . ($status == 4 ? "red" : "green") . "-100 text-" . ($status == 4 ? "red" : "green") . "-500 py-1 px-2 rounded-lg w-fit'>" . $newStatus . "</span>
-                    </td>
-                </tr>
-            ";
+                        <tr data-id='$orderID' data-cus='$cusName' data-name='$orderName' data-quan='$orderQuantity' data-date='$orderDate' data-amount='$amount' data-status='$status' class='cursor-pointer'>
+                            <td class='border-2 py-2'>#DH0" . ($row["orderID"] < 10 ? "0" . $row["orderID"] : $row["orderID"]) . "</td>
+                            <td class='border-2 py-2'>" . $row["orderDate"] . "</td>
+                            <td class='border-2 py-2'>" . str_replace(".00", "", $amount) . "</td>
+                            <td class='border-2 py-2'>
+                                <span class='bg-" . ($status == 4 ? "red" : "green") . "-100 text-" . ($status == 4 ? "red" : "green") . "-500 py-1 px-2 rounded-lg w-fit'>" . $newStatus . "</span>
+                            </td>
+                        </tr>";
                 }
                 echo "</tbody>
             </table>";
-            } else {
+            } else
                 echo "<p class='text-center py-2 font-semibold'>Chưa có dữ liệu!</p>";
-            }
             ?>
         </div>
     </div>
