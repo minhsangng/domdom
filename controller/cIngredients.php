@@ -63,4 +63,12 @@ class cIngredients extends mIngredients
             echo "<script>alert('Cập nhật nguyên liệu thành công!')</script>";
         }
     }
+
+    public function cUpdateNeedIngredientQuantity($ingredientID, $quantity) 
+    {
+        if ($this->mUpdateNeedIngredientQuantity($ingredientID, $quantity) != 0) {
+            return true;
+        }
+        return false;
+    }
 }

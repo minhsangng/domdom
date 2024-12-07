@@ -1,30 +1,62 @@
 <?php
+session_start();
 $ctrl = new cEmployees;
 $ctrlMessage = new cMessage;
 
 $staff = "";
 
-if (isset($_POST["staff"]))
+if (isset($_POST["staff"])) {
+    $_SESSION["selected_staff"] = $_POST["staff"];
     $staff = $_POST["staff"];
+} else {
+    $staff = isset($_SESSION["selected_staff"]) ? $_SESSION["selected_staff"] : '';
+}
 
 if (isset($_POST["btnxoa"])) {
     $arrE = explode("/", $_POST["btnxoa"]);
-    $ESID = $arrE[0];
-    $name = $arrE[1];
-    $shiftName = $arrE[2];
-    $date = $arrE[3];
+    $shiftID = $arrE[0];
+    $userID = $arrE[1];
+    $date = $arrE[2];
     
-    $ctrl->cDeleteEmployeeShift($ESID);
-    $ctrlMessage->successMessage("Xóa ca làm nhân viên ");
+    if ($ctrl->cDeleteEmployeeShift($shiftID, $userID, $date)) {
+        $ctrlMessage->successMessage("Xóa ca làm nhân viên");
+
+    }
 }
 
 if (isset($_POST["btnthemnv"])) {
     $userID = (int)$_POST["user"];
-    $shiftID = (int)$_POST["shift"];
+    $shifts = $_POST["shift"];
     $date = $_POST["btnthemnv"];
-
-    $ctrl->cInsertEmployeeShift($shiftID, $userID, $date);
-    $ctrlMessage->successMessage("Thêm ca làm");    
+    
+    $hasError = false;
+    // Kiểm tra trùng lịch trước khi thêm
+    foreach ($shifts as $shiftID) {
+        $sql = "SELECT * FROM employee_shift WHERE userID = $userID AND date = '$date' AND shiftID = $shiftID";
+        $result = $conn->query($sql);
+        
+        if ($result && $result->num_rows > 0) {
+            $hasError = true;
+            $ctrlMessage->errorMessage("Ca làm đã được đăng ký cho nhân viên này!");
+            break;
+        }
+    }
+    
+    // Chỉ thêm nếu không có lỗi
+    if (!$hasError) {
+        $success = true;
+        foreach ($shifts as $shiftID) {
+            if (!$ctrl->cInsertEmployeeShift($shiftID, $userID, $date)) {
+                $success = false;
+                break;
+            }
+        }
+        if ($success) {
+            $ctrlMessage->successMessage("Thêm ca làm thành công!");
+        } else {
+            $ctrlMessage->errorMessage("Có lỗi x�y ra khi thêm ca làm!");
+        }
+    }
 }
 ?>
 
@@ -32,9 +64,18 @@ if (isset($_POST["btnthemnv"])) {
     <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-semibold">Bảng phân ca</h2>
+            <div class="flex items-center gap-4">
+                <button onclick="changeWeek(-1)" class="btn bg-gray-100 px-4 py-2 rounded-lg">
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <span id="weekDisplay" class="text-sm text-gray-600"></span>
+                <button onclick="changeWeek(1)" class="btn bg-gray-100 px-4 py-2 rounded-lg">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
             <form action="" method="POST" class="my-auto" id="staffForm">
                 <select name="staff" id="" class="form-control w-fit" onchange="document.getElementById('staffForm').submit()">
-                    <option value="" <?php echo ($staff != 3 && $staff != 4) ? "selected" : ""; ?>>Tất cả nhân viên</option>
+                    <option value="" >Tất cả nhân viên</option>
                     <option value="3" <?php echo $staff == 3 ? "selected" : ""; ?>>Nhân viên nhận đơn</option>
                     <option value="4" <?php echo $staff == 4 ? "selected" : ""; ?>>Nhân viên bếp</option>
                 </select>
@@ -50,18 +91,6 @@ if (isset($_POST["btnthemnv"])) {
 
             <?php
 
-            $currentDate = new DateTime();
-            $currentWeekDay = $currentDate->format("w");
-
-            $startW = clone $currentDate;
-            $startW->modify("-" . ($currentWeekDay - 1) . " days");
-
-            $endW = clone $startW;
-            $endW->modify("+13 days");
-
-            $startW = $startW->format("Y-m-d");
-            $endW = $endW->format("Y-m-d");
-
             if ($staff != "")
                 $sql = "SELECT * FROM `employee_shift` AS ES JOIN `user` AS U ON ES.userID = U.userID JOIN `shift` AS S ON S.shiftID = ES.shiftID WHERE U.roleID = $staff AND ES.date BETWEEN '$startW' AND '$endW'";
             else
@@ -72,7 +101,8 @@ if (isset($_POST["btnthemnv"])) {
 
             while ($row = $result->fetch_assoc()) {
                 $workShifts[$row["date"]][] = [
-                    "ESID" => $row["employeeshiftID"],
+                    "shiftID" => $row["shiftID"],
+                    "userID" => $row["userID"],
                     "name" => $row["userName"],
                     "shiftName" => $row["shiftName"],
                     "date" => $row["date"]
@@ -92,7 +122,11 @@ if (isset($_POST["btnthemnv"])) {
                                 <div id="employeeList" class="flex items-center">
                                     <strong class="w-1/3">Chọn nhân viên:</strong>
                                     <?php
-                                    $sql = "SELECT * FROM `user` WHERE roleID IN (3, 4)";
+                                    if ($staff != "") {
+                                        $sql = "SELECT * FROM `user` WHERE roleID = $staff";
+                                    } else {
+                                        $sql = "SELECT * FROM `user` WHERE roleID IN (3, 4)";
+                                    }
                                     $result = $conn->query($sql);
 
                                     echo '<select name="user" id="" class="w-2/3 form-control">';
@@ -105,12 +139,16 @@ if (isset($_POST["btnthemnv"])) {
                                 <div id="shiftOptions" class="mt-4">
                                     <strong>Chọn ca làm:</strong>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" id="shiftMo" name="shift" value="1">
-                                        <label for="shiftMo" class="form-check-label">Ca sáng (8:00 - 14:00)</label>
+                                        <input class="form-check-input" type="checkbox" id="shiftMo" name="shift[]" value="1">
+                                        <label for="shiftMo" class="form-check-label">Ca sáng (07:00 - 12:00)</label>
                                     </div>
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" id="shiftEv" name="shift" value="2">
-                                        <label for="shiftEv" class="form-check-label">Ca chiều (14:00 - 20:00)</label>
+                                        <input class="form-check-input" type="checkbox" id="shiftAf" name="shift[]" value="2">
+                                        <label for="shiftAf" class="form-check-label">Ca chiều (12:00 - 17:00)</label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="shiftEv" name="shift[]" value="3">
+                                        <label for="shiftEv" class="form-check-label">Ca tối (17:00 - 22:00)</label>
                                     </div>
                                 </div>
                             </div>
@@ -127,20 +165,43 @@ if (isset($_POST["btnthemnv"])) {
 
     <script>
         const workShifts = <?php echo $jsonWorkShifts; ?>;
+        let currentWeekOffset = 0;
 
-        function createCalendar() {
+        function changeWeek(offset) {
+            currentWeekOffset += offset;
+            updateCalendar();
+        }
+
+        function updateCalendar() {
             const calendar = document.getElementById("calendar");
+            calendar.innerHTML = ''; // Xóa calendar hiện tại
 
             const startW = new Date("<?php echo $startW; ?>");
-            const endW = new Date("<?php echo $endW; ?>");
+            startW.setDate(startW.getDate() + (currentWeekOffset * 7));
+            
+            const endW = new Date(startW);
+            endW.setDate(startW.getDate() + 6);
+
+            // Hiển thị thông tin tuần
+            const weekDisplay = document.getElementById("weekDisplay");
+            weekDisplay.textContent = `${startW.toLocaleDateString('vi-VN')} - ${endW.toLocaleDateString('vi-VN')}`;
 
             for (let day = new Date(startW); day <= endW; day.setDate(day.getDate() + 1)) {
                 const dateString = day.toISOString().split('T')[0];
                 const dayNumber = day.getDate();
 
                 const dayDiv = document.createElement("div");
-                dayDiv.classList.add("day", "bg-white", "p-3", "rounded-lg", "shadow-md", "mb-2", "text-sm", "h-44");
-                dayDiv.innerHTML = `<h3 class='bg-orange-400 p-2 w-8 rounded-full text-center text-white font-bold mb-2'>${dayNumber}</h3>`;
+                dayDiv.classList.add("day", "bg-white", "p-3", "rounded-lg", "shadow-md", "mb-2", "text-sm", "h-100");
+                
+                // Thêm header cố định cho ngày
+                const headerDiv = document.createElement("div");
+                headerDiv.classList.add("sticky", "top-0", "bg-white", "mb-2", "z-10");
+                headerDiv.innerHTML = `<h3 class='bg-orange-400 p-2 w-8 rounded-full text-center text-white font-bold'>${dayNumber}</h3>`;
+                dayDiv.appendChild(headerDiv);
+
+                // Tạo container có thể scroll cho nội dung
+                const contentDiv = document.createElement("div");
+                contentDiv.classList.add("overflow-y-auto", "h-48"); // Thay đổi h-28 thành h-40 hoặc h-48
 
                 const detailsDiv = document.createElement("div");
 
@@ -149,11 +210,14 @@ if (isset($_POST["btnthemnv"])) {
                         const shiftInfo = document.createElement("div");
                         shiftInfo.classList.add("flex", "items-center", "mb-2");
                         shiftInfo.innerHTML = `<form method='POST' class='m-0 w-full'>
-                        <button type='submit' name='btnxoa' value='${shift.ESID}/${shift.name}/${shift.shiftName}/${shift.date}' class='bg-gray-300 p-1 text-center mr-2 rounded-full'>
-                            <i class="fa-solid fa-minus"></i>
-                        </button>
-                        <span>${shift.name} (${shift.shiftName})</span>
-                    </form>`;
+                            <button type='submit' name='btnxoa' 
+                                value='${shift.shiftID}/${shift.userID}/${shift.date}' 
+                                onclick="return confirm('Bạn có chắc chắn muốn xóa ca làm của nhân viên ${shift.name} (${shift.shiftName}) vào ngày ${shift.date}?')"
+                                class='bg-gray-300 p-1 text-center mr-2 rounded-full'>
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                            <span>${shift.name} (${shift.shiftName})</span>
+                        </form>`;
                         detailsDiv.appendChild(shiftInfo);
                     });
                 }
@@ -161,14 +225,15 @@ if (isset($_POST["btnthemnv"])) {
                 const addEmployeeDiv = document.createElement("div");
                 addEmployeeDiv.classList.add("flex", "items-center", "mb-2");
                 addEmployeeDiv.innerHTML = `
-                <button class='bg-gray-300 p-1 text-center mr-2 rounded-full' value='${dateString}'  onclick='openModal(this)' data-bs-toggle="modal" data-bs-target="#insertModal">
-                    <i class="fa-solid fa-plus"></i>
-                </button>
-                <span class='text-gray-600'>Thêm ca làm</span>
-            `;
+                    <button class='bg-gray-300 p-1 text-center mr-2 rounded-full' value='${dateString}'  onclick='openModal(this)' data-bs-toggle="modal" data-bs-target="#insertModal">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    <span class='text-gray-600'>Thêm ca làm</span>
+                `;
                 detailsDiv.appendChild(addEmployeeDiv);
 
-                dayDiv.appendChild(detailsDiv);
+                contentDiv.appendChild(detailsDiv);
+                dayDiv.appendChild(contentDiv);
                 calendar.appendChild(dayDiv);
             }
         }
@@ -177,5 +242,6 @@ if (isset($_POST["btnthemnv"])) {
             document.getElementById("btnthem").value = button.value;
         }
 
-        createCalendar();
+        // Thay thế createCalendar() bằng updateCalendar()
+        updateCalendar();
     </script>

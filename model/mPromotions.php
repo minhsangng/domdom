@@ -35,7 +35,7 @@ class mPromotions
     public function mInsertPromotion($proName, $des, $percent, $start, $end, $image, $status) {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "INSERT INTO promotion(promotionName, description, discountPercentage, startDate, endDate, image, status) VALUES ('$proName', '$des', $percent, '$start', '$end', '$image', '$status')";
+        $sql = "INSERT INTO promotion(promotionName, description, discountPercentage, startDate, endDate, image, status) VALUES ('$proName', '$des', '$percent', '$start', '$end', '$image', '$status')";
         
         if ($conn != null)
             return $conn->query($sql);
@@ -55,7 +55,7 @@ class mPromotions
     public function mdeletePromotion($proID) {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "DELETE FROM promotion WHERE promotionID = $proID";
+        $sql = "DELETE FROM promotion WHERE promotionID = '$proID'";
         
         if ($conn != null)
             return $conn->query($sql);

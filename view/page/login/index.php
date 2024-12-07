@@ -130,19 +130,23 @@ if (isset($_POST["btndn"])) {
 
         if ($result->num_rows > 0) {
             $_SESSION["user"] = [$row["userName"], $row["storeID"]];
-            $_SESSION["login"] = true;
+            $_SESSION["login"] = 1;
 
             switch ($row["roleID"]) {
                 case 1:
+                    $_SESSION["role"] = 1;
                     echo "<script>window.location.href = '../admin/index.php'</script>";
                     break;
                 case 2:
+                    $_SESSION["role"] = 2;
                     echo "<script>window.location.href = '../manager/index.php'</script>";
                     break;
                 case 3:
+                    $_SESSION["role"] = 3;
                     echo "<script>window.location.href = '../orderstaff/index.php'</script>";
                     break;
                 case 4:
+                    $_SESSION["role"] = 4;
                     echo "<script>window.location.href = '../kitchenstaff/index.php'</script>";
                     break;
             }

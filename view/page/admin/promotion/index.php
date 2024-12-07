@@ -7,8 +7,11 @@ echo "<script>
         });
     </script>";
 
-$errors = [];
+// Khai báo riêng mảng lỗi cho từng form
+$addErrors = array();
+$updateErrors = array();
 
+// Xử lý form thêm mới
 if (isset($_POST["btnthemkm"])) {
     $proName = $_POST["proName"];
     $des = $_POST["description"];
@@ -18,39 +21,84 @@ if (isset($_POST["btnthemkm"])) {
     $image = $_FILES["image"];
     $status = 1;
 
-    if (!preg_match("/^[a-zA-Z0-9\s]+$/", $proName)) {
-        $errors['proName'] = 'Tên khuyến mãi không hợp lệ!';
-    }
-    if (!preg_match("/^[a-zA-Z0-9\s]+$/", $des)) {
-        $errors['description'] = 'Mô tả không hợp lệ!';
-    }
-    if (!preg_match("/^\d+$/", $percent) || $percent < 0 || $percent > 100) {
-        $errors['percent'] = 'Phần trăm khuyến mãi không hợp lệ!';
-    }
-    if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $start)) {
-        $errors['startDate'] = 'Ngày bắt đầu không hợp lệ!';
-    }
-    if (!preg_match("/^\d{4}-\d{2}-\d{2}$/", $end)) {
-        $errors['endDate'] = 'Ngày kết thúc không hợp lệ!';
-    }
-    if (strtotime($start) >= strtotime($end)) {
-        $errors['date'] = 'Ngày bắt đầu phải nhỏ hơn ngày kết thúc!';
+    // Validation giống như update
+    if (empty($proName)) {
+        $addErrors['proName'] = 'Vui lòng nhập tên khuyến mãi!';
+    } elseif (strlen($proName) < 5) {
+        $addErrors['proName'] = 'Tên khuyến mãi phải có ít nhất 5 ký tự!';
     }
 
-    if (empty($errors)) {
-        $imgName = '';
+    if (empty($des)) {
+        $addErrors['description'] = 'Vui lòng nhập mô tả!';
+    } elseif (strlen($des) < 10) {
+        $addErrors['description'] = 'Mô tả phải có ít nhất 10 ký tự!';
+    }
 
-        if ($image["size"] > 0 && $image["error"] == 0){
-            if ($image["type"] == "image/png" || $image["type"] == "image/jpeg") {
-                $imgName = $image["name"];
-                move_uploaded_file($image["tmp_name"], "../../../images/promotion1/".$imgName);
-            } else {
-                $errors['image'] = 'Không phải ảnh. Vui lòng chọn lại ảnh khác!';
-            }
+    if (empty($percent)) {
+        $addErrors['percent'] = 'Vui lòng nhập phần trăm khuyến mãi!';
+    } elseif (!is_numeric($percent) || $percent <= 0 || $percent > 100) {
+        $addErrors['percent'] = 'Phần trăm khuyến mãi phải từ 1 đến 100!';
+    }
+
+    if (empty($start)) {
+        $addErrors['startDate'] = 'Vui lòng chọn ngày bắt đầu!';
+    }
+
+    if (empty($end)) {
+        $addErrors['endDate'] = 'Vui lòng chọn ngày kết thúc!';
+    }
+
+    if (!empty($start) && !empty($end)) {
+        $startDate = new DateTime($start);
+        $endDate = new DateTime($end);
+        $currentDate = new DateTime();
+
+        if ($startDate > $endDate) {
+            $addErrors['date'] = 'Ngày bắt đầu phải nhỏ hơn ngày kết thúc!';
         }
-        if (empty($errors)) {
-            $ctrl->cInsertPromotion($proName, $des, $percent, $start, $end, $imgName, $status);
+        if ($startDate < $currentDate) {
+            $addErrors['startDate'] = 'Ngày bắt đầu phải từ ngày hiện tại trở đi!';
         }
+    }
+
+    // Kiểm tra ảnh
+    if ($image["size"] == 0) {
+        $addErrors['image'] = 'Vui lòng chọn ảnh!';
+    } else {
+        $allowed = array("jpg" => "image/jpg", "jpeg" => "image/jpeg", "png" => "image/png");
+        $filename = $image["name"];
+        $filetype = $image["type"];
+        $filesize = $image["size"];
+
+        // Xác minh phần mở rộng tệp
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        if (!array_key_exists($ext, $allowed)) {
+            $addErrors['image'] = 'Vui lòng chọn định dạng ảnh hợp lệ (jpg, jpeg, png)!';
+        }
+
+        // Xác minh kích thước tệp - tối đa 5MB
+        $maxsize = 5 * 1024 * 1024;
+        if ($filesize > $maxsize) {
+            $addErrors['image'] = 'Kích thước ảnh quá lớn. Vui lòng chọn ảnh dưới 5MB!';
+        }
+    }
+    // Nếu không có lỗi thì thêm mới
+    if (empty($addErrors)) {
+        $imgName = $image["name"];
+        move_uploaded_file($image["tmp_name"], "../../../images/promotion/".$imgName);
+        
+        if ($ctrl->cInsertPromotion($proName, $des, $percent, $start, $end, $imgName, $status)) {
+            echo "<script>alert('Thêm khuyến mãi thành công!');</script>";
+        } 
+    } else {
+        // Nếu có lỗi, hiển thị lại modal ngay lập tức
+        echo "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var insertModal = document.getElementById('insertModal');
+                var modal = new bootstrap.Modal(insertModal);
+                modal.show();
+            });
+        </script>";
     }
 }
 
@@ -86,31 +134,92 @@ if (isset($_POST["btnsuakm"])) {
     $image = $_FILES["image"];
     $status = $_POST["status"];
 
-    $imgName = '';
+    // Validation
+    if (empty($proName)) {
+        $updateErrors['proName'] = 'Vui lòng nhập tên khuyến mãi!';
+    } elseif (strlen($proName) < 5) {
+        $updateErrors['proName'] = 'Tên khuyến mãi phải có ít nhất 5 ký tự!';
+    }
 
-    if ($image["size"] > 0 && $image["error"] == 0) {
-        if ($image["type"] == "image/png" || $image["type"] == "image/jpeg") {
-            $imgName = $image["name"];
-            move_uploaded_file($image["tmp_name"], "../../../images/promotion/".$imgName);
-        } else {
-            echo "<script>alert('Không phải ảnh. Vui lòng chọn lại ảnh khác!')</script>";
+    if (empty($des)) {
+        $updateErrors['description'] = 'Vui lòng nhập mô tả!';
+    } elseif (strlen($des) < 10) {
+        $updateErrors['description'] = 'Mô tả phải có ít nhất 10 ký tự!';
+    }
+
+    if (empty($percent)) {
+        $updateErrors['percent'] = 'Vui lòng nhập phần trăm khuyến mãi!';
+    } elseif (!is_numeric($percent) || $percent <= 0 || $percent > 100) {
+        $updateErrors['percent'] = 'Phần trăm khuyến mãi phải từ 1 đến 100!';
+    }
+
+    if (empty($start)) {
+        $updateErrors['startDate'] = 'Vui lòng chọn ngày bắt đầu!';
+    }
+
+    if (empty($end)) {
+        $updateErrors['endDate'] = 'Vui lòng chọn ngày kết thúc!';
+    }
+
+    if (!empty($start) && !empty($end)) {
+        $startDate = new DateTime($start);
+        $endDate = new DateTime($end);
+        $currentDate = new DateTime();
+
+        if ($startDate > $endDate) {
+            $updateErrors['date'] = 'Ngày bắt đầu phải nhỏ hơn ngày kết thúc!';
+        }
+        if ($startDate < $currentDate) {
+            $updateErrors['startDate'] = 'Ngày bắt đầu phải từ ngày hiện tại trở đi!';
         }
     }
-    $ctrl->cUpdatePromotion($proID, $proName, $des, $percent, $start, $end, $imgName, $status);
+
+     // Kiểm tra ảnh
+     if ($image["size"] == 0) {
+        $updateErrors['image'] = 'Vui lòng chọn ảnh!';
+    } else {
+        $allowed = array("jpg" => "image/jpg", "jpeg" => "image/jpeg", "png" => "image/png");
+        $filename = $image["name"];
+        $filetype = $image["type"];
+        $filesize = $image["size"];
+
+        // Xác minh phần mở rộng tệp
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        if (!array_key_exists($ext, $allowed)) {
+            $updateErrors['image'] = 'Vui lòng chọn định dạng ảnh hợp lệ (jpg, jpeg, png)!';
+        }
+
+        // Xác minh kích thước tệp - tối đa 5MB
+        $maxsize = 5 * 1024 * 1024;
+        if ($filesize > $maxsize) {
+            $updateErrors['image'] = 'Kích thước ảnh quá lớn. Vui lòng chọn ảnh dưới 5MB!';
+        }
+    }
+    // Nếu không có lỗi thì thêm mới
+    if (empty($updateErrors)) {
+        $imgName = $image["name"];
+        move_uploaded_file($image["tmp_name"], "../../../images/promotion/".$imgName);
+        
+        if ($ctrl->cUpdatePromotion($proID, $proName, $des, $percent, $start, $end, $imgName, $status)) {
+            echo "<script>alert('Cập nhật khuyến mãi thành công!');</script>";
+        } 
+    } else {
+        // Nếu có lỗi, hiển thị lại modal ngay lập tức
+        echo "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var updateModal = document.getElementById('updateModal');
+                var modal = new bootstrap.Modal(updateModal);
+                modal.show();
+            });
+        </script>";
+    }
 }
 
 if (isset($_POST["btnxoa"])) {
-    $proID = $_SESSION["proID"];
-    $ctrl->cdeletePromotion($proID);
-}
-
-if (!empty($errors)) {
-    echo "<script>
-        window.addEventListener('load', () => {
-            var insertModal = new bootstrap.Modal(document.getElementById('insertModal'));
-            insertModal.show();
-        });
-    </script>";
+    $proID = $_POST["btnxoa"];
+    if ($ctrl->cdeletePromotion($proID)) {
+        echo "<script>alert('Xóa khuyến mãi thành công!');</script>";
+    }
 }
 ?>
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
@@ -156,11 +265,11 @@ if (!empty($errors)) {
                             <td class='py-2 border-2'>" . str_replace(".00", "%", $row["discountPercentage"]) . "</td>
                             <td class='py-2 border-2'>" . $row["startDate"] . "</td>
                             <td class='py-2 border-2'>" . $row["endDate"] . "</td>
-                            <td class='py-2 border-2'><img src='../../../images/promotion1/" . $row["image"] . "' alt='" . $row["promotionName"] . "' class='size-24' /></td>
+                            <td class='py-2 border-2'><img src='../../../images/promotion/" . $row["image"] . "' alt='" . $row["promotionName"] . "' class='size-24' /></td>
                             <td class='py-2 border-2 text-" . ($row["status"] == 1 ? "green" : "red") . "-500'>" . ($row["status"] == 1 ? "Đang áp dụng" : "Ngưng áp dụng") . "</td>
                             <td class='py-2 border-2 flex justify-center items-center h-28'>
                                 <button class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["promotionID"] . "'>Cập nhật</button>
-                                <button class='btn btn-danger ml-1' name='btnxoa'>Xóa</button>
+                                <button class='btn btn-danger ml-1' name='btnxoa' value='" . $row["promotionID"] . "' onclick='return confirm(\"Bạn có chắc chắn xóa khuyến mãi này?\");'>Xóa</button>
                             </td>
                         </tr>";
                             }
@@ -184,61 +293,63 @@ if (!empty($errors)) {
                             <tr>
                                 <td>
                                     <label for="proName" class="w-full py-2"><b>Tên KM <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="proName" required value="<?php echo isset($proName) ? $proName : ''; ?>">
-                                    <?php if (isset($errors['proName'])) {
-                                        echo '<div class="text-red-500">' . $errors['proName'] . '</div>';
+                                    <input type="text" class="w-full form-control <?php echo isset($addErrors['proName']) ? 'border-red-500' : ''; ?>" 
+                                        name="proName" value="<?php echo isset($proName) ? $proName : ''; ?>">
+                                    <?php if (isset($addErrors['proName'])) {
+                                        echo '<div class="text-red-500">' . $addErrors['proName'] . '</div>';
                                     } ?>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="description" class="w-full py-2"><b>Mô tả <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="description" required value="<?php echo isset($des) ? $des : ''; ?>">
-                                    <?php if (isset($errors['description'])) {
-                                        echo '<div class="text-red-500">' . $errors['description'] . '</div>';
+                                    <input type="text" class="w-full form-control <?php echo isset($addErrors['description']) ? 'border-red-500' : ''; ?>" 
+                                        name="description" value="<?php echo isset($des) ? $des : ''; ?>">
+                                    <?php if (isset($addErrors['description'])) {
+                                        echo '<div class="text-red-500">' . $addErrors['description'] . '</div>';
                                     } ?>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="percent" class="w-full py-2"><b>Phần trăm KM<span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="percent" required value="<?php echo isset($percent) ? $percent : ''; ?>">
-                                    <?php if (isset($errors['percent'])) {
-                                        echo '<div class="text-red-500">' . $errors['percent'] . '</div>';
+                                    <input type="number" class="w-full form-control <?php echo isset($addErrors['percent']) ? 'border-red-500' : ''; ?>" 
+                                        name="percent" value="<?php echo isset($percent) ? $percent : ''; ?>">
+                                    <?php if (isset($addErrors['percent'])) {
+                                        echo '<div class="text-red-500">' . $addErrors['percent'] . '</div>';
                                     } ?>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="startDate" class="w-full py-2"><b>Ngày bắt đầu<span class="text-red-500">*</span></b></label>
-                                    <input type="date" class="w-full form-control" name="startDate" required value="<?php echo isset($start) ? $start : ''; ?>">
-                                    <?php if (isset($errors['startDate'])) {
-                                        echo '<div class="text-red-500">' . $errors['startDate'] . '</div>';
+                                    <input type="date" class="w-full form-control <?php echo isset($addErrors['startDate']) ? 'border-red-500' : ''; ?>" 
+                                        name="startDate" value="<?php echo isset($start) ? $start : ''; ?>">
+                                    <?php if (isset($addErrors['startDate'])) {
+                                        echo '<div class="text-red-500">' . $addErrors['startDate'] . '</div>';
                                     } ?>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="endDate" class="w-full py-2"><b>Ngày kết thúc<span class="text-red-500">*</span></b></label>
-                                    <input type="date" class="w-full form-control" name="endDate" required value="<?php echo isset($end) ? $end : ''; ?>">
-                                    <?php if (isset($errors['endDate'])) {
-                                        echo '<div class="text-red-500">' . $errors['endDate'] . '</div>';
+                                    <input type="date" class="w-full form-control <?php echo isset($addErrors['endDate']) ? 'border-red-500' : ''; ?>" 
+                                        name="endDate" value="<?php echo isset($end) ? $end : ''; ?>">
+                                    <?php if (isset($addErrors['endDate'])) {
+                                        echo '<div class="text-red-500">' . $addErrors['endDate'] . '</div>';
                                     } ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <?php if (isset($errors['date'])) {
-                                        echo '<div class="text-red-500">' . $errors['date'] . '</div>';
+                                    <?php if (isset($addErrors['date'])) {
+                                        echo '<div class="text-red-500">' . $addErrors['date'] . '</div>';
                                     } ?>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="image" class="w-full py-2"><b>Hình ảnh<span class="text-red-500">*</span></b></label>
-                                    <input type="file" class="w-full form-control" name="image" required>
-                                    <?php if (isset($errors['image'])) {
-                                        echo '<div class="error">' . $errors['image'] . '</div>';
+                                    <input type="file" class="w-full form-control <?php echo isset($addErrors['image']) ? 'border-red-500' : ''; ?>" 
+                                        name="image">
+                                    <?php if (isset($addErrors['image'])) {
+                                        echo '<div class="text-red-500">' . $addErrors['image'] . '</div>';
                                     } ?>
                                 </td>
                             </tr>
@@ -261,59 +372,73 @@ if (!empty($errors)) {
                         <h2 class="modal-title fs-5 font-bold text-3xl" id="updateModalLabel" style="color: #E67E22;">Cập nhật khuyến mãi</h2>
                     </div>
                     <div class="modal-body">
-                        <table>
-                            <tr>
-                                <td>
-                                    <label for="proName" class="w-full py-2"><b>Tên KM </b></label>
-                                    <input type="text" class="w-full form-control" name="proName" value="<?php echo $_SESSION["proName"]; ?>">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="description" class="w-full py-2"><b>Mô tả </b></label>
-                                    <input type="text" class="w-full form-control" name="description" value="<?php echo $_SESSION["description"]; ?>">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="percent" class="w-full py-2"><b>Phần trăm KM </b></label>
-                                    <input type="number" class="w-full form-control" name="percent" value="<?php echo $_SESSION["percent"]; ?>">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="startDate" class="w-full py-2"><b>Ngày bắt đầu </b></label>
-                                    <input type="date" class="w-full form-control" name="startDate" value="<?php echo $_SESSION["startDate"]; ?>">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="endDate" class="w-full py-2"><b>Ngày kết thúc </b></label>
-                                    <input type="date" class="w-full form-control" name="endDate" value="<?php echo $_SESSION["endDate"]; ?>">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="image" class="w-full py-2"><b>Hình ảnh </b></label>
-                                    <input type="file" class="w-full form-control" name="image">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="status" class="w-full py-2"><b>Trạng thái </b></label>
-                                    <select type="text" class="w-full form-control" name="status">
-                                        <?php
-                                        $status = $_SESSION["status"];
+                        <div class="mb-3">
+                            <label class="form-label"><b>Tên khuyến mãi<span class="text-red-500">*</span></b></label>
+                            <input type="text" class="form-control <?php echo isset($updateErrors['proName']) ? 'border-red-500' : ''; ?>" 
+                                name="proName" value="<?php echo $_SESSION["proName"] ?? ''; ?>">
+                            <?php if (isset($updateErrors['proName'])): ?>
+                                <span class="text-red-500 text-sm mt-1 block"><?php echo $updateErrors['proName']; ?></span>
+                            <?php endif; ?>
+                        </div>
 
-                                        echo "<option value='" . $status . "' selected>" . ($_SESSION["status"] == 1 ? "Đang áp dụng" : "Ngưng áp dụng") . "</option>";
-                                        $result = $ctrl->cGetPromotionNotStatus($status);
-                                        while ($row = $result->fetch_assoc())
-                                            echo "<option value='" . $row["status"] . "'>" . ($row["status"] == 1 ? "Đang áp dụng" : "Ngưng áp dụng") . "</option>";
-                                        ?>
-                                    </select>
-                                </td>
-                            </tr>
-                        </table>
+                        <div class="mb-3">
+                            <label class="form-label"><b>Mô tả<span class="text-red-500">*</span></b></label>
+                            <input type="text" class="form-control <?php echo isset($updateErrors['description']) ? 'border-red-500' : ''; ?>" 
+                                name="description" value="<?php echo $_SESSION["description"] ?? ''; ?>">
+                            <?php if (isset($updateErrors['description'])): ?>
+                                <span class="text-red-500 text-sm mt-1 block"><?php echo $updateErrors['description']; ?></span>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><b>Phần trăm KM<span class="text-red-500">*</span></b></label>
+                            <input type="number" class="form-control <?php echo isset($updateErrors['percent']) ? 'border-red-500' : ''; ?>" 
+                                name="percent" value="<?php echo $_SESSION["percent"] ?? ''; ?>">
+                            <?php if (isset($updateErrors['percent'])): ?>
+                                <span class="text-red-500 text-sm mt-1 block"><?php echo $updateErrors['percent']; ?></span>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><b>Ngày bắt đầu<span class="text-red-500">*</span></b></label>
+                            <input type="date" class="form-control <?php echo isset($updateErrors['startDate']) ? 'border-red-500' : ''; ?>" 
+                                name="startDate" value="<?php echo $_SESSION["startDate"] ?? ''; ?>">
+                            <?php if (isset($updateErrors['startDate']) || isset($updateErrors['date'])): ?>
+                                <span class="text-red-500 text-sm mt-1 block">
+                                    <?php echo $updateErrors['startDate'] ?? $updateErrors['date'] ?? ''; ?>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><b>Ngày kết thúc<span class="text-red-500">*</span></b></label>
+                            <input type="date" class="form-control <?php echo isset($updateErrors['endDate']) ? 'border-red-500' : ''; ?>" 
+                                name="endDate" value="<?php echo $_SESSION["endDate"] ?? ''; ?>">
+                            <?php if (isset($updateErrors['endDate'])): ?>
+                                <span class="text-red-500 text-sm mt-1 block"><?php echo $updateErrors['endDate']; ?></span>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><b>Hình ảnh</b></label>
+                            <?php if (!empty($_SESSION["currentImage"])): ?>
+                                <img src="../../../images/promotion/<?php echo $_SESSION["currentImage"]; ?>" 
+                                    class="size-24 object-cover rounded mb-2">
+                            <?php endif; ?>
+                            <input type="file" class="form-control <?php echo isset($updateErrors['image']) ? 'border-red-500' : ''; ?>" 
+                                name="image" accept="image/*">
+                            <?php if (isset($updateErrors['image'])): ?>
+                                <span class="text-red-500 text-sm mt-1 block"><?php echo $updateErrors['image']; ?></span>
+                            <?php endif; ?>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label"><b>Trạng thái<span class="text-red-500">*</span></b></label>
+                            <select name="status" class="form-control">
+                                <option value="1" <?php echo ($_SESSION["status"] ?? '') == 1 ? 'selected' : ''; ?>>Đang áp dụng</option>
+                                <option value="0" <?php echo ($_SESSION["status"] ?? '') == 0 ? 'selected' : ''; ?>>Ngưng áp dụng</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" name="btndong" data-bs-dismiss="modal" onclick="if (confirm('Thông tin chưa được lưu. Bạn có chắc chắn thoát?') === false) { var modalUpdate = new bootstrap.Modal(document.querySelector('.modalUpdate')); modalUpdate.show();}">Hủy</button>
@@ -323,5 +448,6 @@ if (!empty($errors)) {
             </div>
         </div>
     </div>
+
 
 

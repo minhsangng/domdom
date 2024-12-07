@@ -48,11 +48,7 @@ class cPromotions extends mPromotions
     
     public function cdeletePromotion($proID) {  
         if ($this->mdeletePromotion($proID) != 0) {
-            echo "<script>
-            document.addEventListener('DOMContentLoaded', function() {
-                confirm('Bạn có chắc chắn xóa khuyến mãi này?');
-            });
-          </script>";
+            echo "<script>alert('Xóa khuyến mãi thành công');</script>";
         }
     }
 }
