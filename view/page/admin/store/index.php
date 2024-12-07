@@ -60,15 +60,13 @@ if (isset($_POST["btnsuach"])) {
     }
 }
 
-
-
 // Trạng thái cửa hàng
 if (isset($_POST["btnkhoach"])) {
     $status = $_POST["btnkhoa"];
     $storeID = $_POST["storeID"];
 
-    $newStatus = ($status == 1) ? 0 : 1; 
-    
+    $newStatus = ($status == 1) ? 0 : 1;
+
     $sql = "UPDATE store SET status = '$newStatus' WHERE storeID = '$storeID'";
 
     if ($conn->query($sql) === TRUE) {
@@ -77,8 +75,6 @@ if (isset($_POST["btnkhoach"])) {
         echo "<script>alert('Lỗi khi cập nhật trạng thái tài khoản.');</script>";
     }
 }
-
-
 ?>
 
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
@@ -126,7 +122,7 @@ if (isset($_POST["btnkhoach"])) {
                                         <td class='py-2 border-2'>" . $row["contact"] . "</td>
                                         <td class='py-2 border-2'>" . $row2["userName"] . "</td>
                                         <td class='py-2 border-2'>
-                                            <span class='bg-" . ($row["status"] == 1 ? "green" : "red") . "-100 text-" . ($row["status"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["status"] == 1 ? "Đang kinh doanh" : "Ngừng kinh doanh") . "</span>
+                                            <span class='-100 text-" . ($row["status"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["status"] == 1 ? "Đang kinh doanh" : "Ngừng kinh doanh") . "</span>
                                         </td>
                                         <td class='py-2 border-2 flex justify-center items-center'>
                                             <button class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["storeID"] . "'>Cập nhật</button>
@@ -176,8 +172,10 @@ if (isset($_POST["btnkhoach"])) {
                             <tr>
                                 <td>
                                     <label for="contact" class="w-full py-2"><b>Thông tin liên hệ <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="contact" required>
-                                </td>
+                                    <input type="text" class="w-full form-control" name="contact" required
+                                    pattern="^0[0-9]{9}$" title="Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số">
+                                    
+                                </td>   
                             </tr>
                         </table>
                     </div>
@@ -216,9 +214,11 @@ if (isset($_POST["btnkhoach"])) {
                             <tr>
                                 <td>
                                     <label for="contact" class="w-full py-2"><b>Thông tin liên hệ</b></label>
-                                    <input type="text" class="w-full form-control" name="contact" value="<?php echo $_SESSION["contact"]; ?>" required>
+                                    <input type="text" class="w-full form-control" name="contact" value="<?php echo $_SESSION['contact']; ?>" required
+                                        pattern="^0[0-9]{9}$" title="Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số">
                                 </td>
                             </tr>
+
                         </table>
                     </div>
                     <div class="modal-footer">
