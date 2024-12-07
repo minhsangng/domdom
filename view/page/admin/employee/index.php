@@ -232,7 +232,7 @@ if (isset($_POST["btnthemnv"])) {
                                 <td>
                                     <label for="phone" class="w-full py-2"><b>Số điện thoại <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="phone" required  pattern="^0\d{9}$" title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 0">
+                                    <input type="text" class="w-full form-control" name="phone" required pattern="^(0(2[0-9]|3[0-9]|7[0-9]|8[0-9]|9[0-9])[0-9]{7})|(\+84(2[0-9]|3[0-9]|7[0-9]|8[0-9]|9[0-9])[0-9]{7})$" title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 0 hoặc +84, với các mã vùng 02, 03, 07, 08, 09">
                                 </td>
                             </tr>
                             <tr>
@@ -317,7 +317,7 @@ if (isset($_POST["btnthemnv"])) {
                             <tr>
                                 <td>
                                     <label for="phone" class="w-full py-2"><b>Số điện thoại</b></label>
-                                    <input type="text" class="w-full form-control" name="phone" required  pattern="^0\d{9}$" title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 0"
+                                    <input type="text" class="w-full form-control" name="phone" required pattern="^(0(2[0-9]|3[0-9]|7[0-9]|8[0-9]|9[0-9])[0-9]{7})|(\+84(2[0-9]|3[0-9]|7[0-9]|8[0-9]|9[0-9])[0-9]{7})$" title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng 0 hoặc +84, với các mã vùng 02, 03, 07, 08, 09"
                                         value="<?php echo $phone; ?>">
                                 </td>
                             </tr>
