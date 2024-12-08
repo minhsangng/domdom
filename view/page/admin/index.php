@@ -255,7 +255,7 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
         </div>
     </div>
     </div>
-
+    
     <script>
         function adjustContentHeight() {
             var rightSession = document.getElementById("right");
@@ -325,19 +325,19 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
             window.onload = adjustContentHeight;
 
             window.onresize = adjustContentHeight;
-            
+
             const navAd = document.querySelectorAll(".adnav");
             let idActiveAd = "admin";
-    
+
             navAd.forEach(function (item) {
                 item.addEventListener("click", () => {
                     navAd.forEach((i) => i.classList.remove("activeAd"));
                 });
             });
-    
+
             if (window.location.search != "")
                 idActiveAd = window.location.search.slice(3);
-    
+
             window.addEventListener("load", () => {
                 navAd.forEach(function (item) {
                     if (item.id == idActiveAd) item.classList.add("activeAd");

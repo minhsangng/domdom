@@ -14,7 +14,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playwrite+DE+Grund:wght@100..400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playwrite+DE+Grund:wght@100..400&display=swap"
+        rel="stylesheet">
 
     <!-- Bootstrap CSS -->
     <link href="../../css/bootstrap.min.css" rel="stylesheet">
@@ -33,10 +34,10 @@
 
     <!-- Bootstrap Bundle JS  -->
     <script src="../../js/bootstrap.bundle.min.js"></script>
-    
+
     <!-- Xuất Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
-    
+
     <!-- Sweet Alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -79,7 +80,7 @@
         }
 
         .pagination a.active {
-            background-color: rgb(200,200,200);
+            background-color: rgb(200, 200, 200);
             color: white;
         }
 
@@ -87,19 +88,19 @@
             background-color: #ddd;
             border-radius: 5px;
         }
-        
+
         .swal2-icon {
             font-size: 1rem;
         }
-        
+
         .swal2-title {
             font-size: 1.5rem;
         }
-        
+
         .swal2-cancel {
             margin-right: 5px;
         }
-        
+
         .swal2-confirm {
             margin-left: 5px;
         }
@@ -156,28 +157,36 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 </a>
             </div>
             <nav class="mt-10">
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="admin" href="index.php">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="admin"
+                    href="index.php">
                     <i class="fas fa-home mr-3"></i>Trang chủ
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="employee" href="index.php?i=employee">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="employee" href="index.php?i=employee">
                     <i class="fa-solid fa-users-gear mr-3"></i></i>Xem thông tin NV
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="ingredient" href="index.php?i=ingredient">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="ingredient" href="index.php?i=ingredient">
                     <i class="fa-solid fa-cubes mr-3"></i>Tính toán ng.liệu
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="revenue" href="index.php?i=revenue">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="revenue" href="index.php?i=revenue">
                     <i class="fa-solid fa-file-invoice-dollar mr-3"></i>Xem thống kê
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="shift" href="index.php?i=shift">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="shift"
+                    href="index.php?i=shift">
                     <i class="fa-regular fa-calendar-days mr-3"></i>Phân ca
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="attendance" href="index.php?i=attendance">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="attendance" href="index.php?i=attendance">
                     <i class="fa-solid fa-clock mr-3"></i>Chấm công
                 </a>
-                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav" id="proposal" href="index.php?i=proposal">
+                <a class="flex items-center py-2 px-8 text-gray-400 hover:bg-gray-700 hover:text-white adnav"
+                    id="proposal" href="index.php?i=proposal">
                     <i class="fa-solid fa-paper-plane mr-3"></i>Đề xuất
                 </a>
-                <a href="#" onclick="logout()" class="flex items-center py-2 px-8 text-white border-y-2 bg-gray-700 border-gray-500 mt-4 hover:bg-gray-700 hover:text-white adnav">
+                <a href="#" onclick="logout()"
+                    class="flex items-center py-2 px-8 text-white border-y-2 bg-gray-700 border-gray-500 mt-4 hover:bg-gray-700 hover:text-white adnav">
                     <i class="fa-solid fa-right-from-bracket mr-3"></i>Đăng xuất
                 </a>
             </nav>
@@ -185,16 +194,19 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
         <div class="bg-gray-100 flex-1 p-6 h-fit pb-2 md:p-10" id="right">
             <div class="flex justify-between items-center mb-6 hover:cursor-pointer">
                 <div class="relative w-1/2 flex">
-                    <input class="w-full py-2 px-4 mr-2 rounded-lg border border-gray-300" placeholder="Tìm kiếm..." type="text" />
+                    <input class="w-full py-2 px-4 mr-2 rounded-lg border border-gray-300" placeholder="Tìm kiếm..."
+                        type="text" />
                     <button type="submit" class="btn btn-primary ml-2 px-3">Tìm</button>
                 </div>
                 <div class="flex items-center hover:cursor-pointer">
-                    <div class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
+                    <div
+                        class="ml-4 bg-blue-100 text-blue-500 p-2 rounded-full text-xl hover:bg-blue-500 hover:text-white">
                         <i class="fa-regular fa-bell"></i>
                     </div>
                     <div class="ml-4 flex items-center relative user-container">
-                        <div class="rounded-full mr-1 border-solid bg-gray-400 text-white font-bold border-2 w-10 h-10 flex justify-center items-center">
-                        <?php
+                        <div
+                            class="rounded-full mr-1 border-solid bg-gray-400 text-white font-bold border-2 w-10 h-10 flex justify-center items-center">
+                            <?php
                             $userID = $_SESSION["user"][0];
 
                             $sql = "SELECT userID, userName FROM user WHERE userID = $userID";
@@ -206,9 +218,9 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                             $firstLetter = substr($name, 0, 1);
 
                             echo $firstLetter;
-                        ?>
+                            ?>
                         </div>
-                        <span class="text-xs font-bold ml-1"> Hello, 
+                        <span class="text-xs font-bold ml-1"> Hello,
                             <?php
                             echo $name;
                             ?>
@@ -232,6 +244,17 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                 require("home/index.php");
             }
             ?>
+
+            <!-- Thêm biến để lấy manager theo từng cửa hàng -->
+            <?php
+            $userID = $_SESSION["user"][0];
+
+            $sql = "SELECT userID, userName FROM user WHERE userID = $userID";
+            $result = $conn->query($sql);
+            $row = $result->fetch_assoc();
+
+            $_SESSION["managerstoreID"] = $row["storeID"];
+            ?>
         </div>
     </div>
     </div>
@@ -243,13 +266,13 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
             let isFormSubmitting = false;
 
             document.querySelectorAll("a").forEach(link => {
-                link.addEventListener("click", function(event) {
+                link.addEventListener("click", function (event) {
                     targetUrl = event.currentTarget.href;
                 });
             });
 
             document.querySelectorAll("form").forEach(form => {
-                form.addEventListener("submit", function(event) {
+                form.addEventListener("submit", function (event) {
                     isFormSubmitting = true;
                 });
             });
@@ -288,7 +311,7 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
         const navAd = document.querySelectorAll(".adnav");
         let idActiveAd = "admin";
 
-        navAd.forEach(function(item) {
+        navAd.forEach(function (item) {
             item.addEventListener("click", () => {
                 navAd.forEach((i) => i.classList.remove("activeAd"));
             });
@@ -296,17 +319,17 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
 
         if (window.location.search != "")
             idActiveAd = window.location.search.slice(3);
-            
+
         if (window.location.search.includes("ingredient"))
             idActiveAd = "ingredient";
 
         window.addEventListener("load", () => {
-            navAd.forEach(function(item) {
+            navAd.forEach(function (item) {
                 if (item.id == idActiveAd) item.classList.add("activeAd");
                 else item.classList.remove("activeAd");
             });
         });
-        
+
         function logout() {
             const swalWithBootstrapButtons = Swal.mixin({
                 customClass: {
