@@ -3,7 +3,6 @@ $storeID = 1;
 $isChecked = "";
 if (isset($_POST["btnxem"])) {
     $storeID = $_POST["store"];
-    $revenue = $_POST["revenue"];
     $isChecked = $storeID;
 }
 ?>
@@ -26,12 +25,11 @@ if (isset($_POST["btnxem"])) {
                 </select>
                 <div class="flex items-center w-fit">
                     <label for="" class="font-bold w-full">Loại DT: </label>
-                    <select name="revenue" id="revenue" class="form-control">
-                        <option value="0">Tất cả</option>
-                        <option value="1">Bán hàng</option>
-                        <option value="2">Nhân công</option>
-                        <option value="3">Nguyên liệu</option>
-                        <option value="4">Lợi nhuận</option>
+                    <select name="revenue" id="revenue" class="form-control"
+                        onchange="window.location.href = this.value;">
+                        <option value="#0">Tất cả</option>
+                        <option value="#DT">Doanh thu</option>
+                        <option value="#NVL">Nguyên vật liệu</option>
                     </select>
                 </div>
                 <div class="currentMonth flex items-center">
@@ -47,11 +45,9 @@ if (isset($_POST["btnxem"])) {
         </form>
 
         <hr>
-<!-- //////////////////// -->
+        <!-- //////////////////// -->
         <?php
-        if ($revenue == 1 || $revenue == 0) {
-
-            echo "<div class='flex justify-between items-center my-4 w-full'>
+            echo "<div class='flex justify-between items-center my-4 w-full' id='DT'>
                     <h2 class='text-xl font-semibold'>Doanhh thu bán hàng</h2>
                     <div class='flex items-center'>
                         <button
@@ -109,9 +105,8 @@ if (isset($_POST["btnxem"])) {
         </tfoot>
         </table>
     </div>";
-        }
         ?>
-<!-- //////////////////// -->
+        <!-- //////////////////// -->
         <div class="flex justify-between items-center my-4 w-full">
             <h2 class="text-xl font-semibold">Chi phí nhân công</h2>
             <div class="flex items-center">
@@ -136,40 +131,40 @@ if (isset($_POST["btnxem"])) {
                 </thead>
 
                 <tbody>
-                <?php
-                $ctrl = new cEmployees;
-                if ($ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM) != 0) {
-                $result = $ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM);
-                $totalCost = 0;
-                    while ($row = $result->fetch_assoc()) {
-                        $totalCost += $cost['totalSalary'];
-                        echo "<tr>
+                    <?php
+                    $ctrl = new cEmployees;
+                    if ($ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM) != 0) {
+                        $result = $ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM);
+                        $totalCost = 0;
+                        while ($row = $result->fetch_assoc()) {
+                            $totalCost += $cost['totalSalary'];
+                            echo "<tr>
                             <td class='border-2 py-2'>{$cost['roleName']}</td>
                             <td class='border-2 py-2'>{$cost['totalEmployees']}</td>
                             <td class='border-2 py-2'>{$cost['totalHours']}</td>
                             <td class='border-2 py-2'>" . number_format($cost['totalSalary'], 2, ',', '.') . " đồng</td>
                         </tr>";
-                    }
-                } else {
-                    echo "<tr>
+                        }
+                    } else {
+                        echo "<tr>
                             <td colspan='7' class='border-2 py-2'>Không có dữ liệu trong thời gian này!</td>
                         </tr>";
-                }
-                echo '</tbody>
+                    }
+                    echo '</tbody>
                 <tfoot>
                     <tr>
                         <td colspan="3" class="font-bold text-lg text-left p-2 border-2">
                             <p>Tổng chi phí:</p>
                         </td>
-                        <td class="text-center border-2">'.number_format($cost['totalSalary'], 2, ',', '.').'đồng</td>
+                        <td class="text-center border-2">' . number_format($cost['totalSalary'], 2, ',', '.') . 'đồng</td>
                     </tr>
                 </tfoot>';
-                ?>
+                    ?>
             </table>
         </div>
 
-        <!-- //////////////////// -->
-        <div class="flex justify-between items-center my-4 w-full">
+        <!-- ////////////////////Thống kê nvl -->
+        <div class="flex justify-between items-center my-4 w-full" id="NVL">
             <h2 class="text-xl font-semibold">Chi phí nguyên liệu</h2>
             <div class="flex items-center">
                 <button
@@ -197,7 +192,7 @@ if (isset($_POST["btnxem"])) {
                     <?php
                     $ctrl = new cIngredients;
                     if ($ctrl->cGetRevenueIngredientByStore($storeID, $startM, $endM) != 0) {
-                    $result = $ctrl->cGetRevenueIngredientByStore($storeID, $startM, $endM);
+                        $result = $ctrl->cGetRevenueIngredientByStore($storeID, $startM, $endM);
                         while ($row = $result->fetch_assoc()) {
                             $exportQuantity = $row['quantityImported'] - $row['quantityInStock']; // Tính sl xuất
                             $totalCost = $row['price'] * $row['quantityImported']; // Tính tổng chi phí
@@ -216,16 +211,16 @@ if (isset($_POST["btnxem"])) {
                                 <td colspan='7' class='border-2 py-2'>Không có dữ liệu trong thời gian này!</td>
                             </tr>";
                     }
-                echo '</tbody>
+                    echo '</tbody>
                 <tfoot>
                     <tr>
                         <td colspan="6" class="font-bold text-lg text-left p-2 border-2">
                             <p>Tổng chi phí:</p>
                         </td>
-                        <td class="text-center border-2">'.number_format($totalCost, 2, '.', ',').'đồng</td>
+                        <td class="text-center border-2">' . number_format($totalCost, 2, '.', ',') . 'đồng</td>
                     </tr>
                 </tfoot>';
-                ?>
+                    ?>
             </table>
         </div>
         <div class="flex justify-between items-center my-4 w-full">
@@ -250,11 +245,11 @@ if (isset($_POST["btnxem"])) {
                     </tr>
                 </thead>
                 <tbody>
-                <?php
+                    <?php
                     $revenueSales = 0; // Doanh thu bán hàng
                     $costLabor = 0; // Chi phí nhân công
                     $costIngredients = 0; // Chi phí nguyên liệu
-
+                    
                     // Doanh thu bán hàng
                     if ($revenue == 1 || $revenue == 0) {
                         $ctrlOrder = new cOrders;
@@ -288,12 +283,12 @@ if (isset($_POST["btnxem"])) {
                     $profit = $revenueSales - $costLabor - $costIngredients;
 
                     echo '<tr>
-                    <td class="border-2 py-2"><?php echo number_format($revenueSales, 2, ',', '.'); ?> đồng</td>
-                    <td class="border-2 py-2"><?php echo number_format($costLabor, 2, ',', '.'); ?> đồng</td>
-                    <td class="border-2 py-2"><?php echo number_format($costIngredients, 2, ',', '.'); ?> đồng</td>
-                    <td class="border-2 py-2"><?php echo number_format($profit, 2, ',', '.'); ?> đồng</td>
+                    <td class="border-2 py-2">' . number_format($revenueSales, 2, ',', '.') . 'đồng</td>
+                    <td class="border-2 py-2">' . number_format($costLabor, 2, ',', '.') . 'đồng</td>
+                    <td class="border-2 py-2">' . number_format($costIngredients, 2, ',', '.') . 'đồng</td>
+                    <td class="border-2 py-2">' . number_format($profit, 2, ',', '.') . 'đồng</td>
                     </tr>'
-                    ?>
+                        ?>
                 </tbody>
             </table>
         </div>
