@@ -1,15 +1,9 @@
 <?php
 $storeID = 1;
-
 if (isset($_POST["btnxem"])) {
     $storeID = $_POST["store"];
-    $revenueType = $_POST["revenueType"];
-    setcookie("selectedRevenueType", $_POST["revenueType"], time() + 3600, "/");
+    $_SESSION["isChecked"] = (int) $storeID;
 }
-
-$selectedRevenueType = isset($_COOKIE["selectedRevenueType"]) ? $_COOKIE["selectedRevenueType"] : "0";
-
-var_dump($_COOKIE["selectedRevenueType"]);
 ?>
 
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
@@ -17,25 +11,30 @@ var_dump($_COOKIE["selectedRevenueType"]);
         <form action="" method="POST" class="w-full">
             <div class="flex justify-between items-center mb-4">
                 <select name="store" id="store" class="form-control w-fit">
-                    <option class="mr-2 size-4" <?php echo $isChecked == 1 ? "selected" : ""; ?> value="1">Cửa hàng 1
+                    <option class="mr-2 size-4" <?php echo $_SESSION["isChecked"] == 1 ? "selected" : ""; ?> value="1">Cửa
+                        hàng 1
                     </option>
-                    <option class="mr-2 size-4" <?php echo $isChecked == 2 ? "selected" : ""; ?> value="2">Cửa hàng 2
+                    <option class="mr-2 size-4" <?php echo $_SESSION["isChecked"] == 2 ? "selected" : ""; ?> value="2">Cửa
+                        hàng 2
                     </option>
-                    <option class="mr-2 size-4" <?php echo $isChecked == 3 ? "selected" : ""; ?> value="3">Cửa hàng 3
+                    <option class="mr-2 size-4" <?php echo $_SESSION["isChecked"] == 3 ? "selected" : ""; ?> value="3">Cửa
+                        hàng 3
                     </option>
-                    <option class="mr-2 size-4" <?php echo $isChecked == 4 ? "selected" : ""; ?> value="4">Cửa hàng 4
+                    <option class="mr-2 size-4" <?php echo $_SESSION["isChecked"] == 4 ? "selected" : ""; ?> value="4">Cửa
+                        hàng 4
                     </option>
-                    <option class="mr-2 size-4" <?php echo $isChecked == 5 ? "selected" : ""; ?> value="5">Cửa hàng 5
+                    <option class="mr-2 size-4" <?php echo $_SESSION["isChecked"] == 5 ? "selected" : ""; ?> value="5">Cửa
+                        hàng 5
                     </option>
                 </select>
                 <div class="flex items-center w-fit">
                     <label for="" class="font-bold w-full">Loại DT: </label>
-                    <select name="revenueType" id="revenueType" class="form-control">
-                        <option value="0" <?php echo $_COOKIE["selectedRevenueType"] == "0" ? "selected" : ""; ?>>Tất cả</option>
-                        <option value="1" <?php echo $_COOKIE["selectedRevenueType"] == "1" ? "selected" : ""; ?>>Bán hàng</option>
-                        <option value="2" <?php echo $_COOKIE["selectedRevenueType"] == "2" ? "selected" : ""; ?>>Nhân công</option>
-                        <option value="3" <?php echo $_COOKIE["selectedRevenueType"] == "3" ? "selected" : ""; ?>>Nguyên liệu</option>
-                        <option value="4" <?php echo $_COOKIE["selectedRevenueType"] == "4" ? "selected" : ""; ?>>Lợi nhuận</option>
+                    <select name="revenue" id="revenue" class="form-control"
+                        onchange="window.location.href = this.value;">
+                        <option value="#0">Tất cả</option>
+                        <option value="#DT">Doanh thu</option>
+                        <option value="#NV">Nhân viên</option>
+                        <option value="#NL">Nguyên liệu</option>
                     </select>
                 </div>
                 <div class="currentMonth flex items-center">
@@ -53,9 +52,7 @@ var_dump($_COOKIE["selectedRevenueType"]);
         <hr>
         <!-- //////////////////// -->
         <?php
-        if ($revenueType == 1 || $revenueType == 0) {
-
-            echo "<div class='flex justify-between items-center my-4 w-full'>
+        echo "<div class='flex justify-between items-center my-4 w-full' id='DT'>
                     <h2 class='text-xl font-semibold'>Doanhh thu bán hàng</h2>
                     <div class='flex items-center'>
                         <button
@@ -67,7 +64,7 @@ var_dump($_COOKIE["selectedRevenueType"]);
                     </div>
                 </div>";
 
-            echo "<div class='h-fit bg-gray-100 rounded-lg p-6'>
+        echo "<div class='h-fit bg-gray-100 rounded-lg p-6'>
                     <table class='text-base w-full text-center'>
                         <thead>
                             <tr>
@@ -78,45 +75,44 @@ var_dump($_COOKIE["selectedRevenueType"]);
                             </tr>
                         </thead>
                         <tbody>";
-            $ctrl = new cOrders;
-            if ($ctrl->cGetRevenueOrderByStore($storeID, $startM, $endM) != 0) {
-                $result = $ctrl->cGetRevenueOrderByStore($storeID, $startM, $endM);
-                $revenue = 0;
+        $ctrl = new cOrders;
+        $revenue = 0;
+        if ($ctrl->cGetRevenueOrderByStore(storeID: $storeID, start: $startM, end: $endM) != 0) {
+            $result = $ctrl->cGetRevenueOrderByStore($storeID, $startM, $endM);
 
-                while ($row = $result->fetch_assoc()) {
-                    echo "
+            while ($row = $result->fetch_assoc()) {
+                echo "
                         <tr>
                             <td class='py-2 border-2'>" . date("d-m-Y", strtotime($row["orderDate"])) . "</td>
                             <td class='py-2 border-2'>" . $row["dishes"] . "</td>
                             <td class='py-2 border-2'>" . $row["sumOfQuantity"] . "</td>
-                            <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["total"], "2", ".", ",")) . "</td>
+                            <td class='py-2 border-2'>" . number_format($row["total"], 0, ".", ",") . "</td>
                         </tr>
                         ";
-                    $revenue += $row["finalAmount"];
-                }
+                $revenue += $row["total"];
+            }
+        } else
+            echo "<tr>
+                <td colspan='4' class='py-2 border-2'>Không có dữ liệu trong thời gian này!</td>
+            </tr>";
+        $_SESSION["revenue"] = $revenue;
 
-            } else
-                echo "<tr>
-                    <td colspan='4' class='py-2 border-2'>Không có dữ liệu trong thời gian này!</td>
-                </tr>";
-
-            echo "</tbody>
+        echo "</tbody>
         <tfoot>
             <tr>
                 <td colspan='3' class='font-bold text-lg text-left p-2 border-2'>
                     <p>Tổng doanh thu:</p>
                 </td>
                 <td class='text-center border-2'>
-                    " . str_replace(".00", "", number_format($revenue, "2", ".", ",")) . " đồng
+                    " . number_format($_SESSION["revenue"], 0, ".", ",") . " đồng
                 </td>
             </tr>
         </tfoot>
         </table>
     </div>";
-        }
         ?>
         <!-- //////////////////// -->
-        <div class="flex justify-between items-center my-4 w-full">
+        <div class="flex justify-between items-center my-4 w-full" id="NV">
             <h2 class="text-xl font-semibold">Chi phí nhân công</h2>
             <div class="flex items-center">
                 <button
@@ -144,9 +140,9 @@ var_dump($_COOKIE["selectedRevenueType"]);
                     $ctrl = new cEmployees;
                     if ($ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM) != 0) {
                         $result = $ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM);
-                        $totalCost = 0;
+                        $totalCostEmployee = 0;
                         while ($row = $result->fetch_assoc()) {
-                            $totalCost += $cost['totalSalary'];
+                            $totalCostEmployee += $cost['totalSalary'];
                             echo "<tr>
                             <td class='border-2 py-2'>{$cost['roleName']}</td>
                             <td class='border-2 py-2'>{$cost['totalEmployees']}</td>
@@ -159,21 +155,23 @@ var_dump($_COOKIE["selectedRevenueType"]);
                             <td colspan='7' class='border-2 py-2'>Không có dữ liệu trong thời gian này!</td>
                         </tr>";
                     }
+                    
+                    $_SESSION["totalCostEmployee"] = $totalCostEmployee;
                     echo '</tbody>
                 <tfoot>
                     <tr>
                         <td colspan="3" class="font-bold text-lg text-left p-2 border-2">
                             <p>Tổng chi phí:</p>
                         </td>
-                        <td class="text-center border-2">' . number_format($cost['totalSalary'], 2, ',', '.') . 'đồng</td>
+                        <td class="text-center border-2">' . number_format($_SESSION["totalCostEmployee"], 0, '.', ',') . ' đồng</td>
                     </tr>
                 </tfoot>';
                     ?>
             </table>
         </div>
 
-        <!-- //////////////////// -->
-        <div class="flex justify-between items-center my-4 w-full">
+        <!-- ////////////////////Thống kê nvl -->
+        <div class="flex justify-between items-center my-4 w-full" id="NL">
             <h2 class="text-xl font-semibold">Chi phí nguyên liệu</h2>
             <div class="flex items-center">
                 <button
@@ -211,8 +209,8 @@ var_dump($_COOKIE["selectedRevenueType"]);
                                     <td class='border-2 py-2'>{$row['stockQuantity']}</td>
                                     <td class='border-2 py-2'>{$row['importQuantity']}</td>
                                     <td class='border-2 py-2'>{$exportQuantity}</td>
-                                    <td class='border-2 py-2'>" . number_format($row['price'], 2, '.', ',') . " đồng</td>
-                                    <td class='border-2 py-2'>" . number_format($totalCost, 2, '.', ',') . " đồng</td>
+                                    <td class='border-2 py-2'>" . number_format($row['price'], 0, '.', ',') . " đồng</td>
+                                    <td class='border-2 py-2'>" . number_format($totalCost, 0, '.', ',') . " đồng</td>
                                 </tr>";
                         }
                     } else {
@@ -220,13 +218,15 @@ var_dump($_COOKIE["selectedRevenueType"]);
                                 <td colspan='7' class='border-2 py-2'>Không có dữ liệu trong thời gian này!</td>
                             </tr>";
                     }
+                    
+                    $_SESSION["totalCost"] = $totalCost;
                     echo '</tbody>
                 <tfoot>
                     <tr>
                         <td colspan="6" class="font-bold text-lg text-left p-2 border-2">
                             <p>Tổng chi phí:</p>
                         </td>
-                        <td class="text-center border-2">' . number_format($totalCost, 2, '.', ',') . 'đồng</td>
+                        <td class="text-center border-2">' . number_format($_SESSION["totalCost"], 0, '.', ',') . ' đồng</td>
                     </tr>
                 </tfoot>';
                     ?>
@@ -255,47 +255,14 @@ var_dump($_COOKIE["selectedRevenueType"]);
                 </thead>
                 <tbody>
                     <?php
-                    $revenueSales = 0; // Doanh thu bán hàng
-                    $costLabor = 0; // Chi phí nhân công
-                    $costIngredients = 0; // Chi phí nguyên liệu
-                    
-                    // Doanh thu bán hàng
-                    if ($revenue == 1 || $revenue == 0) {
-                        $ctrlOrder = new cOrders;
-                        if ($ctrlOrder->cGetRevenueOrderByStore($storeID, $startM, $endM) != 0) {
-                            $resultOrder = $ctrlOrder->cGetRevenueOrderByStore($storeID, $startM, $endM);
-                            while ($row = $resultOrder->fetch_assoc()) {
-                                $revenueSales += $row["finalAmount"]; // Tổng doanh thu bán hàng
-                            }
-                        }
-                    }
 
-                    // Chi phí nhân công
-                    $ctrlEmployee = new cEmployees;
-                    if ($ctrlEmployee->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM) != 0) {
-                        $resultEmployee = $ctrlEmployee->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM);
-                        while ($row = $resultEmployee->fetch_assoc()) {
-                            $costLabor += $row["totalSalary"]; // Tổng chi phí nhân công
-                        }
-                    }
-
-                    // Chi phí nguyên liệu
-                    $ctrlIngredient = new cIngredients;
-                    if ($ctrlIngredient->cGetRevenueIngredientByStore($storeID, $startM, $endM) != 0) {
-                        $resultIngredient = $ctrlIngredient->cGetRevenueIngredientByStore($storeID, $startM, $endM);
-                        while ($row = $resultIngredient->fetch_assoc()) {
-                            $costIngredients += $row['price'] * $row['quantityImported']; // Tổng chi phí nguyên liệu
-                        }
-                    }
-
-                    // lợi nhuận
-                    $profit = $revenueSales - $costLabor - $costIngredients;
+                    $_SESSION["profit"] = $_SESSION["revenue"] - $_SESSION["totalCostEmplyee"] - $_SESSION["totalCost"];
 
                     echo '<tr>
-                    <td class="border-2 py-2"><?php echo number_format($revenueSales, 2, ', ', ' . '); ?> đồng</td>
-                    <td class="border-2 py-2"><?php echo number_format($costLabor, 2, ', ', ' . '); ?> đồng</td>
-                    <td class="border-2 py-2"><?php echo number_format($costIngredients, 2, ', ', ' . '); ?> đồng</td>
-                    <td class="border-2 py-2"><?php echo number_format($profit, 2, ', ', ' . '); ?> đồng</td>
+                    <td class="border-2 py-2">' . number_format($_SESSION["revenue"], 0, '.', ',') . '</td>
+                    <td class="border-2 py-2">' . number_format($_SESSION["totalCostEmplyee"], 0, '.', ',') . '</td>
+                    <td class="border-2 py-2">' . number_format($_SESSION["totalCost"], 0, '.', ',') . '</td>
+                    <td class="border-2 py-2">' . number_format($_SESSION["profit"], 0, '.', ',') . '</td>
                     </tr>'
                         ?>
                 </tbody>

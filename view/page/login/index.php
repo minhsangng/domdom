@@ -144,7 +144,7 @@ if (isset($_POST["btndn"])) {
             transform-style: preserve-3d;
             -webkit-perspective: 1000px;
             perspective: 1000px;
-            z-index: 0;
+            z-index: -1;
         }
 
         .starfall .falling-star {

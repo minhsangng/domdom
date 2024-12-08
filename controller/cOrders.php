@@ -77,13 +77,17 @@ class cOrders extends mOrders
         } return 0;
     }
     
-    public function cUpdateOrder($orderID, $note, $total) {
+    /* public function cUpdateOrder($orderID, $note, $total) {
         return $this->mUpdateOrder($orderID, $note, $total);
-    }
+    } */
     
-    public function cUpdateOrderDish($orderID, $quantity, $dishID) {
-        return $this->mUpdateOrderDish($orderID, $quantity, $dishID);
+    public function cUpdateOrderDish($orderID, $quantityUpdate, $notes, $total, $dishID) {
+        if ($this->mUpdateOrderDish($orderID, $quantityUpdate, $notes, $total, $dishID)) {
+            return true;
+        }else 
+        return false;
     }
+
     
     public function cUpdateStatusOrder($orderID, $status, $storeID) {
         return $this->mUpdateStatusOrder($orderID, $status, $storeID);
@@ -93,12 +97,12 @@ class cOrders extends mOrders
         return $this->mUpdateOrderPartyPackage($orderID, $note);
     }
     
-    public function cInsertOrder($customerID, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID) {
-        return $this->mInsertOrder($customerID, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID);
+    public function cInsertOrder($phoneNumber, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID) {
+        return $this->mInsertOrder($phoneNumber, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID);
     }
     
-    public function cInsertOrderPartyPackage($customerID, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID, $partyPackageID) {
-        return $this->mInsertOrderPartyPackage($customerID, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID, $partyPackageID);
+    public function cInsertOrderPartyPackage($phoneNumber, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID, $partyPackageID) {
+        return $this->mInsertOrderPartyPackage($phoneNumber, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID, $partyPackageID);
     }
     
     public function cInsertOrderDish($orderID, $dishID, $quantity) {
