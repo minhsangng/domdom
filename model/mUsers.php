@@ -6,7 +6,7 @@ class mUsers
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT * FROM user WHERE roleID != 1";
+        $sql = "SELECT * FROM `user` AS U JOIN `role` AS R ON U.roleID = R.roleID WHERE U.roleID != 1";
         if ($conn != null) 
             return $conn->query($sql);
         return 0;

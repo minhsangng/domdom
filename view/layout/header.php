@@ -1,9 +1,6 @@
 <?php
 $_SESSION["currentTotal"] = 0;
-?>
-<!DOCTYPE html>
-<html lang="en">
-<?php
+
 if (isset($_POST["store"])) {
     $storeID = $_POST["store"];
     setcookie("selectedStore", $_POST["store"], time() + 3600, "/");
@@ -11,7 +8,8 @@ if (isset($_POST["store"])) {
 
 $selectedStore = isset($_COOKIE["selectedStore"]) ? $_COOKIE["selectedStore"] : "";
 ?>
-
+<!DOCTYPE html>
+<html lang="en"></html>
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -35,6 +33,7 @@ $selectedStore = isset($_COOKIE["selectedStore"]) ? $_COOKIE["selectedStore"] : 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
     <!-- Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="view/js/tailwindcss.js"></script>
 
     <!-- jQuery -->
@@ -319,7 +318,8 @@ $selectedStore = isset($_COOKIE["selectedStore"]) ? $_COOKIE["selectedStore"] : 
 
     if (isset($_POST["HuyDonHang"])) {
         $ctrl = new cOrders;
-        if ($ctrl->cUpdateStatusOrder($_SESSION["orderIDD"], 4, $_COOKIE["selectedStore"]) == 0)
+        $ctrlMessage = new cMessage;
+        if ($ctrl->cUpdateStatusOrder($_SESSION["orderIDD"], 4, $_COOKIE["selectedStore"]))
             $ctrlMessage->errorMessage("Huỷ đơn hàng ");
         else
             $ctrlMessage->successMessage("Huỷ đơn hàng ");

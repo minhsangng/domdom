@@ -13,6 +13,17 @@ class mIngredients
         return 0;
     }
 
+    public function mGetUnitIngredient()
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT * FROM ingredient GROUP BY unitOfcalculation";
+
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+
     public function mGetAllIngredientLiMit($startFrom, $productsPerPage)
     {
         $db = new Database;
@@ -59,7 +70,7 @@ class mIngredients
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT * FROM ingredient WHERE unitOfcalculaton != '$unit' GROUP BY unitOfcalculaton";
+        $sql = "SELECT * FROM `ingredient` WHERE unitOfcalculation != '$unit' GROUP BY unitOfcalculation";
         if ($conn != null)
             return $conn->query($sql);
         return 0;
@@ -69,7 +80,7 @@ class mIngredients
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT ingredientID, typeIngredient FROM ingredient  GROUP BY typeIngredient";
+        $sql = "SELECT * FROM `ingredient` GROUP BY typeIngredient";
         if ($conn != null)
             return $conn->query($sql);
         return 0;
@@ -79,7 +90,7 @@ class mIngredients
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT ingredientID, unitOfcalculaton FROM ingredient  GROUP BY unitOfcalculaton";
+        $sql = "SELECT ingredientID, unitOfcalculation FROM ingredient  GROUP BY unitOfcalculation";
         if ($conn != null)
             return $conn->query($sql);
         return 0;
@@ -89,45 +100,49 @@ class mIngredients
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT unitOfcaculaton FROM ingredient WHERE ingredientName = $ingredient";
+        $sql = "SELECT unitOfcaculation FROM ingredient WHERE ingredientName = $ingredient";
         if ($conn != null)
             return $conn->query($sql);
         return 0;
     }
 
-    public function mGetQuantityFreshIngredient($quantities){
+    public function mGetQuantityFreshIngredient($quantities)
+    {
         $db = new Database;
         $conn = $db->connect();
-        $count=0;
+        $dishID = 0;
         $sql_parts = [];
         foreach ($quantities as $dishID => $quantity) {
-            $dishID+=1;
+            $dishID += 1;
             $sql_parts[] = "WHEN di.dishID = $dishID THEN $quantity";
-            $count++;
         }
         $sql_case = implode(' ', $sql_parts);
-        $sql = "SELECT di.ingredientID, i.ingredientName, i.unitOfcalculaton, SUM(di.quantity * CASE $sql_case ELSE 0 END) AS TotalQuantity FROM ingredient i inner join dish_ingredient di on i.ingredientID = di.ingredientID WHERE i.typeIngredient = 'Tươi' GROUP BY i.ingredientID HAVING TotalQuantity != 0";
+        $sql = "SELECT di.ingredientID, i.ingredientName, i.unitOfcalculation, SUM(di.quantity * CASE $sql_case ELSE 0 END) AS TotalQuantity FROM ingredient i 
+            inner join dish_ingredient di on i.ingredientID = di.ingredientID WHERE i.typeIngredient = 'Tươi' GROUP BY i.ingredientID HAVING TotalQuantity != 0";
         if ($conn != null)
             return $conn->query($sql);
         return 0;
     }
 
-    public function mGetQuantityDryIngredient($quantities, $userID){
+    public function mGetQuantityDryIngredient($quantities, $userID)
+    {
         $db = new Database;
         $conn = $db->connect();
-        $count=0;
+        $dishID = 0;
         $sql_parts = [];
         foreach ($quantities as $dishID => $quantity) {
-            $dishID+=1;
+            $dishID += 1;
             $sql_parts[] = "WHEN di.dishID = $dishID THEN $quantity";
-            $count++;
         }
         $sql_case = implode(' ', $sql_parts);
-        $sql = "SELECT *, SUM(di.quantity * CASE $sql_case ELSE 0 END) AS TotalQuantity FROM ingredient i inner join dish_ingredient di on i.ingredientID = di.ingredientID inner join store_ingredient si on i.ingredientID = si.ingredientID inner join user u on u.storeID = si.storeID WHERE i.typeIngredient = 'Khô' AND u.userID = $userID GROUP BY i.ingredientID HAVING TotalQuantity != 0";
+        $sql = "SELECT *, SUM(di.quantity * CASE $sql_case ELSE 0 END) AS TotalQuantity FROM ingredient i inner join dish_ingredient di on i.ingredientID = di.ingredientID 
+            inner join store_ingredient si on i.ingredientID = si.ingredientID inner join user u on u.storeID = si.storeID WHERE i.typeIngredient = 'Khô' AND u.userID = $userID GROUP BY i.ingredientID HAVING TotalQuantity != 0";
         if ($conn != null)
             return $conn->query($sql);
         return 0;
     }
+
+
 
     public function mGetTotalIngredient()
     {
@@ -148,7 +163,7 @@ class mIngredients
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "INSERT INTO ingredient (ingredientName, unitOfcalculaton, price, typeIngredient) VALUES ('$ingreName', '$unit', $price, '$type')";
+        $sql = "INSERT INTO ingredient (ingredientName, unitOfcalculation, price, typeIngredient) VALUES ('$ingreName', '$unit', $price, '$type')";
 
         return $conn->query($sql);
     }
@@ -157,7 +172,7 @@ class mIngredients
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "UPDATE `ingredient` SET ingredientName = '$ingreName', unitOfcalculaton = '$unit', price = $price, typeIngredient = '$type' WHERE ingredientID = $ingreID";
+        $sql = "UPDATE `ingredient` SET ingredientName = '$ingreName', unitOfcalculation = '$unit', price = $price, typeIngredient = '$type' WHERE ingredientID = $ingreID";
 
         if ($conn != null)
             return $conn->query($sql);
@@ -170,6 +185,35 @@ class mIngredients
         $conn = $db->connect();
         $sql = "UPDATE ingredient SET status = $status WHERE ingredientID = '$ingredientID'";
 
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+
+    public function mGetRevenueIngredientByStore($storeID, $startDate, $endDate)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "
+                SELECT 
+                    i.ingredientName AS 'ingredientName', 
+                    i.unitOfcalculation AS 'unit', 
+                    si.quantityInStock AS 'quantityInStock', 
+                    SUM(ni.quantity) AS 'quantityImported', 
+                    i.price
+                FROM 
+                    NeedIngredient ni
+                JOIN 
+                    ImportOrder io ON ni.importOrderID = io.importOrderID
+                JOIN 
+                    Ingredient i ON ni.ingredientID  = i.ingredientID 
+                JOIN 
+                    Store_Ingredient si ON si.ingredientID  = i.ingredientID  AND si.storeID = $storeID
+                WHERE 
+                    io.importOrderDate BETWEEN $startDate AND $endDate
+                GROUP BY 
+                    i.ingredientID
+            ";
         if ($conn != null)
             return $conn->query($sql);
         return 0;

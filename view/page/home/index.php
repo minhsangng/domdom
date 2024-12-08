@@ -9,22 +9,20 @@
 <div class="search absolute top-52 left-16">
   <form action="#ci" method="post" class="form-search">
     <section class="content-home">
-      <h1 class="text-center my-4 leading-relaxed text-5xl">THÈM MÓN GÌ, <br> <span id="text">NGẠI CHI MÀ KHÔNG NÓI?</span></h1>
+      <h1 class="text-center my-4 leading-relaxed text-5xl">THÈM MÓN GÌ, <br> <span id="text">NGẠI CHI MÀ KHÔNG
+          NÓI?</span></h1>
       <div class="content w-full flex justify-center text-xl">
         <div class=" flex items-center w-full h-14 rounded-lg shadow-red-200 shadow-md bg-white pr-4 pl-2">
           <div class="grid place-items-center h-full w-12 text-gray-300">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
 
-          <input
-            class="peer h-full w-full outline-none text-base text-gray-700 px-2"
-            type="search"
-            id="search"
-            name="search"
-            value="<?php echo $_POST["search"]; ?>"
-            placeholder="Gà rán, 15000, Mì,..." />
+          <input class="peer h-full w-full outline-none text-base text-gray-700 px-2" type="search" id="search"
+            name="search" value="<?php echo $_POST["search"]; ?>" placeholder="Gà rán, 15000, Mì,..." />
         </div>
     </section>
   </form>
@@ -49,13 +47,13 @@ if (isset($_POST["search"])) {
         echo "<div class='grid grid-cols-4 gap-x-14 gap-y-10 my-4'>";
         $img_dish = "";
 
-            while ($row = $result->fetch_assoc()) {
-                $img_dish = "images/dish/" . $row["image"];
-                if (!file_exists($img_dish))
-                    $img_dish = "images/nodish.png";
+        while ($row = $result->fetch_assoc()) {
+          $img_dish = "images/dish/" . $row["image"];
+          if (!file_exists($img_dish))
+            $img_dish = "images/nodish.png";
 
-                $price = str_replace(".00", "", number_format($row["price"], "2", ".", ","));
-                echo "<div class='w-full bg-white shadow rounded-lg hover:scale-105 transition delay-150'>
+          $price = str_replace(".00", "", number_format($row["price"], "2", ".", ","));
+          echo "<div class='w-full bg-white shadow rounded-lg hover:scale-105 transition delay-150'>
                         <a href='index.php?p=dish&i=" . $row["dishID"] . "'>
                     <div class='h-40 w-full bg-gray-200 flex flex-col justify-between p-4 bg-cover bg-center border-2 border-red-100 rounded-t-lg' style='background-image: url(" . $img_dish . ")'>
                     </div>
@@ -83,10 +81,11 @@ if (isset($_POST["search"])) {
                     </div>
                     </a>
                   </div>";
-            }
+        }
         echo "</div>";
       }
-    } else echo "Không có dữ liệu!";
+    } else
+      echo "Không có dữ liệu!";
 
     if ($n == 0 && $m == 0) {
       echo "<div class='grid grid-cols-1 w-full my-4'><h5 class='font-bold'>Xin lỗi! Chúng tôi không tìm thấy kết quả bạn cần!</h5></div>";
@@ -117,7 +116,8 @@ if (isset($_POST["search"])) {
             $count++;
             if ($count % 2 == 0)
               $border = "#FFA726";
-            else $border = "#EF5350";
+            else
+              $border = "#EF5350";
             $img_dish = "images/dish/" . $row["image"];
             if (!file_exists($img_dish))
               $img_dish = "images/nodish.png";
@@ -133,7 +133,8 @@ if (isset($_POST["search"])) {
                         </a>
                     </div>";
           }
-        } else "Không có dữ liệu!";
+        } else
+          "Không có dữ liệu!";
         ?>
       </div>
     </div>
@@ -165,19 +166,20 @@ if (isset($_POST["search"])) {
             $bg = "rgba(255, 255, 255, 0.8)";
             $color = "#EF5350";
           }
-          
-          $id = $row["promotionID"]-1;
+
+          $id = $row["promotionID"] - 1;
 
           echo "
               <div class='rounded-3xl mb-20 pb-6 h-fit hover:scale-110 delay-150 ease-linear transition-all' style='background-color: " . $bg . "; color: " . $color . ";'>
-                  <a class='relative flex flex-col items-center' href='index.php?p=promotion#".$id."'>
+                  <a class='relative flex flex-col items-center' href='index.php?p=promotion#" . $id . "'>
                     <img alt='" . $row["promotionName"] . "' class='rounded-full size-40 absolute bottom-24 border-amber-400 border-2' src='" . $img_pomotion . "'/>
                     <h2 class='text-lg font-semibold mt-20 mb-2'>" . $row["promotionName"] . "</h2>
                     <p class='text-md text-center px-2 h-12'>" . $row["description"] . "</p>
                   </a>
               </div>";
         }
-      } else echo "Không có dữ liệu!";
+      } else
+        echo "Không có dữ liệu!";
       ?>
     </div>
   </section>

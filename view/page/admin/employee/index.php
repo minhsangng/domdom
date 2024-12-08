@@ -202,7 +202,7 @@ if (isset($_POST["btnthemnv"])) {
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form action="" class="form-container w-full" method="POST" enctype="multipart/form-data">
+                <form action="" class="form-container w-full" method="POST" enctype="multipart/form-data" >
                     <div class="modal-header">
                         <h2 class="modal-title fs-5 font-bold text-3xl" id="insertModalLabel" style="color: #E67E22;">
                             Thêm nhân viên</h2>

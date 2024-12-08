@@ -76,12 +76,11 @@ class mDishes
             return $conn->query($sql);
         return 0;
     }
-
     public function mGetDishById($dishID)
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT d.*, di.*, i.ingredientName, i.unitOfcalculaton FROM dish d INNER JOIN dish_ingredient di ON d.dishID = di.dishID INNER JOIN ingredient i ON di.ingredientID = i.ingredientID WHERE d.dishID = '" . $dishID . "'";
+        $sql = "SELECT d.*, di.*, i.ingredientName, i.unitOfcalculation FROM dish d INNER JOIN dish_ingredient di ON d.dishID = di.dishID INNER JOIN ingredient i ON di.ingredientID = i.ingredientID WHERE d.dishID = '" . $dishID . "'";
         if ($conn != null)
             return $conn->query($sql);
         return 0;
@@ -180,7 +179,6 @@ class mDishes
         $db = new Database;
         $conn = $db->connect();
         $sql = "INSERT INTO dish (dishName, dishCategory, price, preparationProcess, image) VALUES ('$dishName', '$dishCategory', $price, '$prepare', '$image')";
-
         return $conn->query($sql);
     }
 

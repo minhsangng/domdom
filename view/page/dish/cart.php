@@ -45,9 +45,6 @@ if (isset($_POST["btndel"])) {
             break;
         }
     }
-
-    if (count($_SESSION["cart"]) == 0)
-        unset($_SESSION["cart"]);
 }
 
 if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
@@ -99,8 +96,9 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
 
                         $total += $cart["total"];
                     }
-                } else
-                    echo "<div class='flex justify-center items-center w-full h-full text-gray-400'>Giỏ hàng đang trống!</div>";
+                }
+                if (count($_SESSION["cart"]) == 0)
+                    echo "<div class='flex justify-center items-center w-full h-full text-gray-500 text-xl'>Giỏ hàng đang trống!</div>";
                 ?>
 
             </div>

@@ -45,6 +45,15 @@ class cIngredients extends mIngredients
             return $result;
         } return 0;
     }
+    
+    public function cGetUnitIngredient()
+    {
+        if ($this->mGetUnitIngredient() != 0) {
+            $result = $this->mGetUnitIngredient();
+            
+            return $result;
+        } return 0;
+    }
 
     public function cGetQuantityFreshIngredient($quantities)
     {
@@ -131,5 +140,13 @@ class cIngredients extends mIngredients
         if ($this->mLockIngredient($status, $ingredientID) != 0) {
             echo "<script>alert('" . ($status == 1 ? "Mở khóa" : "Khóa") . " nguyên liệu thành công!')</script>";
         }
+    }
+    
+    public function cGetRevenueIngredientByStore($storeID, $startDate, $endDate) {
+        if ($this->mGetRevenueIngredientByStore($storeID, $startDate, $endDate) != 0) {
+            $result = $this->mGetRevenueIngredientByStore($storeID, $startDate, $endDate);
+           
+            return $result;
+        } return 0;
     }
 }

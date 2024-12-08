@@ -12,12 +12,12 @@ $ctrl = new cIngredients;
 
 if (isset($_POST["btnthemnl"])) {
     $ingreName = $_POST["ingreName"];
-    $unit = $_POST["unit"];
+    $unit = $_POST["unitCalculation"];
     $price = $_POST["price"];
     $type = $_POST["typeIngre"];
 
     $ctrl->cInsertIngredient($ingreName, $unit, $price, $type);
-}
+} 
 
 if (isset($_POST["btncapnhat"])) {
 
@@ -34,7 +34,7 @@ if (isset($_POST["btncapnhat"])) {
 
     $_SESSION["ingreID"] = $row["ingredientID"];
     $_SESSION["ingreName"] = $row["ingredientName"];
-    $_SESSION["unit"] = $row["unitOfcalculaton"];
+    $_SESSION["unit"] = $row["unitOfcalculation"];
     $_SESSION["price"] = $row["price"];
     $_SESSION["type"] = $row["typeIngredient"];
 }
@@ -60,7 +60,6 @@ if (isset($_POST["btnSLT"])) {
         $_SESSION["quantityInStockSLT"][$sltdem] = $r["quantityInStock"];
         $sltdem++;
     }
-
 }
 
 if (isset($_POST["btnsuanl"])) {
@@ -74,12 +73,16 @@ if (isset($_POST["btnsuanl"])) {
 }
 
 if (isset($_POST["btnkhoa"])) {
-    echo "<script>
-        document.addEventListener('DOMContentLoaded', function() {
-            confirm('Bạn có chắc chắn khóa nguyên liệu này?');
-        });
-        </script>";
+    $ingredientID = $_POST["btnkhoa"];
+    $ctrl = new cIngredients;
+    $table = $ctrl->cGetIngredientById($ingredientID);
+    $status = $table["status"];
+
+    $newStatus = ($status == 1) ? 0 : 1;
+
+    $ctrl->cLockIngredient($newStatus, $ingredientID);
 }
+
 ?>
 
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
@@ -141,7 +144,7 @@ if (isset($_POST["btnkhoa"])) {
                         <tr>
                             <td class='py-2 border-2'>#NL0" . ($row["ingredientID"] < 10 ? "0" . $row["ingredientID"] : $row["ingredientID"]) . "</td>
                             <td class='py-2 border-2'>" . $row["ingredientName"] . "</td>
-                            <td class='py-2 border-2'>" . $row["unitOfcalculaton"] . "</td>
+                            <td class='py-2 border-2'>" . $row["unitOfcalculation"] . "</td>
                             <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
                             <td class='py-2 border-2'>" . $row["typeIngredient"] . "</td>
                             <td class='py-2 border-2'> <button class=' mr-1' name='btnSLT' value='" . $row["ingredientID"] . "'><i class='fa-solid fa-eye fa-lg'></i></button></td>
@@ -219,15 +222,15 @@ if (isset($_POST["btnkhoa"])) {
                                 <td>
                                     <label for="unit" class="w-full py-2"><b>Đơn vị tính <span
                                                 class="text-red-500">*</span></b></label>
-                                    <select name="ingredient" id="cate" class="w-full form-control">
+                                    <select name="unitCalculation" id="unit" class="w-full form-control">
                                         <?php
                                         $ctrl = new cIngredients;
 
-                                        if ($ctrl->cGetAllIngredient() != 0) {
-                                            $result = $ctrl->cGetAllIngredient();
+                                        if ($ctrl->cGetUnitIngredient() != 0) {
+                                            $result = $ctrl->cGetUnitIngredient();
 
                                             while ($row = $result->fetch_assoc())
-                                                echo "<option value='" . $row["ingredientID"] . "'>" . $row["unitOfcalculaton"] . "</option>";
+                                                echo "<option value='" . $row["unitOfcalculation"] . "'>" . $row["unitOfcalculation"] . "</option>";
                                         }
                                         ?>
                                     </select>
@@ -293,21 +296,21 @@ if (isset($_POST["btnkhoa"])) {
                             <tr>
                                 <td>
                                     <label for="unit" class="w-full py-2"><b>Đơn vị tính</b></label>
-                                    <select name="ingredient" id="cate" class="w-full form-control">
+                                    <select name="unit" id="cate" class="w-full form-control">
                                         <?php
                                         $ctrl = new cIngredients;
 
                                         if ($ctrl->cGetIngredientById($_SESSION["ingreID"]) != 0) {
                                             $row = $ctrl->cGetIngredientById($_SESSION["ingreID"]);
 
-                                            echo "<option value='" . $row["ingredientID"] . "'>" . $row["unitOfcalculaton"] . "</option>";
+                                            echo "<option value='" . $row["unitOfcalculation"] . "'>" . $row["unitOfcalculation"] . "</option>";
                                         }
 
                                         if ($ctrl->cGetIngredientNotUnit($_SESSION["unit"]) != 0) {
                                             $result = $ctrl->cGetIngredientNotUnit($_SESSION["unit"]);
 
                                             while ($row = $result->fetch_assoc())
-                                                echo "<option value='" . $row["ingredientID"] . "'>" . $row["unitOfcalculaton"] . "</option>";
+                                                echo "<option value='" . $row["unitOfcalculation"] . "'>" . $row["unitOfcalculation"] . "</option>";
                                         }
                                         ?>
                                     </select>
