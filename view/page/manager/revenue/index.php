@@ -1,13 +1,15 @@
+<?php
+session_start();
+$storeID = $_SESSION["managerstoreID"];
+?>
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
         <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
             <div class="flex justify-between items-center mb-4">
                 <div class="flex items-center w-fit">
                     <select name="" id="" class="form-control">
-                        <option value="">Tất cả</option>
-                        <option value="">Bán hàng</option>
-                        <option value="">Nhân công</option>
-                        <option value="">Nguyên liệu</option>
-                        <option value="">Lợi nhuận</option>
+                        <option value="#0">Tất cả</option>
+                        <option value="#DT">Doanh thu</option>
+                        <option value="#NVL">Nguyên vật liệu</option>
                     </select>
                 </div>
                 <div class="currentMonth">
@@ -40,13 +42,12 @@
                     </thead>
                     <tbody>
                         <?php
-                        $sql = "SELECT *, GROUP_CONCAT(CONCAT(D.dishName, ' (x', OD.quantity, ')') SEPARATOR ', ') AS dishes FROM `order` AS O JOIN `order_dish` AS OD ON OD.orderID = O.orderID JOIN `dish` AS D ON D.dishID = OD.dishID WHERE O.orderDate >= '$startM' AND O.orderDate <= '$endM' GROUP BY O.orderID";
-                        $result = $conn->query($sql);
-                        $revenue = 0;
-
-                        if ($result->num_rows > 0)
-                            while ($row = $result->fetch_assoc()) {
-                                echo "
+                            $ctrl = new cOrders;
+                            if ($ctrl->cGetRevenueOrderByStore(storeID: $storeID, start: $startM, end: $endM) != 0) {
+                                $result = $ctrl->cGetRevenueOrderByStore($storeID, $startM, $endM);
+                                $revenueType = 0;
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "
                                         <tr>
                                             <td class='py-2 border-2'>" . date("d-m-Y", strtotime($row["orderDate"])) . "</td>
                                             <td class='py-2 border-2'>" . $row["dishes"] . "</td>
@@ -54,28 +55,25 @@
                                             <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["total"], "2", ".", ",")) . "</td>
                                         </tr>
                                         ";
-                                $revenue += $row["total"];
-                            }
-                        else
-                            echo "<tr>
-                                <td colspan='4' class='py-2 border-2'>Không có dữ liệu trong thời gian này!</td>
-                            </tr>";
-                        ?>
-                        <tr>
-                            <td class="border-2 py-2">...</td>
-                            <td class="border-2 py-2">...</td>
-                            <td class="border-2 py-2">...</td>
-                            <td class="border-2 py-2">...</td>
-                        </tr>
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="3" class="font-bold text-lg text-left p-2 border-2">
-                                <p>Tổng doanh thu:</p>
-                            </td>
-                            <td class="text-center border-2"><!-- <?php echo str_replace(".00", "", number_format($revenue, "2", ".", ",")); ?> --> 552,250,000 đồng</td>
-                        </tr>
-                    </tfoot>
+                                    $revenueType += $row["finalAmount"];
+                                }
+
+                            } else
+                                echo "<tr>
+                                    <td colspan='4' class='py-2 border-2'>Không có dữ liệu trong thời gian này!</td>
+                                </tr>";
+                                echo "</tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan='3' class='font-bold text-lg text-left p-2 border-2'>
+                                                    <p>Tổng doanh thu:</p>
+                                                </td>
+                                                <td class='text-center border-2'>
+                                                    " . str_replace(".00", "", number_format($revenue, "2", ".", ",")) . " đồng
+                                                </td>
+                                            </tr>
+                                        </tfoot>"
+                               ?>
                 </table>
             </div>
             <div class="flex justify-between items-center my-4 w-full">

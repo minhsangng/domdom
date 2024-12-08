@@ -71,7 +71,7 @@ if (isset($_POST["btnxem"])) {
                         </thead>
                         <tbody>";
             $ctrl = new cOrders;
-            if ($ctrl->cGetRevenueOrderByStore($storeID, $startM, $endM) != 0) {
+            if ($ctrl->cGetRevenueOrderByStore(storeID: $storeID, start: $startM, end: $endM) != 0) {
                 $result = $ctrl->cGetRevenueOrderByStore($storeID, $startM, $endM);
                 $revenueType = 0;
 

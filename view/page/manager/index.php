@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <html lang="en">
 
 <head>
@@ -247,9 +250,7 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
 
             <!-- Thêm biến để lấy manager theo từng cửa hàng -->
             <?php
-            $userID = $_SESSION["user"][0];
-
-            $sql = "SELECT userID, userName FROM user WHERE userID = $userID";
+            $sql = "SELECT storeID FROM user WHERE userName = $userID";
             $result = $conn->query($sql);
             $row = $result->fetch_assoc();
 
