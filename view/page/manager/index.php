@@ -15,6 +15,7 @@ include("../../../controller/cUsers.php");
 include("../../../controller/cProposals.php");
 include("../../../controller/cStores.php");
 include("../../../controller/cMessage.php");
+include("../../../controller/cImportOrder.php");
 
 /* Xử lý đăng nhập */
 if (!isset($_SESSION["login"]))

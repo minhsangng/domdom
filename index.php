@@ -8,6 +8,7 @@ require_once("controller/cPartyPackages.php");
 require_once("controller/cIngredients.php");
 require_once("controller/cCustomers.php");
 require_once("controller/cOrders.php");
+require_once("controller/cImportOrder.php");
 require_once("controller/cEmployees.php");
 require_once("controller/cDishes.php");
 require_once("controller/cMessage.php");

@@ -17,6 +17,49 @@ class cOrders extends mOrders
             return $result;
         } return 0;
     }
+
+    public function cGetAllOrderByID($orderID) {
+        $result = [];
+        $orderData = $this->mGetAllOrderByID($orderID);
+        if ($orderData != 0 && $orderData->num_rows > 0) {
+            $order = $orderData->fetch_assoc();
+            if (!is_null($order['partyPackageID'])) {
+                $packageData = $this->mGetOrderPackage($orderID);
+                if ($packageData != 0 && $packageData->num_rows > 0) {
+                    $result['type'] = 'package';
+                    $result['data'] = $packageData->fetch_all(MYSQLI_ASSOC);
+                    return $result;
+                }else {
+                    return 0;
+                }
+            } else {
+                $dishData = $this->mGetOrderDishes($orderID);
+                if ($dishData != 0 && $dishData->num_rows > 0) {
+                    $result['type'] = 'dishes';
+                    $result['data'] = $dishData->fetch_all(MYSQLI_ASSOC);
+                    return $result;
+                } else {
+                    return 0;
+                }
+            }
+        }
+    }
+
+    public function cGetAllOrderDishByID($orrderID) {
+        if ($this->mGetOrderDishes($orrderID) != 0) {
+            $result = $this->mGetOrderDishes($orrderID);
+            
+            return $result;
+        } return 0;
+    }
+
+    public function cGetAllOrderPackageByID($orrderID) {
+        if ($this->mGetOrderDishes($orrderID) != 0) {
+            $result = $this->mGetOrderPackage($orrderID);
+            
+            return $result;
+        } return 0;
+    }
     
     public function cGetRevenueOrderByStore($storeID, $start, $end) {
         if ($this->mGetRevenueOrderByStore($storeID, $start, $end) != 0) {
@@ -34,12 +77,20 @@ class cOrders extends mOrders
         } return 0;
     }
     
-    public function cUpdateOrder($orderID) {
-        return $this->mUpdateOrder($orderID);
+    public function cUpdateOrder($orderID, $note, $total) {
+        return $this->mUpdateOrder($orderID, $note, $total);
+    }
+    
+    public function cUpdateOrderDish($orderID, $quantity, $dishID) {
+        return $this->mUpdateOrderDish($orderID, $quantity, $dishID);
     }
     
     public function cUpdateStatusOrder($orderID, $status, $storeID) {
         return $this->mUpdateStatusOrder($orderID, $status, $storeID);
+    }
+    
+    public function cUpdateOrderPartyPackage($orderID, $note) {
+        return $this->mUpdateOrderPartyPackage($orderID, $note);
     }
     
     public function cInsertOrder($customerID, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID) {

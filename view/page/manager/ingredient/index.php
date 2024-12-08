@@ -1,20 +1,15 @@
 <?php
-if (isset($_POST["btnmo"])) {
+if (isset($_POST["btnLuuNL"])) {
+    $totalQuantity = $_POST["TotalQuantity"];
+    $ingredient = $_POST["Ingre"];
+    $userID = $_SESSION["userID"];
 
-    echo "<script>
-        document.addEventListener('DOMContentLoaded', function() {
-                var modalIngredient = new bootstrap.Modal(document.getElementById('ingredientModal')); 
-                modalIngredient.show();
-            });
-        </script>";
+    $ctrl = new cImportOrder;
+   if( $ctrl->cInsertNeedIngredient($userID, $ingredient, $totalQuantity)) {
+    header("Location:index.php?i=ingredient");
+   }
 }
-
-if (isset($_POST["btnnl"])) {
-    echo "<script>alert('Đã lưu nguyên liệu cần mua');</script>";
-}
-
 ?>
-
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
     <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
         <div class="flex justify-between items-center mb-4">
@@ -79,63 +74,6 @@ if (isset($_POST["btnnl"])) {
                     </tbody>
                 </table>
             </form>
-            <?php
-            $ctrl = new cIngredients;
-            echo '<div class="pagination">';
-            $totalPages = ceil($ctrl->cGetTotalIngredient() / $productsPerPage);
-            for ($i = 1; $i <= $totalPages; $i++) {
-                echo "<a href='index.php?i=ingredient&paging=product_list&page_num=$i'";
-                if ($i == $currentPage) {
-                    echo " class='active'";
-                }
-                echo ">$i</a>";
-            }
-            echo '</div>';
-            ?>
-        </div>
-    </div>
-
-    <div class="modal modalIngredient fade" id="ingredientModal" tabindex="-1" aria-labelledby="ingredientModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form action="" class="form-container w-full" method="POST">
-                    <div class="modal-header">
-                        <h2 class="modal-title fs-5 font-bold text-3xl" id="ingredientModalLabel" style="color: #E67E22;">Tính toán nguyên liệu</h2>
-                    </div>
-                    <div class="modal-body">
-                        <table class="w-full">
-                            <tr>
-                                <td>
-                                    <label for="ingreName" class="w-full py-2"><b>Tên NL <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="ingreName" required>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="price" class="w-full py-2"><b>Giá mua <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="price" required>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="unit" class="w-full py-2"><b>Đơn vị tính <span class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="unit" required>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="unit" class="w-full py-2"><b>Số lượng cần mua <span class="text-red-500">*</span></b></label>
-                                    <input type="number" class="w-full form-control" name="unit" required>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                        <button type="submit" class="btn btn-primary" name="btnnl">Thêm</button>
-                    </div>
-                </form>
-            </div>
         </div>
     </div>
 </div>

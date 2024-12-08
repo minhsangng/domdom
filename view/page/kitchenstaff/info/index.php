@@ -2,7 +2,7 @@
     <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
         <div class="flex justify-center items-center mb-4">
             <h2 class="text-xl font-semibold">
-                Thông tin công việc trong tuần
+                Thông tin công việc trong tháng
             </h2>
         </div>
         <div class="h-fit bg-gray-100 rounded-lg p-6">

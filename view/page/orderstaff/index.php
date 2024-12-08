@@ -9,6 +9,7 @@ include("../../../controller/cPromotions.php");
 include("../../../controller/cDishes.php");
 include("../../../controller/cIngredients.php");
 include("../../../controller/cOrders.php");
+include("../../../controller/cImportOrders.php");
 include("../../../controller/cEmployees.php");
 include("../../../controller/cUsers.php");
 include("../../../controller/cCustomers.php");

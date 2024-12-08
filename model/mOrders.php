@@ -11,6 +11,16 @@ class mOrders
             return $conn->query($sql);
         return 0;
     }
+    
+    public function mGetAllOrderByID($orderID)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT * FROM `order` WHERE orderID = $orderID";
+        if ($conn != null) 
+            return $conn->query($sql);
+        return 0;
+    }
 
     public function mGetRevenueOrderByStore($storeID, $start, $end)
     {
@@ -26,19 +36,28 @@ class mOrders
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT O.orderDate, COUNT(O.orderID) AS totalOrder, SUM(O.sumOfQuantity) AS totalQuantity, SUM(O.finalAmount) AS totalAmount FROM `order` AS O WHERE O.orderDate >= '$start' AND O.orderDate <= '$end' GROUP BY O.orderDate";
+        $sql = "SELECT O.orderID, O.orderDate, SUM(D.price * OD.quantity) AS totalOrder, O.total FROM `order` AS O JOIN `order_dish` AS OD ON O.orderID = OD.orderID 
+            JOIN `dish` AS D ON D.dishID = OD.dishID WHERE O.orderDate BETWEEN '$start' AND '$end' GROUP BY O.orderID LIMIT 10";
         if ($conn != null)
             return $conn->query($sql);
         return 0;
     }
 
-    public function mUpdateOrder($orderID)
+    public function mUpdateOrder($orderID, $note, $total)
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "UPDATE `order` SET sumOfQuantity = (SELECT SUM(quantity) FROM `order_dish` GROUP BY orderID HAVING orderID = $orderID), 
-            total = (SELECT SUM(unitPrice * quantity) FROM `order_dish` WHERE orderID = $orderID), 
-            discountAmount = (SELECT SUM(discountAmount * quantity) FROM `order_dish` GROUP BY orderID HAVING orderID = $orderID), finalAmount = (SELECT SUM(lineTotal) FROM `order_dish` GROUP BY orderID HAVING orderID = $orderID) WHERE orderID = $orderID";
+        $sql = "UPDATE `order` SET note = '$note', total = $total WHERE orderID = $orderID";
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+    
+    public function mUpdateOrderDish($orderID, $quantity, $dishID)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "UPDATE `order_dish` SET quantity = $quantity WHERE orderID = $orderID AND dishID = $dishID";
         if ($conn != null)
             return $conn->query($sql);
         return 0;
@@ -49,6 +68,16 @@ class mOrders
         $db = new Database;
         $conn = $db->connect();
         $sql = "UPDATE `order` SET status = $status WHERE orderID = $orderID AND storeID = $storeID";
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+    
+    public function mUpdateOrderPartyPackage($orderID, $note)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "UPDATE `order` SET note = '$note' WHERE orderID = $orderID";
         if ($conn != null)
             return $conn->query($sql);
         return 0;
@@ -90,12 +119,47 @@ class mOrders
             return $conn->query($sql);
         return 0;
     }
+    
+    public function mGetOrderDishes($orderID) {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT *
+                FROM `order` o
+                JOIN `order_dish` od ON od.orderID = o.orderID
+                JOIN `dish` d ON od.dishID = d.dishID
+                WHERE o.orderID = $orderID and o.status != 4";
+        if ($conn != null) 
+            return $conn->query($sql);
+        return 0;
+    }
+    
+    public function mGetOrderPackage($orderID) {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT *
+                FROM `order` o
+                JOIN `partypackage` p ON o.partyPackageID = p.partyPackageID
+                WHERE o.orderID = $orderID and o.status != 4";
+        if ($conn != null) 
+            return $conn->query($sql);
+        return 0;
+    }
 
     public function mGetOrderIDNew()
     {
         $db = new Database;
         $conn = $db->connect();
         $sql = "SELECT orderID FROM `order` ORDER BY orderID DESC LIMIT 1";
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+
+    public function mDeleteOrderDish($orderID, $dishID) {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "DELETE FROM order_dish WHERE orderID = $orderID AND dishID = $dishID";
+        
         if ($conn != null)
             return $conn->query($sql);
         return 0;

@@ -64,7 +64,7 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
     <script src="../../js/tailwindcss.js"></script>
 
     <!-- jQuery -->
-    <script src="../../js/jquery.min.js"></script>
+    <script src="../../js/jquery-3.7.1.min.js"></script>
 
     <!-- Chart -->
     <script src="../../js/chart.js"></script>
@@ -80,7 +80,8 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
 
     <!-- Sweet Alert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+    <!-- main JS -->
+    <script src="../../js/main.js"></script>
     <style>
         .activeAd {
             background-color: rgb(55 65 81);
@@ -130,6 +131,32 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
             border: 1px solid #ccc;
             padding: 20px;
             margin-top: 20px;
+        }
+
+        .pagination {
+            margin-left: 40%;
+            margin-bottom: 8%;
+        }
+
+        .pagination a {
+            color: black;
+            float: left;
+            padding: 8px 16px;
+            text-decoration: none;
+            text-align: center;
+            border: 1px solid #DDD;
+            border-radius: 5px;
+            margin-right: 4px;
+        }
+
+        .pagination a.active {
+            background-color: rgb(200, 200, 200);
+            color: white;
+        }
+
+        .pagination a:hover:not(.active) {
+            background-color: #ddd;
+            border-radius: 5px;
         }
 
         .swal2-icon {
@@ -308,6 +335,9 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
 
             if (window.location.search != "")
                 idActiveAd = window.location.search.slice(3);
+
+            if (window.location.search.slice(3).includes("ingredient"))
+                idActiveAd = "ingredient";
 
             window.addEventListener("load", () => {
                 navAd.forEach(function (item) {

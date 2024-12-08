@@ -3,7 +3,8 @@ $currentPath = $_SERVER["REQUEST_URI"];
 $path = "";
 if (strpos($currentPath, "admin") == true || strpos($currentPath, "manager") == true || strpos($currentPath, "orderstaff") == true || strpos($currentPath, "kitchenstaff") == true)
     $path = "../../../model/mDishes.php";
-else $path = "./model/mDishes.php";
+else
+    $path = "./model/mDishes.php";
 
 if (!class_exists("mDishes"))
     require_once($path);
@@ -43,9 +44,30 @@ class cDishes extends mDishes
     {
         if ($this->mGetAllDish() != 0) {
             $result = $this->mGetAllDish();
-            
+
             return $result;
-        } return 0;
+        }
+        return 0;
+    }
+
+    public function cGetAllDishIngredientByID($dishID)
+    {
+        if ($this->mGetAllDishIngredientByID($dishID) != 0) {
+            $result = $this->mGetAllDishIngredientByID($dishID);
+
+            return $result;
+        }
+        return 0;
+    }
+
+    public function cGetAllDishLimit($startFrom, $productsPerPage)
+    {
+        if ($this->mGetAllDishLimit($startFrom, $productsPerPage) != 0) {
+            $result = $this->mGetAllDishLimit($startFrom, $productsPerPage);
+
+            return $result;
+        }
+        return 0;
     }
     
     public function cGetDishTop()
@@ -63,39 +85,64 @@ class cDishes extends mDishes
             $result = $this->mGetDishById($dishID);
 
             return $result;
-        } return 0;
+        }
+        return 0;
     }
-    
+
     public function cGetDishByName($name)
     {
         if ($this->mGetDishByName($name) != 0) {
             $result = $this->mGetDishByName($name);
 
             return $result;
-        } return 0;
+        }
+        return 0;
     }
-    
-    public function cGetDishByCategory($category) {
+
+    public function cGetDishByCategory($category)
+    {
         if ($this->mGetDishByCategory($category) != 0) {
             $result = $this->mGetDishByCategory($category);
             return $result;
-        } return 0;
-    }
-
-    public function cInsertDish($dishName, $dishCategory, $price, $prepare, $image)
-    {
-        if ($this->mInsertDish($dishName, $dishCategory, $price, $prepare, $image) != 0) {
-            echo "<script>alert('Thêm món ăn thành công!')</script>";
-        } else echo "<script>alert('Thêm món ăn thất bại!')</script>";
-    }
-
-    public function cUpdateDish($dishName, $dishCategory, $price, $prepare, $image, $dishID)
-    {
-        if ($this->mUpdateDish($dishName, $dishCategory, $price, $prepare, $image, $dishID) != 0) {
-            echo "<script>alert('Cập nhật món ăn thành công!')</script>";
         }
+        return 0;
     }
-    
+
+    public function cInsertDish($dishName, $dishCategory, $price, $prepare, $image, $ingredients, $quantities)
+    {
+        $dishId = $this->mInsertDish($dishName, $dishCategory, $price, $prepare, $image);
+        if ($dishId != -1) {
+            if ($this->mInsertDishIngredients($dishId, $ingredients, $quantities)) {
+                echo "<script>alert('Thêm món ăn thành công')</script>";
+            } else {
+                echo "<script>alert('Thêm món ăn thất bại')</script>";
+            }
+        } else
+            return 0;
+
+    }
+
+    public function cUpdateDish($dishName, $dishCategory, $price, $prepare, $image, $dishID, $imgName, $description, $ingredient, $ingredient_old, $quantity)
+    {
+        $success = true;
+        if (strlen($imgName) === 0) {
+            $result = $this->mUpdateDish($dishName, $dishCategory, $price, $prepare, $image, $dishID, $description);
+        } else {
+            $result = $this->mUpdateDishNoImg($dishName, $dishCategory, $price, $prepare, $dishID, $description);
+        }
+        if ($result) {
+            // echo "<script>alert('1')</script>";
+            if ($this->mUpdateDishIngredient($dishID, $ingredient, $ingredient_old, $quantity)) {
+                $success = true;
+            } else {
+                $success = false;
+            }
+        } else {
+            $success = false;
+        }
+        return $success;
+    }
+
     public function cUpdateDishAvailabilityStatus($availability, $dishID)
     {
         if ($this->mUpdateDishAvailabilityStatus($availability, $dishID) != 0) {
@@ -108,5 +155,15 @@ class cDishes extends mDishes
         if ($this->mLockDish($status, $dishID) != 0) {
             echo "<script>alert('" . ($status == 1 ? "Mở khóa" : "Khóa") . " món ăn thành công!')</script>";
         }
+    }
+
+    public function cGetTotalDish()
+    {
+        if ($this->mGetTotalDish() != 0) {
+            $result = $this->mGetTotalDish();
+
+            return $result;
+        }
+        return 0;
     }
 }
