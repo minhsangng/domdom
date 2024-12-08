@@ -9,7 +9,10 @@ if (isset($_POST["store"])) {
 $selectedStore = isset($_COOKIE["selectedStore"]) ? $_COOKIE["selectedStore"] : "";
 ?>
 <!DOCTYPE html>
-<html lang="en"></html>
+<html lang="en">
+
+</html>
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -289,21 +292,21 @@ $selectedStore = isset($_COOKIE["selectedStore"]) ? $_COOKIE["selectedStore"] : 
             $ctrl = new cOrders;
             $ctrlMessage = new cMessage;
             if (isset($_POST["dishName"])) {
-                $quantityUpdate = (int) $_POST["quantityUpdate"][0];
+                $quantityUpdate = $_POST["quantityUpdate"];
                 $notes = (isset($_POST["notes"]) ? trim($_POST["notes"]) : "");
                 $tongTienCheck = (int) str_replace(['.', 'đ'], '', $_POST["tongTienCheck"]);
-                $dishID = (int) $_POST["dishID"][0];
+                $dishID = $_POST["dishID"];
 
-                if (
-                    $ctrl->cUpdateOrderDish((int) $_SESSION["orderIDD"], $quantityUpdate, $dishID)
-                    && $ctrl->cUpdateOrder((int) $_SESSION["orderIDD"], $notes, $tongTienCheck)
-                )
-                    $ctrlMessage->successMessage("Thay đổi đơn hàng ");
-                else
+                $result = $ctrl->cUpdateOrderDish((int) $_SESSION["orderIDD"], $quantityUpdate, $notes, $tongTienCheck, $dishID);
+
+                if (!$result)
                     $ctrlMessage->errorMessage("Thay đổi đơn hàng ");
+                else
+                    $ctrlMessage->successMessage("Thay đổi đơn hàng ");
+
 
             } else if (isset($_POST["partyPackageName"])) {
-                $notes = $_POST["notes"];
+                $notes = (isset($_POST["notes"]) ? trim($_POST["notes"]) : "");
 
                 if ($ctrl->cUpdateOrderPartyPackage($_SESSION["orderIDD"], $notes))
                     $ctrlMessage->successMessage("Thay đổi đơn hàng ");
@@ -319,10 +322,10 @@ $selectedStore = isset($_COOKIE["selectedStore"]) ? $_COOKIE["selectedStore"] : 
     if (isset($_POST["HuyDonHang"])) {
         $ctrl = new cOrders;
         $ctrlMessage = new cMessage;
-        if ($ctrl->cUpdateStatusOrder($_SESSION["orderIDD"], 4, $_COOKIE["selectedStore"]))
-            $ctrlMessage->errorMessage("Huỷ đơn hàng ");
-        else
+        if ($ctrl->cUpdateStatusOrder($_SESSION["orderIDD"], 4, NULL))
             $ctrlMessage->successMessage("Huỷ đơn hàng ");
+        else
+            $ctrlMessage->errorMessage("Huỷ đơn hàng ");
     }
     ?>
 

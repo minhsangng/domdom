@@ -12,16 +12,6 @@ class mCustomers
         return 0;
     }
     
-    public function mGetCustomerIDNew()
-    {
-        $db = new Database;
-        $conn = $db->connect();
-        $sql = "SELECT customerID FROM `customer` ORDER BY customerID DESC LIMIT 1";
-        if ($conn != null) 
-            return $conn->query($sql);
-        return 0;
-    }
-    
     public function mInsertCustomer($phone, $name, $address, $email)
     {
         $db = new Database;

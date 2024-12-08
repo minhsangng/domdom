@@ -56,7 +56,7 @@ class mOrders
         return 0;
     }
 
-    public function mUpdateOrder($orderID, $note, $total)
+    /* public function mUpdateOrder($orderID, $note, $total)
     {
         $db = new Database;
         $conn = $db->connect();
@@ -64,25 +64,39 @@ class mOrders
         if ($conn != null)
             return $conn->query($sql);
         return 0;
-    }
+    } */
 
-    public function mUpdateOrderDish($orderID, $dishID)
+    public function mUpdateOrderDish($orderID, $quantityUpdate, $notes, $total, $dishID)
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "UPDATE `order_dish` AS OD JOIN `dish` AS D ON OD.dishID = D.dishID 
-            SET OD.unitPrice = D.price, promotionID = (SELECT IFNULL(PD.promotionID, NULL) FROM `promotiondish` AS PD JOIN `promotion` AS P ON P.promotionID = PD.promotionID
-            WHERE PD.dishID = $dishID AND P.quantity > 0 AND (NOW() BETWEEN P.startDate AND P.endDate) LIMIT 1) WHERE OD.orderID = $orderID AND OD.dishID = $dishID";
-        if ($conn != null)
-            return $conn->query($sql);
-        return 0;
+        $dem = 0;
+        $sumOfQuantity = 0;
+        foreach ($quantityUpdate as $index => $quantity) {
+            $sumOfQuantity += $quantity;
+            $sql = "UPDATE `order` o
+                JOIN `order_dish` od ON o.orderID = od.orderID
+                SET o.total = $total, 
+                    od.quantity = $quantity, 
+                    o.note = '$notes',
+                    o.sumOfQuantity = $sumOfQuantity
+                WHERE o.orderID = $orderID AND od.dishID = $dishID[$index]";
+
+            if ($conn->query($sql))
+                $dem++;
+        }
+        if ($dem > 0)
+            return true;
+        else {
+            return false;
+        }
     }
 
     public function mUpdateStatusOrder($orderID, $status, $storeID = null)
     {
         $db = new Database;
         $conn = $db->connect();
-        if ($storeID != null)
+        if ($storeID == null)
             $sql = "UPDATE `order` SET status = $status WHERE orderID = $orderID";
         else
             $sql = "UPDATE `order` SET status = $status WHERE orderID = $orderID AND storeID = $storeID";
@@ -101,20 +115,20 @@ class mOrders
         return 0;
     }
 
-    public function mInsertOrder($customerID, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID)
+    public function mInsertOrder($phoneNumber, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID)
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "INSERT INTO `order` (customerID, total, sumOfQuantity, promotionID, paymentMethod, storeID) VALUES ($customerID, $total, $sumOfQuantity, $promotionID, '$paymentMethod', $storeID)";
+        $sql = "INSERT INTO `order` (phoneNumber, total, sumOfQuantity, promotionID, paymentMethod, storeID) VALUES ('$phoneNumber', $total, $sumOfQuantity, $promotionID, '$paymentMethod', $storeID)";
 
         return $conn->query($sql);
     }
 
-    public function mInsertOrderPartyPackage($customerID, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID, $partyPackageID)
+    public function mInsertOrderPartyPackage($phoneNumber, $total, $sumOfQuantity, $promotionID, $paymentMethod, $storeID, $partyPackageID)
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "INSERT INTO `order` (customerID, total, sumOfQuantity, promotionID, paymentMethod, storeID, partyPackageID) VALUES ($customerID, $total, $sumOfQuantity, $promotionID, '$paymentMethod', $storeID, $partyPackageID)";
+        $sql = "INSERT INTO `order` (phoneNumber, total, sumOfQuantity, promotionID, paymentMethod, storeID, partyPackageID) VALUES ('$phoneNumber', $total, $sumOfQuantity, $promotionID, '$paymentMethod', $storeID, $partyPackageID)";
 
         return $conn->query($sql);
     }

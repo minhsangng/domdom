@@ -88,9 +88,9 @@ if (isset($_POST["btnTinhNL"])) {
                                     <td class='py-2 border-2'>" . $row["unitOfcalculation"] . "</td>
                                     <td class='py-2 border-2'>" . $row["quantityInStock"] . "</td>";
                                 if ($row["TotalQuantity"] - $row["quantityInStock"] > 0) {
-                                    echo "<td class='py-2 border-2'><button type='submit' name='btnNhapNL' class='btnNhapNLKho btn btn-danger'>Nhập</button></td>";
+                                    echo "<td class='py-2 border-2'><button type='button' name='btnNhapNL' class='btnNhapNLKho btn btn-danger'>Nhập</button></td>";
                                 } else {
-                                    echo "<td class='py-2 border-2'><button disabled type='submit' class='btn btn-secondary'>Nhập</button></td>";
+                                    echo "<td class='py-2 border-2'><button disabled type='button' class='btn btn-secondary'>Nhập</button></td>";
                                 }
 
                                 echo "</tr>";

@@ -10,7 +10,7 @@
                 <p class="text-gray-600 mb-2">Khách hàng</p>
                 <p class="text-xl font-semibold">
                     <?php
-                    $sql = "SELECT * FROM `customer` AS C JOIN `order` AS O ON C.customerID = O.customerID WHERE O.orderDate >= '$startM' AND O.orderDate <= '$endM' GROUP BY O.customerID";
+                    $sql = "SELECT * FROM `customer` AS C JOIN `order` AS O ON C.phoneNumber = O.phoneNumber WHERE O.orderDate >= '$startM' AND O.orderDate <= '$endM' GROUP BY O.phoneNumber";
                     $result = $conn->query($sql);
                     $count = $result->num_rows;
 
@@ -156,7 +156,7 @@
         <h2 class="text-xl font-semibold mb-4">Khách hàng trong tuần</h2>
         <ul>
             <?php
-            $sql = "SELECT * FROM `customer` AS C JOIN `order` AS O ON O.customerID = C.customerID WHERE O.orderDate >= '$startW' AND O.orderDate <= '$endW' GROUP BY C.customerID ORDER BY O.orderDate DESC";
+            $sql = "SELECT * FROM `customer` AS C JOIN `order` AS O ON O.phoneNumber = C.phoneNumber WHERE O.orderDate >= '$startW' AND O.orderDate <= '$endW' GROUP BY C.phoneNumber ORDER BY O.orderDate DESC";
             $result = $conn->query($sql);
 
             if ($result->num_rows != 0) {
@@ -191,28 +191,28 @@
 
         if ($result->num_rows != 0) {
             echo "
-                        <table class='w-full text-sm text-center'>
-                        <thead>
-                            <tr>
-                                <th class='text-gray-600 py-2 border-2'>
-                                    Mã đơn
-                                </th>
-                                <th class='text-gray-600 py-2 border-2'>
-                                    Ngày đặt
-                                </th>
-                                <th class='text-gray-600 py-2 border-2'>
-                                    Giá trị đơn
-                                </th>
-                                <th class='text-gray-600 py-2 border-2'>
-                                    Giảm giá
-                                </th>
-                                <th class='text-gray-600 py-2 border-2'>
-                                    Trạng thái
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        ";
+                <table class='w-full text-sm text-center'>
+                <thead>
+                    <tr>
+                        <th class='text-gray-600 py-2 border-2'>
+                            Mã đơn
+                        </th>
+                        <th class='text-gray-600 py-2 border-2'>
+                            Ngày đặt
+                        </th>
+                        <th class='text-gray-600 py-2 border-2'>
+                            Giá trị đơn
+                        </th>
+                        <th class='text-gray-600 py-2 border-2'>
+                            Giảm giá
+                        </th>
+                        <th class='text-gray-600 py-2 border-2'>
+                            Trạng thái
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>";
+                
             while ($row = $result->fetch_assoc()) {
                 switch ($row["status"]) {
                     case 0:

@@ -66,7 +66,7 @@ if (isset($_POST["btncapnhat"])) {
             $u_ingredientID[$count] = $row["ingredientID"];
             $u_quantity[$count] = $row["quantity"];
             $u_ingredientName[$count] = $row["ingredientName"];
-            $u_unitOfcalculaton[$count] = $row["unitOfcalculation"];
+            $u_unitOfcalculation[$count] = $row["unitOfcalculation"];
             $count++;
         }
     }
@@ -200,17 +200,17 @@ if (isset($_POST["btnkhoa"])) {
 
                             while ($row = $table->fetch_assoc()) {
                                 echo "
-                                    <tr>
-                                        <td class='py-2 border-2'>#010" . $row["dishID"] . "</td>
-                                        <td class='py-2 border-2'>" . $row["dishName"] . "</td>
-                                        <td class='py-2 border-2'>" . $row["dishCategory"] . "</td>
-                                        <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
-                                        <td class='py-2 border-2'><span class='bg-" . ($row["businessStatus"] == 1 ? "green" : "red") . "-100 text-" . ($row["businessStatus"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["businessStatus"] == 1 ? "Đang kinh doanh" : "Ngưng kinh doanh") . "</span></td>
-                                        <td class='py-2 border-2 flex justify-center'>
-                                            <button type='submit' class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["dishID"] . "'>Cập nhật</button>
-                                            <button type='submit' class='btn btn-danger ml-1' name='btnkhoa' value='" . $row["dishID"] . "'>" . ($row["businessStatus"] == 1 ? "Khóa" : "Mở") . "</button>
-                                        </td>
-                                    </tr>";
+                    <tr>
+                        <td class='py-2 border-2'>#010" . $row["dishID"] . "</td>
+                        <td class='py-2 border-2'>" . $row["dishName"] . "</td>
+                        <td class='py-2 border-2'>" . $row["dishCategory"] . "</td>
+                        <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
+                        <td class='py-2 border-2'><span class='bg-" . ($row["businessStatus"] == 1 ? "green" : "red") . "-100 text-" . ($row["businessStatus"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["businessStatus"] == 1 ? "Đang kinh doanh" : "Ngưng kinh doanh") . "</span></td>
+                        <td class='py-2 border-2 flex justify-center'>
+                            <button value='" . $row["dishID"] . "' type='submit' class='btn btn-primary' name='btncapnhat' data-bs-toggle='modal' data-bs-target='#updateModal'>Cập nhật</button>
+                            <button onclick='return confirm(\" Bạn có chắc muốn " . ($row["businessStatus"] == 1 ? "khóa" : "mở khóa") . " không? \")' type='submit' class='btn btn-danger ml-1' name='btnkhoa' value='" . $row["dishID"] . "'>" . ($row["businessStatus"] == 1 ? "Khóa" : "Mở") . "</button>
+                        </td>
+                    </tr>";
                                 $dishData[] = [
                                     "Mã món" => $row["dishID"],
                                     "Tên món" => $row["dishName"],
@@ -219,6 +219,7 @@ if (isset($_POST["btnkhoa"])) {
                                     "Trạng thái" => ($row["businessStatus"] == 1 ? "Đang kinh doanh" : "Ngưng kinh doanh")
                                 ];
                             }
+                            /* $_SESSION["dishData"] = $dishData; */
                         }
                         $data = json_encode($dishData);
                         ?>
@@ -312,7 +313,10 @@ if (isset($_POST["btnkhoa"])) {
                                                     $result = $ctrl->cGetAllIngredient();
 
                                                     while ($row = $result->fetch_assoc()) {
+
                                                         echo "<option value='" . $row["unitOfcalculation"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
+
+
                                                     }
                                                 }
                                                 ?>
@@ -322,11 +326,14 @@ if (isset($_POST["btnkhoa"])) {
                                             <?php
                                             $ctrl = new cIngredients;
 
-                                            if ($ctrl->cGetUnitIngredient() != 0) {
-                                                $result = $ctrl->cGetUnitIngredient();
+                                            if ($ctrl->cGetAllIngredient() != 0) {
+                                                $result = $ctrl->cGetAllIngredient();
 
                                                 while ($row = $result->fetch_assoc()) {
+
                                                     echo "<option value='" . $row["unitOfcalculation"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
+
+
                                                 }
                                             }
                                             ?>
@@ -474,11 +481,11 @@ if (isset($_POST["btnkhoa"])) {
                                             </select>
                                         </td>
                                         <div id="u-ingredientOptions" style="display: none;">';
-                                            
+
                                         $ctrl = new cIngredients;
 
-                                        if ($ctrl->cGetUnitIngredient() != 0) {
-                                            $result = $ctrl->cGetUnitIngredient();
+                                        if ($ctrl->cGetAllIngredient() != 0) {
+                                            $result = $ctrl->cGetAllIngredient();
 
                                             while ($row = $result->fetch_assoc()) {
 
@@ -488,10 +495,10 @@ if (isset($_POST["btnkhoa"])) {
                                             }
                                         }
                                         echo '
-                                        ></div>
+                                        </div>
                                         <td>
                                             <input type="text" id="u-unit-0" class="w-full form-control bg-gray-100"
-                                                readonly value="' . $u_unitOfcalculaton[$i] . '">
+                                                readonly value="' . $u_unitOfcalculation[$i] . '">
                                         </td>
                                         <td>
                                             <input type="number" class="w-full form-control" name="u-quantity[]"
@@ -564,7 +571,7 @@ if (isset($_POST["btnkhoa"])) {
         let workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Danh sách món ăn");
 
-        XLSX.writeFile(workbook, "Danh sách món ăn.xlsx");
+        XLSX.writeFile(workbook, "DishList.xlsx");
     });
 
     /* In  */

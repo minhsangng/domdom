@@ -120,27 +120,27 @@ $ctrlOrder = new cOrders;
 $ctrlMessage = new cMessage;
 
 if (isset($_POST["btndattiec"])) {
-    $_SESSION["ppID"] = (int)$_POST["btndattiec"];
-    
+    $_SESSION["ppID"] = (int) $_POST["btndattiec"];
+
     if ($ctrlPromotion->cGetAllPromotionGoingOn() != 0) {
         $date = date("Y-m-d");
         $discountRate = 0;
-    
+
         $result = $ctrlPromotion->cGetAllPromotionGoingOn();
         while ($row = $result->fetch_assoc()) {
             if ($date >= $row["startDate"] && $date <= $row["endDate"]) {
                 $_SESSION["promotionID"] = $row["promotionID"];
-                
+
                 if ($discountRate < $row["discountPercentage"])
                     $discountRate = $row["discountPercentage"];
             }
         }
     }
-    
+
     if ($ctrlParty->cGetPartyPackageByID($_SESSION["ppID"]) != 0) {
         $result1 = $ctrlParty->cGetPartyPackageByID($_SESSION["ppID"]);
         $row1 = $result1->fetch_assoc();
-        
+
         $_SESSION["ppName"] = $row1["partyPackageName"];
         $_SESSION["ppPrice"] = $row1["price"] * (1 - $discountRate / 100);
         $_SESSION["quantity"] = $row1["sumQuantity"];
@@ -155,36 +155,42 @@ if (isset($_POST["btndattiec"])) {
 }
 
 if (isset($_POST["btnxn"])) {
-    $ppID = $_SESSION["ppID"];
-    $phone = $_POST["phone"];
-    $name = $_POST["name"];
-    $address = $_POST["address"];
-    $email = $_POST["email"];
-    $paymentMethod = $_POST["method"];
+    if (!isset($_COOKIE["selectedStore"]))
+        echo "<script>
+            alert('Vui lòng chọn cửa hàng trước!');
+        </script>";
+    else {
+        $ppID = $_SESSION["ppID"];
+        $phone = $_POST["phone"];
+        $name = $_POST["name"];
+        $address = $_POST["address"];
+        $email = $_POST["email"];
+        $paymentMethod = $_POST["method"] == 1 ? "Ví điện tử" : "Ngân hàng";
 
-    $ctrlCustomer->cInsertCustomer($phone, $name, $address, $email);
-    $customerID = $ctrlCustomer->cGetCustomerIDNew()->fetch_assoc()["customerID"];
+        $ctrlCustomer->cInsertCustomer($phone, $name, $address, $email);
 
-    $ctrlOrder->cInsertOrderPartyPackage($customerID, $_SESSION["ppPrice"], $_SESSION["quantity"], $_SESSION["promotionID"], $paymentMethod, $_COOKIE["selectedStore"], $_SESSION["ppID"] );
+        $ctrlOrder->cInsertOrderPartyPackage($phone, $_SESSION["ppPrice"], $_SESSION["quantity"], $_SESSION["promotionID"], $paymentMethod, $_COOKIE["selectedStore"], $_SESSION["ppID"]);
 
-    $row2 = $ctrlOrder->cGetOrderIDNew()->fetch_assoc();
-    $orderID = $row2["orderID"];
+        $row2 = $ctrlOrder->cGetOrderIDNew()->fetch_assoc();
+        $orderID = $row2["orderID"];
 
-    if ($ctrlParty->cGetDishFromPartyPacakge($ppID) != 0) {
-        $resultParty = $ctrlParty->cGetDishFromPartyPacakge($ppID);
+        if ($ctrlParty->cGetDishFromPartyPacakge($ppID) != 0) {
+            $resultParty = $ctrlParty->cGetDishFromPartyPacakge($ppID);
 
-        while ($row3 = $resultParty->fetch_assoc()) {
-            $dishID = $row3["dishID"];
-            $quantity = $row3["quantity"];
+            while ($row3 = $resultParty->fetch_assoc()) {
+                $dishID = $row3["dishID"];
+                $quantity = $row3["quantity"];
 
-            $resultOrderDish = $ctrlOrder->cInsertOrderDish($orderID, $dishID, $quantity);
-            
-            if ($resultOrderDish)
-                $ctrlMessage->successMessage("Đặt tiệc");
-            else $ctrlMessage->errorMessage("Đặt tiệc");
-        }
-    } else
-        $ctrlMessage->falseMessage("Không có dữ liệu!");
+                $resultOrderDish = $ctrlOrder->cInsertOrderDish($orderID, $dishID, $quantity);
+
+                if ($resultOrderDish)
+                    $ctrlMessage->successMessage("Đặt tiệc");
+                else
+                    $ctrlMessage->errorMessage("Đặt tiệc");
+            }
+        } else
+            $ctrlMessage->falseMessage("Không có dữ liệu!");
+    }
 }
 ?>
 
@@ -270,11 +276,11 @@ if (isset($_POST["btnxn"])) {
                                     <h2 class="text-[#EF5350] font-bold mb-2">Phương thức thanh toán</h2>
                                     <ol class="p-0 m-0">
                                         <li class="flex justify-center items-center w-fit">
-                                            <input type="radio" name="method" id="momo" value="Ví điện tử">
+                                            <input type="radio" name="method" id="momo" value="1">
                                             <label for="momo" class="ml-2">Ví diện tử</label>
                                         </li>
                                         <li class="flex justify-center items-center w-fit">
-                                            <input type="radio" name="method" id="bank" value="Ngân hàng">
+                                            <input type="radio" name="method" id="bank" value="2">
                                             <label for="bank" class="ml-2">Ngân hàng</label>
                                         </li>
                                     </ol>

@@ -18,14 +18,6 @@ class cCustomers extends mCustomers
         } return 0;
     }
     
-    public function cGetCustomerIDNew() {
-        if ($this->mGetCustomerIDNew() != 0) {
-            $result = $this->mGetCustomerIDNew();
-            
-            return $result;
-        } return 0;
-    }
-    
     public function cInsertCustomer($phone, $name, $address, $email) {
         return $this->mInsertCustomer($phone, $name, $address, $email);
     }
