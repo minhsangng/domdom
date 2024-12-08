@@ -29,6 +29,7 @@ if (isset($_POST["btnxem"])) {
                         onchange="window.location.href = this.value;">
                         <option value="#0">Tất cả</option>
                         <option value="#DT">Doanh thu</option>
+                        <option value="#NV">Nhân viên</option>
                         <option value="#NVL">Nguyên vật liệu</option>
                     </select>
                 </div>
@@ -84,7 +85,7 @@ if (isset($_POST["btnxem"])) {
                             <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["total"], "2", ".", ",")) . "</td>
                         </tr>
                         ";
-                    $revenueType += $row["finalAmount"];
+                    $revenueType += $row["total"];
                 }
 
             } else
@@ -99,7 +100,7 @@ if (isset($_POST["btnxem"])) {
                     <p>Tổng doanh thu:</p>
                 </td>
                 <td class='text-center border-2'>
-                    " . str_replace(".00", "", number_format($revenue, "2", ".", ",")) . " đồng
+                    " . str_replace(".00", "", number_format($revenueType, "2", ".", ",")) . " đồng
                 </td>
             </tr>
         </tfoot>
@@ -107,7 +108,7 @@ if (isset($_POST["btnxem"])) {
     </div>";
         ?>
         <!-- //////////////////// -->
-        <div class="flex justify-between items-center my-4 w-full">
+        <div class="flex justify-between items-center my-4 w-full" id="NV">
             <h2 class="text-xl font-semibold">Chi phí nhân công</h2>
             <div class="flex items-center">
                 <button
@@ -135,9 +136,9 @@ if (isset($_POST["btnxem"])) {
                     $ctrl = new cEmployees;
                     if ($ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM) != 0) {
                         $result = $ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM);
-                        $totalCost = 0;
+                        $totalCostEmplyee = 0;
                         while ($row = $result->fetch_assoc()) {
-                            $totalCost += $cost['totalSalary'];
+                            $totalCostEmplyee += $cost['totalSalary'];
                             echo "<tr>
                             <td class='border-2 py-2'>{$cost['roleName']}</td>
                             <td class='border-2 py-2'>{$cost['totalEmployees']}</td>
@@ -156,7 +157,7 @@ if (isset($_POST["btnxem"])) {
                         <td colspan="3" class="font-bold text-lg text-left p-2 border-2">
                             <p>Tổng chi phí:</p>
                         </td>
-                        <td class="text-center border-2">' . number_format($cost['totalSalary'], 2, ',', '.') . 'đồng</td>
+                        <td class="text-center border-2">' . number_format($totalCostEmplyee, 2, ',', '.') . 'đồng</td>
                     </tr>
                 </tfoot>';
                     ?>
@@ -246,46 +247,13 @@ if (isset($_POST["btnxem"])) {
                 </thead>
                 <tbody>
                     <?php
-                    $revenueSales = 0; // Doanh thu bán hàng
-                    $costLabor = 0; // Chi phí nhân công
-                    $costIngredients = 0; // Chi phí nguyên liệu
-                    
-                    // Doanh thu bán hàng
-                    if ($revenue == 1 || $revenue == 0) {
-                        $ctrlOrder = new cOrders;
-                        if ($ctrlOrder->cGetRevenueOrderByStore($storeID, $startM, $endM) != 0) {
-                            $resultOrder = $ctrlOrder->cGetRevenueOrderByStore($storeID, $startM, $endM);
-                            while ($row = $resultOrder->fetch_assoc()) {
-                                $revenueSales += $row["finalAmount"]; // Tổng doanh thu bán hàng
-                            }
-                        }
-                    }
 
-                    // Chi phí nhân công
-                    $ctrlEmployee = new cEmployees;
-                    if ($ctrlEmployee->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM) != 0) {
-                        $resultEmployee = $ctrlEmployee->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM);
-                        while ($row = $resultEmployee->fetch_assoc()) {
-                            $costLabor += $row["totalSalary"]; // Tổng chi phí nhân công
-                        }
-                    }
-
-                    // Chi phí nguyên liệu
-                    $ctrlIngredient = new cIngredients;
-                    if ($ctrlIngredient->cGetRevenueIngredientByStore($storeID, $startM, $endM) != 0) {
-                        $resultIngredient = $ctrlIngredient->cGetRevenueIngredientByStore($storeID, $startM, $endM);
-                        while ($row = $resultIngredient->fetch_assoc()) {
-                            $costIngredients += $row['price'] * $row['quantityImported']; // Tổng chi phí nguyên liệu
-                        }
-                    }
-
-                    // lợi nhuận
-                    $profit = $revenueSales - $costLabor - $costIngredients;
+                    $profit = $revenueType - $totalCostEmplyee - $totalCost;
 
                     echo '<tr>
-                    <td class="border-2 py-2">' . number_format($revenueSales, 2, ',', '.') . 'đồng</td>
-                    <td class="border-2 py-2">' . number_format($costLabor, 2, ',', '.') . 'đồng</td>
-                    <td class="border-2 py-2">' . number_format($costIngredients, 2, ',', '.') . 'đồng</td>
+                    <td class="border-2 py-2">' . number_format($revenueType, 2, ',', '.') . 'đồng</td>
+                    <td class="border-2 py-2">' . number_format($totalCostEmplyee, 2, ',', '.') . 'đồng</td>
+                    <td class="border-2 py-2">' . number_format($totalCost, 2, ',', '.') . 'đồng</td>
                     <td class="border-2 py-2">' . number_format($profit, 2, ',', '.') . 'đồng</td>
                     </tr>'
                         ?>

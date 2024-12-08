@@ -189,7 +189,7 @@ if (isset($_POST["btndn"])) {
 
 <body class="overflow-hidden"
     style="background: linear-gradient(135deg, #0d1b2a, #1b263b 40%, #243447 70%, #2a2a2a 90%);">
-    <div class="bg"></div>
+    <!-- <div class="bg"></div> -->
     <div class="flex h-screen w-screen">
         <div class="w-1/3 h-5/6 bg-transperant flex border-sky-400 border-2 flex-col justify-center items-center p-10 mx-auto my-auto rounded-lg"
             style="box-shadow: 0 0 10px rgb(56, 189, 248);">
