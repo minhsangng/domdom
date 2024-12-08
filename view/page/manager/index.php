@@ -212,11 +212,12 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
                             <?php
                             $userID = $_SESSION["user"][0];
 
-                            $sql = "SELECT userID, userName FROM user WHERE userID = $userID";
+                            $sql = "SELECT userID, userName,storeID FROM user WHERE userID = $userID";
                             $result = $conn->query($sql);
                             $row = $result->fetch_assoc();
 
                             $fullName = $row["userName"];
+                            $_SESSION["managerstoreID"]= $row["storeID"];
                             $name = end(explode(" ", $fullName));
                             $firstLetter = substr($name, 0, 1);
 
@@ -246,15 +247,6 @@ $endW = date("Y-m-d", strtotime("sunday this week"));
             } else {
                 require("home/index.php");
             }
-            ?>
-
-            <!-- Thêm biến để lấy manager theo từng cửa hàng -->
-            <?php
-            $sql = "SELECT storeID FROM user WHERE userName = $userID";
-            $result = $conn->query($sql);
-            $row = $result->fetch_assoc();
-
-            $_SESSION["managerstoreID"] = $row["storeID"];
             ?>
         </div>
     </div>
