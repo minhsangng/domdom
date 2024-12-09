@@ -56,7 +56,7 @@ if (isset($_POST["btnthemkm"])) {
         if ($startDate > $endDate) {
             $addErrors['date'] = 'Ngày bắt đầu phải nhỏ hơn ngày kết thúc!';
         }
-        if ($startDate < $currentDate) {
+        if ($startDate <= $currentDate) {
             $addErrors['startDate'] = 'Ngày bắt đầu phải từ ngày hiện tại trở đi!';
         }
     }
@@ -122,6 +122,7 @@ if (isset($_POST["btncapnhat"])) {
     $_SESSION["startDate"] = $row["startDate"];
     $_SESSION["endDate"] = $row["endDate"];
     $_SESSION["status"] = $row["status"];
+    $_SESSION["currentImage"] = $row["image"];
 }
 
 if (isset($_POST["btnsuakm"])) {
@@ -174,10 +175,8 @@ if (isset($_POST["btnsuakm"])) {
         }
     }
 
-     // Kiểm tra ảnh
-     if ($image["size"] == 0) {
-        $updateErrors['image'] = 'Vui lòng chọn ảnh!';
-    } else {
+    // Sửa phần xử lý ảnh
+    if ($image["size"] > 0) {
         $allowed = array("jpg" => "image/jpg", "jpeg" => "image/jpeg", "png" => "image/png");
         $filename = $image["name"];
         $filetype = $image["type"];
@@ -195,14 +194,20 @@ if (isset($_POST["btnsuakm"])) {
             $updateErrors['image'] = 'Kích thước ảnh quá lớn. Vui lòng chọn ảnh dưới 5MB!';
         }
     }
-    // Nếu không có lỗi thì thêm mới
+
+    // Nếu không có lỗi thì cập nhật
     if (empty($updateErrors)) {
-        $imgName = $image["name"];
-        move_uploaded_file($image["tmp_name"], "../../../images/promotion/".$imgName);
+        // Sử dụng ảnh hiện tại nếu không có ảnh mới được tải lên
+        $imgName = $image["size"] > 0 ? $image["name"] : $_SESSION["currentImage"];
+        
+        // Chỉ upload ảnh mới nếu có file được chọn
+        if ($image["size"] > 0) {
+            move_uploaded_file($image["tmp_name"], "../../../images/promotion/".$imgName);
+        }
         
         if ($ctrl->cUpdatePromotion($proID, $proName, $des, $percent, $start, $end, $imgName, $status)) {
             echo "<script>alert('Cập nhật khuyến mãi thành công!');</script>";
-        } 
+        }
     } else {
         // Nếu có lỗi, hiển thị lại modal ngay lập tức
         echo "<script>
@@ -420,11 +425,7 @@ if (isset($_POST["btnkhoa"])) {
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label"><b>Hình ảnh</b></label>
-                            <?php if (!empty($_SESSION["currentImage"])): ?>
-                                <img src="../../../images/promotion/<?php echo $_SESSION["currentImage"]; ?>" 
-                                    class="size-24 object-cover rounded mb-2">
-                            <?php endif; ?>
+                            <label class="form-label"><b>Hình ảnh</b></label                  
                             <input type="file" class="form-control <?php echo isset($updateErrors['image']) ? 'border-red-500' : ''; ?>" 
                                 name="image" accept="image/*">
                             <?php if (isset($updateErrors['image'])): ?>

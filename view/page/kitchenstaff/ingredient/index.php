@@ -5,12 +5,22 @@ if (!isset($_SESSION['imported_ingredients'])) {
     $_SESSION['imported_ingredients'] = array();
 }
 
-// Thêm ID vào session khi nhập thành công
+$ctrl = new cIngredients;
+
+// Xử lý nhập nguyên liệu
 if (isset($_POST['btnnhap'])) {
     $ingredientID = $_POST['btnnhap'];
     $quantity = $_POST['quantity'][$ingredientID];
-    if ($quantity > 0) {
-        $_SESSION['imported_ingredients'][$ingredientID] = $quantity;
+    
+    // Kiểm tra số lượng phải là số dương
+    if ($quantity <= 0) {
+        echo "<script>alert('Vui lòng nhập số lượng lớn hơn 0!');</script>";
+    } else {
+        if ($ctrl->cUpdateNeedIngredientQuantity($ingredientID, $quantity)) {
+            $_SESSION['imported_ingredients'][$ingredientID] = $quantity;
+        } else {
+            echo "<script>alert('Có lỗi xảy ra!');</script>";
+        }
     }
 }
 ?>
@@ -38,8 +48,7 @@ if (isset($_POST['btnnhap'])) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php
-                        $ctrl = new cIngredients;
+                        <?php 
                         
                         if ($ctrl->cGetAllIngredient() != 0) {
                         $result = $ctrl->cGetAllIngredient();
@@ -50,7 +59,7 @@ if (isset($_POST['btnnhap'])) {
                                 if (!array_key_exists($row["ingredientID"], $_SESSION['imported_ingredients'])) {
                                     echo "
                                         <tr>
-                                            <td class='py-2 border-2'>#NL0" . ($row["ingredientID"] < 10 ? "0" . $row["ingredientID"] : $row["ingredientID"]) . "</td>
+                                            <td class='py-2 border-2'>#NL0" . $row["ingredientID"] . "</td>
                                             <td class='py-2 border-2'>" . $row["ingredientName"] . "</td>
                                             <td class='py-2 border-2'>" . $row["unitOfcalculaton"] . "</td>
                                             <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
@@ -76,45 +85,33 @@ if (isset($_POST['btnnhap'])) {
 </div>
 
 <?php
-if (isset($_POST['btnnhap'])) {
-    $ingredientID = $_POST['btnnhap'];
-    $quantity = $_POST['quantity'][$ingredientID];
+if (!empty($_SESSION['imported_ingredients'])) {
+    echo "<div class='bg-white p-6 rounded-lg shadow-lg mt-6'>
+            <h2 class='text-xl font-semibold mb-4'>Danh sách nguyên liệu đã nhập</h2>
+            <div class='h-fit bg-gray-100 rounded-lg p-6'>
+                <table class='text-base w-full text-center'>
+                    <thead>
+                        <tr>
+                            <th class='text-gray-600 border-2 py-2'>Mã NL</th>
+                            <th class='text-gray-600 border-2 py-2'>Tên NL</th>
+                            <th class='text-gray-600 border-2 py-2'>Đơn vị tính</th>
+                            <th class='text-gray-600 border-2 py-2'>Số lượng đã nhập</th>
+                        </tr>
+                    </thead>
+                    <tbody>";
     
-    if ($quantity > 0) {
-        if ($ctrl->cUpdateNeedIngredientQuantity($ingredientID, $quantity)) {
-            echo "<div class='bg-white p-6 rounded-lg shadow-lg mt-6'>
-                    <h2 class='text-xl font-semibold mb-4'>Danh sách nguyên liệu đã nhập</h2>
-                    <div class='h-fit bg-gray-100 rounded-lg p-6'>
-                        <table class='text-base w-full text-center'>
-                            <thead>
-                                <tr>
-                                    <th class='text-gray-600 border-2 py-2'>Mã NL</th>
-                                    <th class='text-gray-600 border-2 py-2'>Tên NL</th>
-                                    <th class='text-gray-600 border-2 py-2'>Đơn vị tính</th>
-                                    <th class='text-gray-600 border-2 py-2'>Số lượng đã nhập</th>
-                                </tr>
-                            </thead>
-                            <tbody>";
-            
-            // Sửa phần hiển thị bảng đã nhập
-            foreach ($_SESSION['imported_ingredients'] as $importedID => $importedQuantity) {
-                $ingredient = $ctrl->cGetIngredientById($importedID);
-                if ($ingredient) {  // Thêm kiểm tra kết quả
-                    echo "<tr>
-                            <td class='py-2 border-2'>#NL0" . ($importedID < 10 ? "0" . $importedID : $importedID) . "</td>
-                            <td class='py-2 border-2'>" . $ingredient["ingredientName"] . "</td>
-                            <td class='py-2 border-2'>" . $ingredient["unitOfcalculaton"] . "</td>
-                            <td class='py-2 border-2'>" . $importedQuantity . "</td>
-                        </tr>";
-                }
-            }
-            
-            echo "</tbody></table></div></div>";
-        } else {
-            echo "<script>alert('Có lỗi xảy ra!');</script>";
+    foreach ($_SESSION['imported_ingredients'] as $importedID => $importedQuantity) {
+        $ingredient = $ctrl->cGetIngredientById($importedID);
+        if ($ingredient) {
+            echo "<tr>
+                    <td class='py-2 border-2'>#NL0" . ($importedID < 10 ? "0" . $importedID : $importedID) . "</td>
+                    <td class='py-2 border-2'>" . $ingredient["ingredientName"] . "</td>
+                    <td class='py-2 border-2'>" . $ingredient["unitOfcalculaton"] . "</td>
+                    <td class='py-2 border-2'>" . $importedQuantity . "</td>
+                </tr>";
         }
-    } else {
-        echo "<script>alert('Vui lòng nhập số lượng hợp lệ!');</script>";
     }
+    
+    echo "</tbody></table></div></div>";
 }
 ?>
