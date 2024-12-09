@@ -215,10 +215,10 @@ if (isset($_POST["btnsuakm"])) {
     }
 }
 
-if (isset($_POST["btnxoa"])) {
-    $proID = $_POST["btnxoa"];
-    if ($ctrl->cdeletePromotion($proID)) {
-        echo "<script>alert('Xóa khuyến mãi thành công!');</script>";
+if (isset($_POST["btnkhoa"])) {
+    $proID = $_POST["btnkhoa"];
+    if ($ctrl->cUpdatePromotionStatus($proID)) {
+        echo "<script>alert('Đã ngưng áp dụng khuyến mãi!');</script>";
     }
 }
 ?>
@@ -269,7 +269,7 @@ if (isset($_POST["btnxoa"])) {
                             <td class='py-2 border-2 text-" . ($row["status"] == 1 ? "green" : "red") . "-500'>" . ($row["status"] == 1 ? "Đang áp dụng" : "Ngưng áp dụng") . "</td>
                             <td class='py-2 border-2 flex justify-center items-center h-28'>
                                 <button class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["promotionID"] . "'>Cập nhật</button>
-                                <button class='btn btn-danger ml-1' name='btnxoa' value='" . $row["promotionID"] . "' onclick='return confirm(\"Bạn có chắc chắn xóa khuyến mãi này?\");'>Xóa</button>
+                                <button class='btn btn-danger ml-1' name='btnkhoa' value='" . $row["promotionID"] . "' onclick='return confirm(\"Bạn có chắc chắn khóa khuyến mãi này?\");'>Khóa</button>
                             </td>
                         </tr>";
                             }

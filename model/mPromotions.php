@@ -52,10 +52,10 @@ class mPromotions
         return 0;
     }
     
-    public function mdeletePromotion($proID) {
+    public function mUpdatePromotionStatus($proID) {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "DELETE FROM promotion WHERE promotionID = '$proID'";
+        $sql = "UPDATE promotion SET status = 0 WHERE promotionID = '$proID'";
         
         if ($conn != null)
             return $conn->query($sql);

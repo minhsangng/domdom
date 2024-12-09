@@ -46,9 +46,9 @@ class cPromotions extends mPromotions
         }
     }
     
-    public function cdeletePromotion($proID) {  
-        if ($this->mdeletePromotion($proID) != 0) {
-            echo "<script>alert('Xóa khuyến mãi thành công');</script>";
+    public function cUpdatePromotionStatus($proID) {  
+        if ($this->mUpdatePromotionStatus($proID) != 0) {
+            echo "<script>alert('Khóa khuyến mãi thành công');</script>";
         }
     }
 }
