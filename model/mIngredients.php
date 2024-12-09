@@ -6,7 +6,7 @@ class mIngredients
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT * FROM ingredient";
+        $sql = "SELECT * FROM ingredient i join needingredient ni on i.ingredientID = ni.ingredientID left join importorder o on o.importOrderID = ni.importOrderID ";
 
         if ($conn != null)
             return $conn->query($sql);
