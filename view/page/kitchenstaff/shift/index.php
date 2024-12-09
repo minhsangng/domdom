@@ -1,51 +1,73 @@
 <?php
-$ctrl = new cEmployees;
-$ctrlMessage = new cMessage;
 
-if (!isset($_SESSION["shifts"]))
-    $_SESSION["shifts"] = [];
-    
-// Lấy dữ liệu ca làm từ cơ sở dữ liệu
-if ($ctrl->cGetAllShift() != 0) {
-    $result = $ctrl->cGetAllShift();
-    $workShifts = [];
-    while ($row = $result->fetch_assoc()) {
-        $workShifts[] = $row; // Chứa các thông tin ca làm tất cả
-    }
-} else echo "Không có dữ liệu ca làm việc!";
+session_start();
 
-if (isset($_POST["shift"])) {
-    $userID = $_SESSION["user"][0];
-    $selectedShifts = $_POST["shift"]; // Dữ liệu ca làm đã chọn
-    $totalShifts = 0; // Đếm tổng số ca làm
+$sql = "SELECT * FROM `shift`";
+$result = $conn->query($sql);
+$workShifts = [];
+while ($row = $result->fetch_assoc()) {
+    $workShifts[] = $row;
+}
 
-    // Đếm tổng số ca làm được chọn
-    foreach ($selectedShifts as $date => $shifts) {
-        $totalShifts += count($shifts);
-    }
+$userID = $_SESSION['user'][0];
+$query = "SELECT es.date, s.shiftName 
+          FROM employee_shift es 
+          JOIN shift s ON es.shiftID = s.shiftID 
+          WHERE es.userID = $userID";
+$result = $conn->query($query);
+$caDK = [];
 
-    if ($totalShifts >= 4) {
+while ($row = $result->fetch_assoc()) {
+    $caDK[$row['date']][] = $row['shiftName'];
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['shift']) && !empty($_POST['shift'])) {
+        $selectedShifts = $_POST['shift'];
+        $totalShifts = 0;
+
         foreach ($selectedShifts as $date => $shifts) {
-            foreach ($shifts as $shiftName) {
-                // Lấy shiftID từ shiftName
-                if ($ctrl->cGetShiftIDByName($shiftName) != 0) {
-                    $result = $ctrl->cGetShiftIDByName($shiftName);
-                    $row = $result->fetch_assoc();
-                    $shiftID = $row["shiftID"];
-                    $_SESSION["shifts"][] = [
-                        "date" => $date,
-                        "shiftName" => $shiftName,
-                    ];
-                    
-                    // Thêm thông tin vào bảng employee_shift
-                    $dateForDatabase = DateTime::createFromFormat("d-m-Y", $date)->format("Y-m-d");
-
-                    $ctrl->cInsertEmployeeShift($shiftID, $userID, $dateForDatabase);
-                    $ctrlMessage->successMessage("Đăng ký ca làm ");
-                } else $ctrlMessage->falseMessage("Không tồn tại ca làm: $shiftName");
-            }
+            $totalShifts += count($shifts);
         }
-    } else $ctrlMessage->falseMessage("Vui lòng chọn ít nhất 4 ca làm 1 tuần!");
+
+        if ($totalShifts >= 4) {
+            $deleteQuery = "DELETE FROM `employee_shift` WHERE userID = $userID";
+            $conn->query($deleteQuery);
+
+            foreach ($selectedShifts as $date => $shifts) {
+                foreach ($shifts as $shiftName) {
+                    $query = "SELECT shiftID FROM shift WHERE shiftName = '$shiftName'";
+                    $result = $conn->query($query);
+
+                    if ($result && $row = $result->fetch_assoc()) {
+                        $shiftID = $row['shiftID'];
+
+                        $dateForDatabase = DateTime::createFromFormat('d-m-Y', $date)->format('Y-m-d');
+                        $insertQuery = "INSERT INTO employee_shift (userID, shiftID, date) VALUES ($userID, $shiftID, '$dateForDatabase')";
+                        $conn->query($insertQuery);
+                    } else {
+                        echo "<script>alert('Ca làm không tồn tại: $shiftName');</script>";
+                    }
+                }
+            }
+            echo "<script>alert('Đăng ký ca làm thành công!');</script>";
+
+            $query = "SELECT es.date, s.shiftName 
+                      FROM `employee_shift` AS es 
+                      JOIN `shift` AS s ON es.shiftID = s.shiftID 
+                      WHERE es.userID = $userID";
+            $result = $conn->query($query);
+            $caDK = [];
+
+            while ($row = $result->fetch_assoc()) {
+                $caDK[$row['date']][] = $row['shiftName'];
+            }
+        } else {
+            echo "<script>alert('Vui lòng chọn ít nhất 4 ca làm!');</script>";
+        }
+    } else {
+        echo "<script>alert('Chưa chọn ca làm nào!');</script>";
+    }
 }
 ?>
 
@@ -71,26 +93,16 @@ if (isset($_POST["shift"])) {
                         $days[] = $day;
                     }
 
-                    // Hiển thị các ngày trong tuần và ca làm cho từng ngày
                     foreach ($days as $day) {
-                        $dateString = $day->format('d-m-Y'); // Định dạng ngày
-                        echo "<div class='day p-2 border-2 border-amber-100 rounded-md mb-2'>";
-                        echo "<h3 class='font-bold border-b-2 border-amber-200 pb-2 mb-2 text-center'>{$day->format('l')}</h3>";
-                        echo "<h4 class='mb-3 text-center'>{$day->format('d-m-Y')}</h4>";
+                        $dateString = $day->format('d-m-Y');
+                        echo "<div class='day p-2 border rounded-md mb-2'>";
+                        echo "<strong>{$day->format('l')}</strong><br>";
+                        echo "{$day->format('d-m-Y')}<br>";
 
                         foreach ($workShifts as $shift) {
-                            $isChecked = "";
-                            if (isset($_SESSION["shifts"])) {
-                                foreach ($_SESSION["shifts"] as $registeredShift) {
-                                    if ($registeredShift["date"] === $dateString && $registeredShift["shiftName"] === $shift["shiftName"]) {
-                                        $isChecked = "checked";
-                                        break;
-                                    }
-                                }
-                            }
-                            
+                            $isChecked = isset($caDK[$dateString]) && in_array($shift['shiftName'], $caDK[$dateString]) ? 'checked' : '';
                             echo "<div class='my-2'><label>";
-                            echo "<input type='checkbox' name='shift[{$dateString}][]' value='{$shift['shiftName']}' {$isChecked}> {$shift['shiftName']}";
+                            echo "<input type='checkbox' name='shift[{$dateString}][]' value='{$shift['shiftName']}' $isChecked> {$shift['shiftName']}";
                             echo "</label><br> </div>";
                         }
                         echo "</div>";
@@ -99,9 +111,30 @@ if (isset($_POST["shift"])) {
                 </div>
 
                 <div id="registerButtonDiv" class="mt-4">
-                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-lg" name="submitShifts">Đăng ký</button>
+                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-lg" name="submitShifts">Đăng
+                        ký</button>
                 </div>
             </form>
         </div>
+
+        <!-- Hiển thị lịch đã đăng ký nếu có -->
+        <?php
+        if (!empty($caDK)) {
+            echo "<h3 class='mt-6 text-lg font-semibold'>Lịch bạn đã đăng ký:</h3>";
+            echo "<div class='mt-4 bg-white p-4 rounded-lg shadow-lg'>";
+            echo "<div class='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4'>";
+
+            foreach ($caDK as $date => $shifts) {
+                $dateFormatted = date('d-m-Y', strtotime($date));
+
+                echo "<div class='day p-4 bg-blue-100 border rounded-md'>";
+                echo "<strong>{$dateFormatted}</strong><br>";
+                echo "<div class='mt-2'>" . implode(", ", $shifts) . "</div>";
+                echo "</div>";
+            }
+            echo "</div>";
+            echo "</div>";
+        }
+        ?>
     </div>
 </div>

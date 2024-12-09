@@ -2,16 +2,15 @@
 session_start();
 $ctrl = new cProposals;
         $ctrlMessage = new cMessage;
-$userID = $_SESSION["user"][2];
+$userID = $_SESSION["user"][0];
 if (isset($_POST['btnthemmon'])) {
     $type = $_POST['type'];
     $content = $_POST['content'];
-
     if (empty($type) || empty($content)) {
         $ctrlMessage->emptyMessage();
     } else {
         $ctrl->cInsertProposal($type, $content, $userID);
-        $ctrlMessage->successMessage("Tạo đề xuất ");
+        $ctrlMessage->successMessage("Tạo đề xuất ");   
     }
 }
 ?>
@@ -38,7 +37,8 @@ if (isset($_POST['btnthemmon'])) {
                 </thead>
                 <tbody>
                     <?php
-                    $userID = $_SESSION["user"][2];
+                    $userID = $_SESSION["user"][0];
+                    
                     if ($ctrl->cGetProposalByUserID($userID) != 0) {
                         $result = $ctrl->cGetProposalByUserID($userID);
 

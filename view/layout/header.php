@@ -16,7 +16,7 @@ $selectedStore = isset($_COOKIE["selectedStore"]) ? $_COOKIE["selectedStore"] : 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="images/logo-nobg.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../../../images/logo-nobg.png" type="image/x-icon" />
 
     <!-- Font Awesome -->
     <link href="view/css/all.css" rel="stylesheet" />

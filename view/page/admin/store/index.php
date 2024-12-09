@@ -1,6 +1,4 @@
 <?php
-$ctrl = new cStores;
-$ctrlMessage = new cMessage;
 
 if (isset($_POST["btnthemch"])) {
     $storeID = $_SESSION["storeID"];
@@ -8,9 +6,17 @@ if (isset($_POST["btnthemch"])) {
     $address = $_POST["address"];
     $contact = $_POST["contact"];
     $status = $_POST["status"];
+    $sql = "INSERT INTO store (storeName, address, contact, status) 
+            VALUES ('$storeName', '$address', '$contact', 1)";
 
-    $ctrl->cInsertStore($storeName, $address, $contact);
-    $ctrlMessage->successMessage("Thêm cửa hàng ");
+    if ($conn->query($sql) === TRUE) {
+        echo "<script>
+                alert('Cửa hàng đã được thêm thành công');
+                window.location.href = ''
+              </script>";
+    } else {
+        echo "Thêm thất bại";
+    }
 }
 
 if (isset($_POST["btncapnhat"])) {
@@ -22,17 +28,18 @@ if (isset($_POST["btncapnhat"])) {
   </script>";
 
     $storeID = $_POST["btncapnhat"];
+    $sql = "SELECT * FROM store WHERE storeID = $storeID";
+    $result = $conn->query($sql);
 
-    if ($ctrl->cGetStoreByID($storeID) != 0) {
-        $result = $ctrl->cGetStoreByID($storeID);
-
+    if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
         $_SESSION["storeID"] = $row["storeID"];
         $_SESSION["storeName"] = $row["storeName"];
         $_SESSION["address"] = $row["address"];
         $_SESSION["contact"] = $row["contact"];
-    } else
-        $ctrlMessage->falseMessage("Không tìm thấy cửa hàng!");
+    } else {
+        echo "<script>alert('Không tìm thấy cửa hàng!');</script>";
+    }
 }
 
 if (isset($_POST["btnsuach"])) {
@@ -41,8 +48,16 @@ if (isset($_POST["btnsuach"])) {
     $address = $_POST["address"];
     $contact = $_POST["contact"];
 
-    $ctrl->cUpdateStore($storeID, $storeName, $address, $contact);
-    $ctrlMessage->successMessage("Cập nhật cửa hàng ");
+    $sql = "UPDATE store SET storeName='$storeName', address='$address', 
+        contact='$contact' WHERE storeID=$storeID";
+    if ($conn->query($sql) === TRUE) {
+        echo "<script>
+            alert('Cửa hàng đã được cập nhật thành công!');
+            window.location.href = '';
+        </script>";
+    } else {
+        echo "Cập nhật thất bại: " . $conn->error;
+    }
 }
 
 // Trạng thái cửa hàng
@@ -52,10 +67,14 @@ if (isset($_POST["btnkhoach"])) {
 
     $newStatus = ($status == 1) ? 0 : 1;
 
-    $ctrl->cUpdateStatusStore($storeID, $newStatus);
-    $ctrlMessage->successMessage("Cập nhật trạng thái cửa hàng ");
-}
+    $sql = "UPDATE store SET status = '$newStatus' WHERE storeID = '$storeID'";
 
+    if ($conn->query($sql) === TRUE) {
+        echo "<script>alert('Cập nhật trạng thái tài khoản thành công!'); </script>";
+    } else {
+        echo "<script>alert('Lỗi khi cập nhật trạng thái tài khoản.');</script>";
+    }
+}
 ?>
 
 <div class="grid grid-cols-1 md:grid-cols-1 gap-6 mt-8">
@@ -91,18 +110,16 @@ if (isset($_POST["btnkhoach"])) {
                     </thead>
                     <tbody>
                         <?php
-                        if ($ctrl->cGetAllStore() != 0) {
-                            $result = $ctrl->cGetAllStore();
+                        $sql = "SELECT * FROM `store`";
+                        $result = $conn->query($sql);
 
-                            while ($row = $result->fetch_assoc()) {
-                                $storeID = $row["storeID"];
-                                $ctrlUser = new cEmployees;
+                        while ($row = $result->fetch_assoc()) {
+                            $storeID = $row["storeID"];
+                            $sql2 = "SELECT * FROM user WHERE userID = $storeID + 1";
+                            $result2 = $conn->query($sql2);
+                            $row2 = $result2->fetch_assoc();
 
-                                if ($ctrlUser->cGetManagerByStoreID($storeID) != 0) {
-                                    $result2 = $ctrlUser->cGetManagerByStoreID($storeID);
-                                    $row2 = $result2->fetch_assoc();
-
-                                    echo "
+                            echo "
                                     <tr>
                                         <td class='py-2 border-2'>#CH0" . $row["storeID"] . "</td>
                                         <td class='py-2 border-2'>" . $row["storeName"] . "</td>
@@ -110,7 +127,7 @@ if (isset($_POST["btnkhoach"])) {
                                         <td class='py-2 border-2'>" . $row["contact"] . "</td>
                                         <td class='py-2 border-2'>" . $row2["userName"] . "</td>
                                         <td class='py-2 border-2'>
-                                            <span class='bg-" . ($row["status"] == 1 ? "green" : "red") . "-100 text-" . ($row["status"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["status"] == 1 ? "Đang kinh doanh" : "Ngừng kinh doanh") . "</span>
+                                            <span class='bg-" . ($row["status"] == 1 ? "green" : "red") . "-100 text-" . ($row["status"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["status"] == 1 ? "Đang hoạt động" : "Ngừng hoạt động") . "</span>
                                         </td>
                                         <td class='py-2 border-2 flex justify-center items-center'>
                                             <button class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["storeID"] . "'>Cập nhật</button>
@@ -127,10 +144,7 @@ if (isset($_POST["btnkhoach"])) {
                                         </td>
                                     </tr>
                                     ";
-                                }
-                            }
-                        } else
-                            echo "Không có dữ liệu!";
+                        }
                         ?>
                     </tbody>
                 </table>
@@ -168,7 +182,9 @@ if (isset($_POST["btnkhoach"])) {
                                 <td>
                                     <label for="contact" class="w-full py-2"><b>Thông tin liên hệ <span
                                                 class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="contact" required>
+                                    <input type="text" class="w-full form-control" name="contact" required
+                                        pattern="^0[0-9]{9}$" title="Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số">
+
                                 </td>
                             </tr>
                         </table>
@@ -212,9 +228,11 @@ if (isset($_POST["btnkhoach"])) {
                                 <td>
                                     <label for="contact" class="w-full py-2"><b>Thông tin liên hệ</b></label>
                                     <input type="text" class="w-full form-control" name="contact"
-                                        value="<?php echo $_SESSION["contact"]; ?>" required>
+                                        value="<?php echo $_SESSION['contact']; ?>" required pattern="^0[0-9]{9}$"
+                                        title="Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số">
                                 </td>
                             </tr>
+
                         </table>
                     </div>
                     <div class="modal-footer">
