@@ -41,9 +41,10 @@ if (isset($_POST["submit"])) {
 ?>
 
 <!-- On top button -->
-<button class="fixed bottom-10 right-4 text-white bg-gray-700 rounded-full size-10 z-20 opacity-40 hover:opacity-100"
+<button class="fixed bottom-10 right-4 flex justify-center items-center text-black bg-gray-300 border-2 border-black rounded-full size-10 z-20 transition ease opacity-60 hover:opacity-900"
     onclick="scrollToTop()" id="onTopBtn">
-    <i class="far fa-circle-up size-10"></i>
+    <i class="fas fa-level-up-alt size-6"></i>
+    <!-- <i class="far fa-circle-up size-10"></i> -->
 </button>
 
 <!-- Footer -->
