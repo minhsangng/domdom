@@ -13,17 +13,43 @@ $storeID = $_SESSION["managerstoreID"];
                     <option value="#NVL">Nguyên vật liệu</option>
                 </select>
             </div>
-            <div class="currentMonth">
-                <form action="" method="post" class="revenueMonth flex items-center my-auto">
-                    <input type="date" name="startM" id="startM"
-                        class="bg-gray-100 border-solid border-2 rounded-lg py-1 px-3" value="<?php echo $startM; ?>">
+            <div class="currentMonth flex items-center">
+                    <input type="date" name="startM" id="startM" class="bg-gray-100 border-solid border-2 rounded-lg py-1 px-3" 
+                        value="<?php echo $startM; ?>" required>
                     <span class="mx-2">đến</span>
-                    <input type="date" name="endM" id="endM"
-                        class="bg-gray-100 border-solid border-2 rounded-lg py-1 px-3 mr-1"
-                        value="<?php echo $endM; ?>">
-                    <button type="submit" name="btnxem" class="btn btn-primary ml-1 py-2 px-4 rounded-lg">Xem</button>
-                </form>
+                    <input type="date" name="endM" id="endM" class="bg-gray-100 border-solid border-2 rounded-lg py-1 px-3 mr-1"
+                        value="<?php echo $endM; ?>" required>
+                    <button type="submit" name="btnxem" id="btnxem" class="btn btn-primary ml-1 py-2 px-4 rounded-lg">Xem</button>
+                </div>
+
             </div>
+                <script>
+                    document.addEventListener("DOMContentLoaded", () => {
+                    const startDate = document.getElementById("startM");
+                    const endDate = document.getElementById("endM");
+                    const btnXem = document.getElementById("btnxem");
+
+                    // Sự kiện thay đổi giá trị
+                    startDate.addEventListener("change", () => {
+                        // Giới hạn giá trị tối thiểu của ngày kết thúc
+                        endDate.min = startDate.value;
+                    });
+
+                    endDate.addEventListener("change", () => {
+                        // Giới hạn giá trị tối đa của ngày bắt đầu
+                        startDate.max = endDate.value;
+                    });
+
+                    // Kiểm tra trước khi submit
+                    btnXem.addEventListener("click", (e) => {
+                        if (new Date(startDate.value) > new Date(endDate.value)) {
+                            e.preventDefault(); // Ngăn submit form
+                            alert("Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc!");
+                        }
+                    });
+                });
+
+                </script>
         </div>
 
         <hr>
