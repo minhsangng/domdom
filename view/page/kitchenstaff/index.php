@@ -21,7 +21,7 @@ if (!isset($_SESSION["login"]) || $_SESSION["user"][2] != 4)
         if (alert('Bạn không có quyền truy cập!') != false)
             window.location.href = '../login/';
     </script>";
-
+    
 /* Kết nối database */
 $db = new Database();
 $conn = $db->connect();

@@ -5,6 +5,22 @@ $ctrlMessage = new cMessage;
 
 $staff = "";
 
+// Thêm biến để theo dõi offset tuần
+if (isset($_SESSION['week_offset'])) {
+    $week_offset = $_SESSION['week_offset'];
+} else {
+    $week_offset = 0;
+}
+
+// Cập nhật offset nếu có POST request
+if (isset($_POST['week_change'])) {
+    $week_offset += (int)$_POST['week_change'];
+    $_SESSION['week_offset'] = $week_offset;
+}
+
+// Tính toán $startW dựa trên offset
+$startW = date('Y-m-d', strtotime("monday this week $week_offset weeks"));
+$endW = date('Y-m-d', strtotime("sunday this week $week_offset weeks"));
 
 if (isset($_POST["staff"])) {
     $_SESSION["selected_staff"] = $_POST["staff"];
@@ -185,8 +201,19 @@ if (isset($_POST["btnthemnv"])) {
         let currentWeekOffset = 0;
 
         function changeWeek(offset) {
-            currentWeekOffset += offset;
-            updateCalendar();
+            // Tạo form ẩn và submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.style.display = 'none';
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'week_change';
+            input.value = offset;
+
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
         }
 
         function updateCalendar() {
@@ -259,6 +286,5 @@ if (isset($_POST["btnthemnv"])) {
             document.getElementById("btnthem").value = button.value;
         }
 
-        // Thay thế createCalendar() bằng updateCalendar()
         updateCalendar();
     </script>

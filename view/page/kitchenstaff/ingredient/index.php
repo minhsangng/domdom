@@ -52,8 +52,8 @@ if (isset($_POST['btnnhap'])) {
                     <tbody>
                         <?php 
                         
-                        if ($ctrl->cGetAllIngredientByStore($storeID) != 0) {
-                        $result = $ctrl->cGetAllIngredientByStore($storeID);
+                        if ($ctrl->cGetAllNeedIngredientByStore($storeID) != 0) {
+                        $result = $ctrl->cGetAllNeedIngredientByStore($storeID);
 
                         if ($result->num_rows > 0)
                             while ($row = $result->fetch_assoc()) {

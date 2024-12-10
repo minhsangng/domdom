@@ -21,7 +21,6 @@ if (isset($_POST["btnthemkm"])) {
     $image = $_FILES["image"];
     $status = 1;
 
-    // Validation giống như update
     if (empty($proName)) {
         $addErrors['proName'] = 'Vui lòng nhập tên khuyến mãi!';
     } elseif (strlen($proName) < 5) {
@@ -61,7 +60,6 @@ if (isset($_POST["btnthemkm"])) {
         }
     }
 
-    // Kiểm tra ảnh
     if ($image["size"] == 0) {
         $addErrors['image'] = 'Vui lòng chọn ảnh!';
     } else {
@@ -70,19 +68,16 @@ if (isset($_POST["btnthemkm"])) {
         $filetype = $image["type"];
         $filesize = $image["size"];
 
-        // Xác minh phần mở rộng tệp
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
         if (!array_key_exists($ext, $allowed)) {
             $addErrors['image'] = 'Vui lòng chọn định dạng ảnh hợp lệ (jpg, jpeg, png)!';
         }
 
-        // Xác minh kích thước tệp - tối đa 5MB
         $maxsize = 5 * 1024 * 1024;
         if ($filesize > $maxsize) {
             $addErrors['image'] = 'Kích thước ảnh quá lớn. Vui lòng chọn ảnh dưới 5MB!';
         }
     }
-    // Nếu không có lỗi thì thêm mới
     if (empty($addErrors)) {
         $imgName = $image["name"];
         move_uploaded_file($image["tmp_name"], "../../../images/promotion/".$imgName);
@@ -135,7 +130,6 @@ if (isset($_POST["btnsuakm"])) {
     $image = $_FILES["image"];
     $status = $_POST["status"];
 
-    // Validation
     if (empty($proName)) {
         $updateErrors['proName'] = 'Vui lòng nhập tên khuyến mãi!';
     } elseif (strlen($proName) < 5) {
@@ -175,32 +169,27 @@ if (isset($_POST["btnsuakm"])) {
         }
     }
 
-    // Sửa phần xử lý ảnh
     if ($image["size"] > 0) {
         $allowed = array("jpg" => "image/jpg", "jpeg" => "image/jpeg", "png" => "image/png");
         $filename = $image["name"];
         $filetype = $image["type"];
         $filesize = $image["size"];
 
-        // Xác minh phần mở rộng tệp
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
         if (!array_key_exists($ext, $allowed)) {
             $updateErrors['image'] = 'Vui lòng chọn định dạng ảnh hợp lệ (jpg, jpeg, png)!';
         }
 
-        // Xác minh kích thước tệp - tối đa 5MB
         $maxsize = 5 * 1024 * 1024;
         if ($filesize > $maxsize) {
             $updateErrors['image'] = 'Kích thước ảnh quá lớn. Vui lòng chọn ảnh dưới 5MB!';
         }
     }
 
-    // Nếu không có lỗi thì cập nhật
+
     if (empty($updateErrors)) {
-        // Sử dụng ảnh hiện tại nếu không có ảnh mới được tải lên
         $imgName = $image["size"] > 0 ? $image["name"] : $_SESSION["currentImage"];
         
-        // Chỉ upload ảnh mới nếu có file được chọn
         if ($image["size"] > 0) {
             move_uploaded_file($image["tmp_name"], "../../../images/promotion/".$imgName);
         }
@@ -425,7 +414,7 @@ if (isset($_POST["btnkhoa"])) {
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label"><b>Hình ảnh</b></label                  
+                            <label class="form-label"><b>Hình ảnh</b></label>                 
                             <input type="file" class="form-control <?php echo isset($updateErrors['image']) ? 'border-red-500' : ''; ?>" 
                                 name="image" accept="image/*">
                             <?php if (isset($updateErrors['image'])): ?>

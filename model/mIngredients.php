@@ -276,15 +276,15 @@ class mIngredients
         return 0;
     }
 
-    public function mGetAllIngredientByStore($storeID) 
+    public function mGetAllNeedIngredientByStore($storeID) 
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT i.*, ni.quantity 
-                FROM ingredient i 
-                JOIN needingredient ni ON i.ingredientID = ni.ingredientID
-                JOIN store_ingredient si ON i.ingredientID = si.ingredientID
-                WHERE si.storeID = $storeID";
+        $sql = "SELECT * FROM needingredient ni 
+                JOIN ingredient i ON i.ingredientID = ni.ingredientID 
+                JOIN importorder io ON io.importOrderID = ni.importOrderID 
+                JOIN user u ON u.userID = io.userID 
+                WHERE u.storeID = $storeID";
 
         if ($conn != null)
             return $conn->query($sql);
