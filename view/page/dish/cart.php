@@ -419,7 +419,7 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                 }
             }
 
-            $sql_check_orders = "SELECT COUNT(*) AS order_count FROM `order` WHERE phoneNumber = '$phone' AND status = 4";
+            $sql_check_orders = "SELECT COUNT(*) AS order_count FROM `order` WHERE customerID = '$phone' AND status = 4";
             $order_result = $conn->query($sql_check_orders);
             $sumofQuantity = 0;
             foreach ($_SESSION["cart"] as $cart) {
@@ -434,7 +434,7 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                     echo "<script>alert('Không thể đặt hàng: Khách hàng đã hủy đơn quá 3 lần.');</script>";
                 } else {
                     //echo "$total, $sumOfQuantity, $payment_method, $note, '1', $phone, $discountAmount, $finalAmount, $partyPackageID, $storeID";
-                    $sql_insert_order = "INSERT INTO `order` (orderDate, total, sumOfQuantity, paymentMethod, note, phoneNumber, promotionID, storeID) 
+                    $sql_insert_order = "INSERT INTO `order` (orderDate, total, sumOfQuantity, paymentMethod, note, customerID, promotionID, storeID) 
                     VALUES (NOW(), $total, $sumofQuantity, '$payment_method', '$note', '$phone', '$promotionID', $storeID)";
                     if ($conn->query($sql_insert_order) === TRUE) {
                         $orderID = $conn->insert_id;
