@@ -276,15 +276,35 @@ class mIngredients
         return 0;
     }
 
-    public function mUpdateNeedIngredientQuantity($ingredientID, $quantity)
+    public function mGetAllIngredientByStore($storeID) 
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "UPDATE needingredient SET quantity = $quantity WHERE ingredientID = $ingredientID";
-        $sql2 = "UPDATE `store_ingredient` SET `quantityInStock` = `quantityInStock` + $quantity WHERE `ingredientID` = $ingredientID";
+        $sql = "SELECT i.*, ni.quantity 
+                FROM ingredient i 
+                JOIN needingredient ni ON i.ingredientID = ni.ingredientID
+                JOIN store_ingredient si ON i.ingredientID = si.ingredientID
+                WHERE si.storeID = $storeID";
+
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+
+    public function mUpdateNeedIngredientQuantity($ingredientID, $quantity, $storeID)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        
+        $sql1 = "UPDATE needingredient SET quantity = $quantity 
+                 WHERE ingredientID = $ingredientID";
+                 
+        $sql2 = "UPDATE store_ingredient 
+                 SET quantityInStock = quantityInStock + $quantity 
+                 WHERE ingredientID = $ingredientID AND storeID = $storeID";
 
         if ($conn != null) {
-            return $conn->query($sql) && $conn->query($sql2);
+            return $conn->query($sql1) && $conn->query($sql2);
         }
         return 0;
     }

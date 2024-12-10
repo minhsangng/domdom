@@ -5,6 +5,8 @@ if (!isset($_SESSION['imported_ingredients'])) {
     $_SESSION['imported_ingredients'] = array();
 }
 
+$storeID = $_SESSION['user'][1]; 
+
 $ctrl = new cIngredients;
 
 // Xử lý nhập nguyên liệu
@@ -16,7 +18,7 @@ if (isset($_POST['btnnhap'])) {
     if ($quantity <= 0) {
         echo "<script>alert('Vui lòng nhập số lượng lớn hơn 0!');</script>";
     } else {
-        if ($ctrl->cUpdateNeedIngredientQuantity($ingredientID, $quantity)) {
+        if ($ctrl->cUpdateNeedIngredientQuantity($ingredientID, $quantity, $storeID)) {
             $_SESSION['imported_ingredients'][$ingredientID] = $quantity;
         } else {
             echo "<script>alert('Có lỗi xảy ra!');</script>";
@@ -29,7 +31,7 @@ if (isset($_POST['btnnhap'])) {
     <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
         <div class="flex justify-between items-center mb-4">
             <h2 class="text-xl font-semibold">
-                Danh sách nguyên liệu cần mua
+                Danh sách nguyên liệu cần mua của cửa hàng <?php echo $storeID; ?>
             </h2>
         </div>
         <div class="h-fit bg-gray-100 rounded-lg p-6">
@@ -50,8 +52,8 @@ if (isset($_POST['btnnhap'])) {
                     <tbody>
                         <?php 
                         
-                        if ($ctrl->cGetAllIngredient() != 0) {
-                        $result = $ctrl->cGetAllIngredient();
+                        if ($ctrl->cGetAllIngredientByStore($storeID) != 0) {
+                        $result = $ctrl->cGetAllIngredientByStore($storeID);
 
                         if ($result->num_rows > 0)
                             while ($row = $result->fetch_assoc()) {
@@ -61,12 +63,12 @@ if (isset($_POST['btnnhap'])) {
                                         <tr>
                                             <td class='py-2 border-2'>#NL0" . $row["ingredientID"] . "</td>
                                             <td class='py-2 border-2'>" . $row["ingredientName"] . "</td>
-                                            <td class='py-2 border-2'>" . $row["unitOfcalculaton"] . "</td>
+                                            <td class='py-2 border-2'>" . $row["unitOfcalculation"] . "</td>
                                             <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
                                             <td class='py-2 border-2'>" . $row["typeIngredient"] . "</td>
                                             <td class='py-2 border-2'>" . $row["quantity"] . "</td>
                                             <td class='py-2 border-2'>
-                                                <input type='number' name='quantity[" . $row["ingredientID"] . "]' class='w-14 rounded-lg px-2 py-1'>
+                                                <input type='number' name='quantity[" . $row["ingredientID"] . "]' class='w-24 rounded-lg px-2 py-1'>
                                             </td>
                                             <td class='py-2 border-2'>
                                                 <button type='submit' class='btn btn-primary ml-1' name='btnnhap' value='" . $row["ingredientID"] . "'>Nhập</button>
@@ -87,7 +89,7 @@ if (isset($_POST['btnnhap'])) {
 <?php
 if (!empty($_SESSION['imported_ingredients'])) {
     echo "<div class='bg-white p-6 rounded-lg shadow-lg mt-6'>
-            <h2 class='text-xl font-semibold mb-4'>Danh sách nguyên liệu đã nhập</h2>
+            <h2 class='text-xl font-semibold mb-4'>Danh sách nguyên liệu đã nhập của cửa hàng " . $storeID . "</h2>
             <div class='h-fit bg-gray-100 rounded-lg p-6'>
                 <table class='text-base w-full text-center'>
                     <thead>
@@ -106,7 +108,7 @@ if (!empty($_SESSION['imported_ingredients'])) {
             echo "<tr>
                     <td class='py-2 border-2'>#NL0" . ($importedID < 10 ? "0" . $importedID : $importedID) . "</td>
                     <td class='py-2 border-2'>" . $ingredient["ingredientName"] . "</td>
-                    <td class='py-2 border-2'>" . $ingredient["unitOfcalculaton"] . "</td>
+                    <td class='py-2 border-2'>" . $ingredient["unitOfcalculation"] . "</td>
                     <td class='py-2 border-2'>" . $importedQuantity . "</td>
                 </tr>";
         }

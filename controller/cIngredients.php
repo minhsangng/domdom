@@ -205,9 +205,19 @@ class cIngredients extends mIngredients
         return 0;
     }
 
-    public function cUpdateNeedIngredientQuantity($ingredientID, $quantity)
+   
+    public function cGetAllIngredientByStore($storeID)
     {
-        if ($this->mUpdateNeedIngredientQuantity($ingredientID, $quantity) != 0) {
+        if ($this->mGetAllIngredientByStore($storeID) != 0) {
+            $result = $this->mGetAllIngredientByStore($storeID);
+            return $result;
+        }
+        return 0;
+    }
+
+    public function cUpdateNeedIngredientQuantity($ingredientID, $quantity, $storeID)
+    {
+        if ($this->mUpdateNeedIngredientQuantity($ingredientID, $quantity, $storeID) != 0) {
             return true;
         }
         return false;

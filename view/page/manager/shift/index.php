@@ -5,6 +5,7 @@ $ctrlMessage = new cMessage;
 
 $staff = "";
 
+
 if (isset($_POST["staff"])) {
     $_SESSION["selected_staff"] = $_POST["staff"];
     $staff = $_POST["staff"];
@@ -54,7 +55,7 @@ if (isset($_POST["btnthemnv"])) {
         if ($success) {
             $ctrlMessage->successMessage("Thêm ca làm thành công!");
         } else {
-            $ctrlMessage->errorMessage("Có lỗi x�y ra khi thêm ca làm!");
+            $ctrlMessage->errorMessage("Có lỗi xảy ra khi thêm ca làm!");
         }
     }
 }
@@ -91,10 +92,22 @@ if (isset($_POST["btnthemnv"])) {
 
             <?php
 
-            if ($staff != "")
-                $sql = "SELECT * FROM `employee_shift` AS ES JOIN `user` AS U ON ES.userID = U.userID JOIN `shift` AS S ON S.shiftID = ES.shiftID WHERE U.roleID = $staff AND ES.date BETWEEN '$startW' AND '$endW'";
-            else
-                $sql = "SELECT * FROM `employee_shift` AS ES JOIN `user` AS U ON ES.userID = U.userID JOIN `shift` AS S ON S.shiftID = ES.shiftID WHERE ES.date BETWEEN '$startW' AND '$endW'";
+            $managerStoreID = $_SESSION["user"][1]; 
+
+            if ($staff != "") {
+                $sql = "SELECT * FROM `employee_shift` AS ES 
+                        JOIN `user` AS U ON ES.userID = U.userID 
+                        JOIN `shift` AS S ON S.shiftID = ES.shiftID 
+                        WHERE U.roleID = $staff 
+                        AND U.storeID = $managerStoreID 
+                        AND ES.date BETWEEN '$startW' AND '$endW'";
+            } else {
+                $sql = "SELECT * FROM `employee_shift` AS ES 
+                        JOIN `user` AS U ON ES.userID = U.userID 
+                        JOIN `shift` AS S ON S.shiftID = ES.shiftID 
+                        WHERE U.storeID = $managerStoreID 
+                        AND ES.date BETWEEN '$startW' AND '$endW'";
+            }
 
             $result = $conn->query($sql);
             $workShifts = [];
@@ -123,9 +136,13 @@ if (isset($_POST["btnthemnv"])) {
                                     <strong class="w-1/3">Chọn nhân viên:</strong>
                                     <?php
                                     if ($staff != "") {
-                                        $sql = "SELECT * FROM `user` WHERE roleID = $staff";
+                                        $sql = "SELECT * FROM `user` 
+                                                WHERE roleID = $staff 
+                                                AND storeID = $managerStoreID";
                                     } else {
-                                        $sql = "SELECT * FROM `user` WHERE roleID IN (3, 4)";
+                                        $sql = "SELECT * FROM `user` 
+                                                WHERE roleID IN (3, 4) 
+                                                AND storeID = $managerStoreID";
                                     }
                                     $result = $conn->query($sql);
 
@@ -201,7 +218,7 @@ if (isset($_POST["btnthemnv"])) {
 
                 // Tạo container có thể scroll cho nội dung
                 const contentDiv = document.createElement("div");
-                contentDiv.classList.add("overflow-y-auto", "h-48"); // Thay đổi h-28 thành h-40 hoặc h-48
+                contentDiv.classList.add("overflow-y-auto", "h-48"); 
 
                 const detailsDiv = document.createElement("div");
 
