@@ -13,6 +13,17 @@ class mIngredients
         return 0;
     }
 
+    public function mGetAllIngredient1()
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "SELECT * FROM ingredient ";
+
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+
     public function mGetUnitIngredient()
     {
         $db = new Database;
@@ -165,7 +176,31 @@ class mIngredients
         $conn = $db->connect();
         $sql = "INSERT INTO ingredient (ingredientName, unitOfcalculation, price, typeIngredient) VALUES ('$ingreName', '$unit', $price, '$type')";
 
-        return $conn->query($sql);
+        if ($conn->query($sql))
+            return $conn->insert_id;
+        else
+            return -1;
+    }
+
+    public function mInsertStoreIngredient($ingredientID)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $i = 1;
+        $isSuccess = false;
+        while ($i != 6) {
+            $sql = "INSERT INTO store_ingredient (ingredientID, storeID, quantityInStock) VALUES ('$ingredientID', '$i', '0')";
+            if ($conn != null) {
+                if ($conn->query($sql)) {
+                    $isSuccess = true;
+                    $i++;
+                } else {
+                    $isSuccess = false;
+                    break;
+                }
+            }
+        }
+        return $isSuccess;
     }
 
     public function mUpdateIngredient($ingreName, $unit, $price, $type, $ingreID)
@@ -173,6 +208,28 @@ class mIngredients
         $db = new Database;
         $conn = $db->connect();
         $sql = "UPDATE `ingredient` SET ingredientName = '$ingreName', unitOfcalculation = '$unit', price = $price, typeIngredient = '$type' WHERE ingredientID = $ingreID";
+
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+
+    public function mUpdateStoreThuaIngredient($storeThua, $soLuongChuyen)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "UPDATE `store_ingredient` SET quantityInStock = quantityInStock - $soLuongChuyen WHERE storeID = $storeThua";
+
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+
+    public function mUpdateStoreThieuIngredient($storeThieu, $soLuongChuyen)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "UPDATE `store_ingredient` SET quantityInStock = quantityInStock + $soLuongChuyen WHERE storeID = $storeThieu";
 
         if ($conn != null)
             return $conn->query($sql);

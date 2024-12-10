@@ -60,6 +60,19 @@ $(document).ready(function () {
 
   // đổi đơn vị tính
   let u_rowId = $("#u_countIngreDish").val();
+  for (var i=0; i< u_rowId;i++) {
+    $("#u-ma-" + i).val($(`#u-cateIngredient-${i}`).find("option:selected").data("id"));
+    $(`#u-unit-${i}`).val($(`#u-cateIngredient-${i}`).val());
+    $(document).on("change", `#u-cateIngredient-${i}`, function () {
+      var u_rowId = $(this).attr("data-row-id");
+      var ingredientId = $(this).find("option:selected").data("id");
+      var selectedValue = $(`#u-cateIngredient-${u_rowId}`).val();
+      $("#u-ma-" + u_rowId).val(ingredientId);
+      $(`#u-unit-${u_rowId}`).val(selectedValue);
+      console.log(selectedValue);
+      console.log(ingredientId);
+    });
+  }
   $("#u-ma-" + u_rowId).val($(`#u-cateIngredient-${u_rowId}`).find("option:selected").data("id"));
   $(`#u-unit-${u_rowId}`).val($(`#u-cateIngredient-${u_rowId}`).val());
   $(document).on("change", `#u-cateIngredient-${u_rowId}`, function () {
@@ -269,7 +282,7 @@ $(document).ready(function () {
     }
   });
 
-  // regex UC Thêm nguyên liệu
+  // regex UC Thêm món ăn
   function ktDishName() {
     let dishName = $("#iDishName").val()
     if (dishName.length === 0) {
@@ -376,7 +389,7 @@ $(document).ready(function () {
     }
   });
 
-  // regex UC Sửa nguyên liệu
+  // regex UC Sửa món ăn
   function ktuDishName() {
     let dishName = $("#uDishName").val()
     if (dishName.length === 0) {
@@ -483,5 +496,138 @@ $(document).ready(function () {
     }
   });
 
+  // regex UC Thêm nguyên liệu
+  function ktIngredientName() {
+    let ingredientName = $("#iIngredientName").val()
+    if (ingredientName.length === 0) {
+      $("#errIngredientName").html("Tên nguyên liệu không được rỗng")
+      return false
+    } else {
+      $("#errIngredientName").html("*")
+      return true
+    }
+  }
+
+  function ktIngredientPrice() {
+    let ingredientPrice = $("#iIngredientPrice").val()
+    if (ingredientPrice === "") {
+      $("#errIngredientPrice").html("Giá mua không được rỗng")
+      return false
+    } else if (Number(ingredientPrice) < 0) {
+      $("#errIngredientPrice").html("Giá mua không được nhỏ hơn 0")
+      return false
+    } else {
+      $("#errIngredientPrice").html("*")
+      return true
+    }
+  }
+
+  $("#iIngredientName").blur(function () {
+    ktIngredientName()
+  })
+
+  $("#iIngredientPrice").blur(function () {
+    ktIngredientPrice()
+  })
+
+  $("#form-themnguyenlieu").on("submit", function (event) {
+    let isValid = false;
+    if (ktIngredientName() && ktIngredientPrice()) {
+      isValid = true;
+    }
+    if (!isValid) {
+      event.preventDefault();
+      alert("Thông tin không hợp lệ")
+    }
+  });
+
+  // regex UC Sửa nguyên liệu
+  function ktuIngredientName() {
+    let ingredientName = $("#uIngredientName").val()
+    if (ingredientName.length === 0) {
+      $("#uerrIngredientName").html("Tên nguyên liệu không được rỗng")
+      return false
+    } else {
+      $("#uerrIngredientName").html("*")
+      return true
+    }
+  }
+
+  function ktuIngredientPrice() {
+    let ingredientPrice = $("#uIngredientPrice").val()
+    if (ingredientPrice === "") {
+      $("#uerrIngredientPrice").html("Giá mua không được rỗng")
+      return false
+    } else if (Number(ingredientPrice) < 0) {
+      $("#uerrIngredientPrice").html("Giá mua không được nhỏ hơn 0")
+      return false
+    } else {
+      $("#uerrIngredientPrice").html("*")
+      return true
+    }
+  }
+
+  $("#uIngredientName").blur(function () {
+    ktuIngredientName()
+  })
+
+  $("#uIngredientPrice").blur(function () {
+    console.log(1)
+    ktuIngredientPrice()
+  })
+
+  $("#form-suanguyenlieu").on("submit", function (event) {
+    let isValid = false;
+    if (ktuIngredientName() && ktuIngredientPrice()) {
+      isValid = true;
+    }
+    if (!isValid) {
+      event.preventDefault();
+      alert("Thông tin không hợp lệ")
+    }
+  });
+
+  // REGEX TINH TOAN NGUYEN LIEU
+
+  $("#tinhtoannlform").on("submit", function (event) {
+    let isValid = false;
+    const soLuongMon = $(".tinhtoannlinput");
+    soLuongMon.each(function () {
+      if ($(this).val() != 0) {
+        if ($(this).val() > 0) {
+          isValid = true;
+          return false;
+        } else {
+          alert("Số lượng món không được âm")
+        }
+      }
+    });
+    if (!isValid) {
+      event.preventDefault();
+      alert("Nhập ít nhất 1 món ăn")
+
+    }
+  });
+
+  // REGEX Kết quả ước lượng
+  function ktQuantityNeed(index) {
+    let quantity = $("#tinhtoannlinputt-" + index).val();
+    if (quantity === "") {
+      alert("Số lượng không được rỗng");
+      return false;
+    } else if (Number(quantity) <= 0) {
+      alert("Số lượng phải lớn hơn 0");
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  for (let i = 0; i <= $(".tinhtoannlinputcls").length; i++) {
+    $("#tinhtoannlinputt-" + i).blur(function () {
+      console.log(i)
+      ktQuantityNeed(i);
+    });
+  }
 
 });

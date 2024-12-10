@@ -21,6 +21,16 @@ class cIngredients extends mIngredients
         return 0;
     }
 
+    public function cGetAllIngredient1()
+    {
+        if ($this->mGetAllIngredient1() != 0) {
+            $result = $this->mGetAllIngredient1();
+
+            return $result;
+        }
+        return 0;
+    }
+
     public function cGetAllIngredientLimit($startFrom, $productsPerPage)
     {
         if ($this->mGetAllIngredient() != 0) {
@@ -143,17 +153,39 @@ class cIngredients extends mIngredients
 
     public function cInsertIngredient($ingreName, $unit, $price, $type)
     {
-        if ($this->mInsertIngredient($ingreName, $unit, $price, $type) != 0) {
-            echo "<script>alert('Thêm nguyên liệu thành công');</script>";
+        $ingredientID = $this->mInsertIngredient($ingreName, $unit, $price, $type);
+        if ($ingredientID != -1) {
+            if ($this->mInsertStoreIngredient($ingredientID))
+                return true;
+            else
+                return false;
         } else
-            echo "<script>alert('Thêm nguyên liệu thất bại. Vui lòng nhập lại!');</script>";
+            return false;
     }
 
     public function cUpdateIngredient($ingreName, $unit, $price, $type, $ingreID)
     {
         if ($this->mUpdateIngredient($ingreName, $unit, $price, $type, $ingreID) != 0) {
-            echo "<script>alert('Cập nhật nguyên liệu thành công!')</script>";
+            return true;
+        }else {
+            return false;
         }
+    }
+
+    public function cUpdateStoresIngredient($storeThua, $storeThieu, $soLuongChuyen)
+    {
+        $isSuccess = false;
+        if ($this->mUpdateStoreThuaIngredient($storeThua, $soLuongChuyen) != 0) {
+            if ($this->mUpdateStoreThieuIngredient($storeThieu, $soLuongChuyen) != 0) {
+                $isSuccess = true;
+            } else {
+                $isSuccess = false;
+            }
+        } else {
+            $isSuccess = false;
+        }
+
+        return $isSuccess;
     }
 
     public function cLockIngredient($status, $ingredientID)
