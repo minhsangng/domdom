@@ -29,7 +29,7 @@ function validateAndFillModal() {
     isValid = false;
   } else if (!phone.value.match(phone.pattern)) {
     phoneError.innerText =
-      "Số điện thoại gồm 10 chữ số và bắt đầu bằng số 0. Vui lòng nhập lại.";
+      "Số điện thoại gồm 10 chữ số và bắt đầu bằng số 0 hoặc +84. Vui lòng nhập lại.";
     isValid = false;
   }
 

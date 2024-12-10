@@ -117,7 +117,7 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
 
                     <label for="phone" class="form-label mt-3">Số điện thoại:</label>
                     <input type="text" name="phone" id="phone" class="form-control" required
-                        pattern="^(0[1-9]{1}[0-9]{8})$">
+                        pattern="^((0[1-9]{1}[0-9]{8})|(\+84[1-9]{1}[0-9]{8}))$">
                     <div id="phone-error" class="text-red-500 text-sm"></div>
 
 
