@@ -16,8 +16,11 @@ include("../../../controller/cStores.php");
 include("../../../controller/cMessage.php");
 
 /* Kiểm soát truy cập */
-if (!isset($_SESSION["login"]))
-    echo "<script>window.location.href = '../login/';</script>";
+if (!isset($_SESSION["login"]) || $_SESSION["user"][2] != 1)
+    echo "<script>
+        if (alert('Bạn không có quyền truy cập!') != false)
+            window.location.href = '../login/';
+    </script>";
 
 $db = new Database;
 $conn = $db->connect();
