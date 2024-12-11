@@ -44,30 +44,39 @@ if (isset($_POST["btnxoa"])) {
 if (isset($_POST["btnthemnv"])) {
     $userID = (int)$_POST["user"];
     $shifts = $_POST["shift"];
-    $date = $_POST["btnthemnv"];
-    
     $hasError = false;
-    // Kiểm tra trùng lịch trước khi thêm
-    foreach ($shifts as $shiftID) {
-        $sql = "SELECT * FROM employee_shift WHERE userID = $userID AND date = '$date' AND shiftID = $shiftID";
-        $result = $conn->query($sql);
-        
-        if ($result && $result->num_rows > 0) {
-            $hasError = true;
-            $ctrlMessage->errorMessage("Ca làm đã được đăng ký cho nhân viên này!");
-            break;
-        }
+    $date = $_POST["btnthemnv"];
+
+    if (empty($shifts)) {
+        $ctrlMessage->errorMessage("Vui lòng chọn ca làm!");
+        $hasError = true;
     }
-    
+
     // Chỉ thêm nếu không có lỗi
     if (!$hasError) {
         $success = true;
         foreach ($shifts as $shiftID) {
+            // Kiểm tra xem ca làm đã tồn tại chưa
+            $checkSql = "SELECT COUNT(*) as count FROM employee_shift 
+                        WHERE shiftID = $shiftID 
+                        AND userID = $userID 
+                        AND date = '$date'";
+            $checkResult = $conn->query($checkSql);
+            $row = $checkResult->fetch_assoc();
+            
+            if ($row['count'] > 0) {
+                $ctrlMessage->errorMessage("Ca làm này đã được phân công cho nhân viên!");
+                $success = false;
+                break;
+            }
+
+            // Nếu chưa tồn tại thì thêm mới
             if (!$ctrl->cInsertEmployeeShift($shiftID, $userID, $date)) {
                 $success = false;
                 break;
             }
         }
+        
         if ($success) {
             $ctrlMessage->successMessage("Thêm ca làm thành công!");
         } else {
@@ -287,4 +296,5 @@ if (isset($_POST["btnthemnv"])) {
         }
 
         updateCalendar();
+
     </script>
