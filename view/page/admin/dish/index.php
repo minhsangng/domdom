@@ -36,9 +36,22 @@ if (isset($_POST["btnthemmon"])) {
     $prepare = $_POST["prepare"];
     $description = $_POST["description"];
     $image = $_FILES["image"];
-    $imgName = removeVietnameseAccents($dishName) . ".png";
-    if (move_uploaded_file($image["tmp_name"], "../../../images/dish/" . $imgName))
-        $ctrl->cInsertDish($dishName, $category, $price, $prepare, $imgName, $description, $ingredient, $quantity);
+    $currentDateTime = date("YmdHis_");
+    $filename_new = $currentDateTime . removeVietnameseAccents($dishName) .".". pathinfo($image["name"], PATHINFO_EXTENSION);
+    if ($image["type"] == "image/png" || $image["type"] == "image/jpeg" || $image["type"] == "image/jpg") {
+        if (move_uploaded_file($image["tmp_name"], "../../../images/dish/" . $filename_new)) {
+            if ($ctrl->cInsertDish($dishName, $category, $price, $prepare, $filename_new, $description, $ingredient, $quantity)) {
+                echo "<script>alert('Thêm món ăn thành công!')</script>";
+            } else {
+                echo "<script>alert('Thêm món ăn thất bại!')</script>";
+            }
+        } else {
+            echo "<script>alert('Upload ảnh thất bại')</script>";
+        }
+    } else {
+        echo "<script>alert('Không phải ảnh. Vui lòng chọn lại ảnh khác!')</script>";
+
+    }
 }
 
 
@@ -93,33 +106,22 @@ if (isset($_POST["btnsuamonan"])) {
     $prepare = $_POST["u-prepare"];
     $status = $_POST["u-status"];
     $image = $_FILES["u-image"];
-
-    $imgName = removeVietnameseAccents($dishName) . ".png";
-
-    if ($image["type"] == "image/png" || $image["type"] == "image/jpg" || strlen($image["name"]) === 0) {
-        if (strlen($image["name"]) != 0) {
-            if (move_uploaded_file($image["tmp_name"], "../../../images/dish/" . $imgName)) {
-                if ($ctrl->cUpdateDish($dishName, $category, $price, $prepare, $imgName, $dishID, $image["name"], $description, $ingredient, $_SESSION["ingredient"], $quantity)) {
-                    echo "<script>alert('Cập nhật món ăn thành công!')</script>";
-                } else {
-                    echo "<script>alert('Cập nhật món ăn thất bại!')</script>";
-                }
-            } else {
-                echo "<script>alert('Upload ảnh thất bại')</script>";
-            }
-        } else {
-            if ($ctrl->cUpdateDish($dishName, $category, $price, $prepare, $imgName, $dishID, $image["name"], $description, $ingredient, $_SESSION["ingredient"], $quantity)) {
+    $currentDateTime = date("YmdHis_");
+    $filename_new = $currentDateTime . removeVietnameseAccents($dishName) .".". pathinfo($image["name"], PATHINFO_EXTENSION);
+    if ($image["type"] == "image/png" || $image["type"] == "image/jpeg" || $image["type"] == "image/jpg") {
+        if (move_uploaded_file($image["tmp_name"], "../../../images/dish/" . $filename_new)) {
+            if ($ctrl->cUpdateDish($dishName, $category, $price, $prepare, $imgName, $dishID, $filename_new, $description, $ingredient, $_SESSION["ingredient"], $quantity)) {
                 echo "<script>alert('Cập nhật thông tin món ăn thành công!')</script>";
             } else {
                 echo "<script>alert('Cập nhật thông tin món ăn thất bại!')</script>";
             }
+        } else {
+            echo "<script>alert('Upload ảnh thất bại')</script>";
         }
-    } else
+    } else {
         echo "<script>alert('Không phải ảnh. Vui lòng chọn lại ảnh khác!')</script>";
 
-
-
-
+    }
 }
 
 if (isset($_POST["btnkhoa"])) {
@@ -246,7 +248,8 @@ if (isset($_POST["btnkhoa"])) {
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form id="form-themmonan" action="" method="POST" class="form-container w-full" enctype="multipart/form-data">
+                <form id="form-themmonan" action="" method="POST" class="form-container w-full"
+                    enctype="multipart/form-data">
                     <div class="modal-header justify-center">
                         <h2 class="modal-title fs-5 font-bold text-3xl" id="insertModalLabel" style="color: #E67E22;">
                             Thêm món ăn</h2>
@@ -256,9 +259,9 @@ if (isset($_POST["btnkhoa"])) {
                             <tr id="hiddenIngre"></tr>
                             <tr>
                                 <td>
-                                    <label for="name" class="w-full py-2"><b>Tên món ăn <span
-                                                class="text-red-500" id="ierrDishName">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="name" id="iDishName" >
+                                    <label for="name" class="w-full py-2"><b>Tên món ăn <span class="text-red-500"
+                                                id="ierrDishName">*</span></b></label>
+                                    <input type="text" class="w-full form-control" name="name" id="iDishName">
                                 </td>
                             </tr>
                             <tr>
@@ -281,9 +284,9 @@ if (isset($_POST["btnkhoa"])) {
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="price" class="w-full py-2"><b>Giá bán <span
-                                                class="text-red-500" id="ierrDishPrice">*</span></b></label>
-                                    <input type="number" class="w-full form-control" name="price" id="iDishPrice" >
+                                    <label for="price" class="w-full py-2"><b>Giá bán <span class="text-red-500"
+                                                id="ierrDishPrice">*</span></b></label>
+                                    <input type="number" class="w-full form-control" name="price" id="iDishPrice">
                                 </td>
                             </tr>
                             <tr>
@@ -302,15 +305,16 @@ if (isset($_POST["btnkhoa"])) {
                                         <td></td>
                                         <td></td>
                                         <td></td>
-                                        <td><span id="error-quantity-0" class="text-red-500 error-message"></span></td></tr>
+                                        <td><span id="error-quantity-0" class="text-red-500 error-message"></span></td>
+                                    </tr>
                                     <tr>
                                         <td>
                                             <input name="ingredientIds[]" type="text" id="ma-0"
                                                 class="clsNLThem w-20 form-control bg-gray-100" readonly>
                                         </td>
                                         <td>
-                                            <select class="clsIngreName" name="ingredient[]" id="cateIngredient-0" data-row-id="0"
-                                                class="w-full form-control">
+                                            <select class="clsIngreName" name="ingredient[]" id="cateIngredient-0"
+                                                data-row-id="0" class="w-full form-control">
                                                 <?php
                                                 $ctrl = new cIngredients;
 
@@ -344,12 +348,13 @@ if (isset($_POST["btnkhoa"])) {
                                             ?>
                                         </div>
                                         <td>
-                                            <input type="text" id="unit-0" class="clsDVT w-full form-control bg-gray-100"
-                                                readonly>
+                                            <input type="text" id="unit-0"
+                                                class="clsDVT w-full form-control bg-gray-100" readonly>
                                         </td>
                                         <td>
-                                            <input type="number" class="w-full form-control quantityIngre" id="quantityIngre-0" name="quantity[]" >
-                                            
+                                            <input type="number" class="w-full form-control quantityIngre"
+                                                id="quantityIngre-0" name="quantity[]">
+
                                         </td>
                                         <td>
                                             <a href="javascript:void(0);" class="deleteRowBtn"><i
@@ -367,18 +372,18 @@ if (isset($_POST["btnkhoa"])) {
                                 <td>
                                     <label for="description" class="w-full py-2"><b>Mô tả <span id="ierrDishDescription"
                                                 class="text-red-500">*</span></b></label>
-                                    <textarea id="iDishDescription" class="w-full form-control" name="description" rows="4" cols="50"
-                                        placeholder="Nhập quy mô tả..." ></textarea>
+                                    <textarea id="iDishDescription" class="w-full form-control" name="description"
+                                        rows="4" cols="50" placeholder="Nhập quy mô tả..."></textarea>
 
                                 </td>
                             </tr>
 
                             <tr>
                                 <td>
-                                    <label for="prepare" class="w-full py-2"><b>Quy trình chế biến <span id="ierrDishProcess"
-                                                class="text-red-500">*</span></b></label>
-                                    <textarea id="iDishProcess" class="w-full form-control" name="prepare" rows="4" cols="50"
-                                        placeholder="Nhập quy trình chế biến..." ></textarea>
+                                    <label for="prepare" class="w-full py-2"><b>Quy trình chế biến <span
+                                                id="ierrDishProcess" class="text-red-500">*</span></b></label>
+                                    <textarea id="iDishProcess" class="w-full form-control" name="prepare" rows="4"
+                                        cols="50" placeholder="Nhập quy trình chế biến..."></textarea>
 
                                 </td>
                             </tr>
@@ -405,7 +410,8 @@ if (isset($_POST["btnkhoa"])) {
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
-                <form id="form-suamonan" action="" method="POST" class="form-container w-full">
+                <form id="form-suamonan" action="" method="POST" class="form-container w-full"
+                    enctype="multipart/form-data">
                     <div class="modal-header justify-center">
                         <h2 class="modal-title fs-5 font-bold text-3xl" id="updateModalLabel" style="color: #E67E22;">
                             Cập nhật món ăn</h2>
@@ -415,8 +421,8 @@ if (isset($_POST["btnkhoa"])) {
                             <tr id="hiddenIngre"></tr>
                             <tr>
                                 <td>
-                                    <label for="uDishName" class="w-full py-2"><b>Tên món ăn <span
-                                                class="text-red-500" id="uerrDishName">*</span></b></label>
+                                    <label for="uDishName" class="w-full py-2"><b>Tên món ăn <span class="text-red-500"
+                                                id="uerrDishName">*</span></b></label>
                                     <input type="text" class="w-full form-control" name="u-name" id="uDishName" value="<?php if (isset($u_dishName))
                                         echo $u_dishName ?>">
                                     </td>
@@ -442,10 +448,11 @@ if (isset($_POST["btnkhoa"])) {
                             </tr>
                             <tr>
                                 <td>
-                                    <label for="uDishPrice" class="w-full py-2"><b>Giá bán <span
-                                                class="text-red-500" id="uerrDishPrice">*</span></b></label>
-                                    <input type="number" class="w-full form-control" name="u-price" id="uDishPrice" value="<?php if (isset($u_price))
-                                        echo $u_price ?>">
+                                    <label for="uDishPrice" class="w-full py-2"><b>Giá bán <span class="text-red-500"
+                                                id="uerrDishPrice">*</span></b></label>
+                                    <input type="number" class="w-full form-control" name="u-price" id="uDishPrice"
+                                        value="<?php if (isset($u_price))
+                                            echo $u_price ?>">
                                     </td>
                                 </tr>
                                 <tr>
@@ -461,22 +468,25 @@ if (isset($_POST["btnkhoa"])) {
 
                                         </tr>
                                         <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td><span id="uerror-quantity-0" class="text-red-500 uerror-message"></span></td></tr>
-                                    <tr></tr>
-                                        <input type="hidden" name="countIngre" id="u_countIngreDish" value="<?php echo count($u_ingredientID);?>">
-                                        <?php
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td><span id="uerror-quantity-0" class="text-red-500 uerror-message"></span>
+                                            </td>
+                                        </tr>
+                                        <tr></tr>
+                                        <input type="hidden" name="countIngre" id="u_countIngreDish"
+                                            value="<?php echo count($u_ingredientID); ?>">
+                                    <?php
                                     for ($i = 0; $i < count($u_ingredientID); $i++) {
-                                        echo '<tr><td><span id="u-error-quantity-'.$i.'" class="text-red-500 error-message"></span></td></tr>
+                                        echo '<tr><td><span id="u-error-quantity-' . $i . '" class="text-red-500 error-message"></span></td></tr>
                                         <tr>
                                             <td>
-                                                <input name="u-ingredientIds[]" type="text" id="u-ma-'.$i.'"
+                                                <input name="u-ingredientIds[]" type="text" id="u-ma-' . $i . '"
                                                     class="w-20 form-control bg-gray-100" readonly value="' . $u_ingredientID[$i] . '">
                                             </td>
                                             <td>
-                                                <select name="u-ingredient[]" id="u-cateIngredient-'.$i.'" data-row-id="'.$i.'"
+                                                <select name="u-ingredient[]" id="u-cateIngredient-' . $i . '" data-row-id="' . $i . '"
                                                     class="w-full form-control" value="' . $u_ingredientName[$i] . '">';
                                         $ctrl = new cIngredients;
 
@@ -509,11 +519,11 @@ if (isset($_POST["btnkhoa"])) {
                                         echo '
                                         </div>
                                         <td>
-                                            <input type="text" id="u-unit-'.$i.'" class="w-full form-control bg-gray-100"
+                                            <input type="text" id="u-unit-' . $i . '" class="w-full form-control bg-gray-100"
                                                 readonly value="' . $u_unitOfcalculation[$i] . '">
                                         </td>
                                         <td>
-                                            <input id="uquantityIngre-'. $i .'" type="number" class="w-full form-control" name="u-quantity[]"
+                                            <input id="uquantityIngre-' . $i . '" type="number" class="w-full form-control" name="u-quantity[]"
                                                 required value="' . $u_quantity[$i] . '">
                                         </td>
                                         <td>
@@ -532,10 +542,10 @@ if (isset($_POST["btnkhoa"])) {
 
                             <tr>
                                 <td>
-                                    <label for="u-description" class="w-full py-2"><b>Mô tả <span id="uerrDishDescription"
-                                                class="text-red-500">*</span></b></label>
-                                    <textarea id="uDishDescription" class="w-full form-control" name="u-description" rows="4" cols="50"
-                                        placeholder="Nhập mô tả..."><?php if (isset($u_description))
+                                    <label for="u-description" class="w-full py-2"><b>Mô tả <span
+                                                id="uerrDishDescription" class="text-red-500">*</span></b></label>
+                                    <textarea id="uDishDescription" class="w-full form-control" name="u-description"
+                                        rows="4" cols="50" placeholder="Nhập mô tả..."><?php if (isset($u_description))
                                             echo $u_description ?></textarea>
 
                                     </td>
@@ -543,10 +553,10 @@ if (isset($_POST["btnkhoa"])) {
 
                                 <tr>
                                     <td>
-                                        <label for="u-prepare" class="w-full py-2"><b>Quy trình chế biến <span id="uerrDishProcess"
-                                                    class="text-red-500">*</span></b></label>
-                                        <textarea id="uDishProcess" class="w-full form-control" name="u-prepare" rows="4" cols="50"
-                                            placeholder="Nhập quy trình chế biến..."><?php if (isset($u_prepare))
+                                        <label for="u-prepare" class="w-full py-2"><b>Quy trình chế biến <span
+                                                    id="uerrDishProcess" class="text-red-500">*</span></b></label>
+                                        <textarea id="uDishProcess" class="w-full form-control" name="u-prepare" rows="4"
+                                            cols="50" placeholder="Nhập quy trình chế biến..."><?php if (isset($u_prepare))
                                             echo $u_prepare ?></textarea>
 
                                     </td>

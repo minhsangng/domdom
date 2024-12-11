@@ -210,17 +210,6 @@ $(document).ready(function () {
     }
   });
 
-  // Nhập nguyên liệu khô
-  $(".btnNhapNLKho").on("click", function () {
-    console.log("1");
-    var row = $(this).closest("tr");
-    row.find('input[type="number"]:first').attr("name", "Ingre[]");
-    row.find('input[type="number"]:last').attr("name", "TotalQuantity[]");
-    $(this).css("background-color", "green");
-    $(this).html("✔");
-    $(this).removeClass("btn-danger").addClass("btn-success");
-  });
-
   // REGEX
   // regex UC chuyen nguyen lieu tu cua hang thua sang cua hang thieu
   function ktStore() {
@@ -629,5 +618,25 @@ $(document).ready(function () {
       ktQuantityNeed(i);
     });
   }
+
+    // Nhập nguyên liệu khô
+    $(".btnNhapNLKho").on("click", function () {
+      $isValid = true;
+      for (let i = 0; i <= $(".tinhtoannlinputcls").length; i++) {
+        if (!ktQuantityNeed(i)) {
+          $isValid = false;
+          break;
+        }
+      }
+      if ($isValid) {
+        var row = $(this).closest("tr");
+        row.find('input[type="number"]:first').attr("name", "Ingre[]");
+        row.find('input[type="number"]:last').attr("name", "TotalQuantity[]");
+        row.find('input[type="number"]:last').prop("readonly", true);
+        $(this).css("background-color", "green");
+        $(this).html("✔");
+        $(this).removeClass("btn-danger").addClass("btn-success");
+      }
+    });
 
 });
