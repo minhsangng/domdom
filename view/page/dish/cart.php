@@ -307,7 +307,7 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                <button type="button" class="btn btn-danger" onclick="validateStore()">Tiếp tục</button>
+                                <button type="button" class="btn btn-danger" id="submitButton" onclick="validateAndFillModal()" <?php echo $cartDisabled; ?>>Xác nhận</button>
                             </div>
                         </div>
                     </div>

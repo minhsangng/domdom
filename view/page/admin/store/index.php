@@ -120,30 +120,30 @@ if (isset($_POST["btnkhoach"])) {
                             $row2 = $result2->fetch_assoc();
 
                             echo "
-                                    <tr>
-                                        <td class='py-2 border-2'>#CH0" . $row["storeID"] . "</td>
-                                        <td class='py-2 border-2'>" . $row["storeName"] . "</td>
-                                        <td class='py-2 border-2'>" . $row["address"] . "</td>
-                                        <td class='py-2 border-2'>" . $row["contact"] . "</td>
-                                        <td class='py-2 border-2'>" . $row2["userName"] . "</td>
-                                        <td class='py-2 border-2'>
-                                            <span class='bg-" . ($row["status"] == 1 ? "green" : "red") . "-100 text-" . ($row["status"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["status"] == 1 ? "Đang hoạt động" : "Ngừng hoạt động") . "</span>
-                                        </td>
-                                        <td class='py-2 border-2 flex justify-center items-center'>
-                                            <button class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["storeID"] . "'>Cập nhật</button>
-                                            
-                                            <!-- Form Khóa/Mở cửa hàng -->
-                                            <form method='POST' style='display:inline-block;'>
-                                                <input type='hidden' name='storeID' value='" . $row['storeID'] . "'> <!-- Gửi storeID -->
-                                                <input type='hidden' name='btnkhoa' value='" . $row['status'] . "'> <!-- Gửi status hiện tại -->
-                                                
-                                                <button type='submit' class='btn btn-danger ml-1' name=btnkhoach>
-                                                    " . ($row["status"] == 1 ? "Khóa" : "Mở") . "
-                                                </button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                    ";
+<tr>
+    <td class='py-2 border-2'>#CH0" . $row["storeID"] . "</td>
+    <td class='py-2 border-2'>" . $row["storeName"] . "</td>
+    <td class='py-2 border-2'>" . $row["address"] . "</td>
+    <td class='py-2 border-2'>" . $row["contact"] . "</td>
+    <td class='py-2 border-2'>" . $row2["userName"] . "</td>
+    <td class='py-2 border-2'>
+        <span class='bg-" . ($row["status"] == 1 ? "green" : "red") . "-100 text-" . ($row["status"] == 1 ? "green" : "red") . "-500 py-1 px-2 rounded-lg'>" . ($row["status"] == 1 ? "Đang hoạt động" : "Ngừng hoạt động") . "</span>
+    </td>
+    <td class='py-2 border-2 flex justify-center items-center'>
+        <button class='btn btn-secondary mr-1' name='btncapnhat' value='" . $row["storeID"] . "'>Cập nhật</button>
+        
+        <!-- Form Khóa/Mở cửa hàng -->
+        <form method='POST' onsubmit='return confirmUpdateStatus(" . $row['status'] . ")'>
+            <input type='hidden' name='storeID' value='" . $row['storeID'] . "'> <!-- Store ID -->
+            <input type='hidden' name='btnkhoa' value='" . $row['status'] . "'> <!-- Current status -->
+            <button type='submit' class='btn btn-danger ml-1' name='btnkhoach'>
+                " . ($row["status"] == 1 ? "Khóa" : "Mở") . "
+            </button>
+        </form>
+    </td>
+</tr>
+";
+
                         }
                         ?>
                     </tbody>
@@ -151,6 +151,16 @@ if (isset($_POST["btnkhoach"])) {
             </form>
         </div>
     </div>
+    <script>
+    function confirmUpdateStatus(currentStatus) {
+        // Chỉ hiển thị confirm khi trạng thái là "Khóa" (status == 1)
+        if (currentStatus == 1) {
+            return confirm("Bạn có chắc chắn muốn khóa cửa hàng này không?");
+        }
+        // Nếu trạng thái là "Mở", không cần xác nhận, cho phép form được gửi
+        return true;
+    }
+</script>
 
     <!-- Modal Thêm Cửa Hàng -->
     <div class="modal modalInsert fade" id="insertModal" tabindex="-1" aria-labelledby="insertModalLabel"
@@ -164,29 +174,31 @@ if (isset($_POST["btnkhoach"])) {
                     </div>
                     <div class="modal-body">
                         <table class="w-full">
-                            <tr>
-                                <td>
-                                    <label for="storeName" class="w-full py-2"><b>Tên cửa hàng <span
-                                                class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="storeName" required>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="address" class="w-full py-2"><b>Địa chỉ <span
-                                                class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="address" required>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <label for="contact" class="w-full py-2"><b>Thông tin liên hệ <span
-                                                class="text-red-500">*</span></b></label>
-                                    <input type="text" class="w-full form-control" name="contact" required
-                                        pattern="^0[0-9]{9}$" title="Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số">
+                        <tr>
+    <td>
+        <label for="storeName" class="w-full py-2"><b>Tên cửa hàng <span class="text-red-500">*</span></b></label>
+        <input type="text" class="w-full form-control" name="storeName" required
+               pattern="^[a-zA-Z].*" 
+               title="Tên cửa hàng phải bắt đầu bằng chữ cái">
+    </td>
+</tr>
+<tr>
+    <td>
+        <label for="address" class="w-full py-2"><b>Địa chỉ <span class="text-red-500">*</span></b></label>
+        <input type="text" class="w-full form-control" name="address" required
+               pattern="^[a-zA-Z0-9].*" 
+               title="Địa chỉ phải bắt đầu bằng chữ cái hoặc chữ số">
+    </td>
+</tr>
+<tr>
+    <td>
+        <label for="contact" class="w-full py-2"><b>Thông tin liên hệ <span class="text-red-500">*</span></b></label>
+        <input type="text" class="w-full form-control" name="contact" required
+               pattern="^(0[1-9]{1}[0-9]{8}|(\+84)[1-9]{1}[0-9]{8})$" 
+               title="Số điện thoại phải bắt đầu bằng 0 và gốm 10 chữ số hoặc +84 và có 11 chữ số, trừ 00 và +840">
+    </td>
+</tr>
 
-                                </td>
-                            </tr>
                         </table>
                     </div>
                     <div class="modal-footer">
@@ -214,22 +226,27 @@ if (isset($_POST["btnkhoach"])) {
                                 <td>
                                     <label for="storeName" class="w-full py-2"><b>Tên cửa hàng</b></label>
                                     <input type="text" class="w-full form-control" name="storeName"
-                                        value="<?php echo $_SESSION["storeName"]; ?>" required>
+                                        value="<?php echo $_SESSION["storeName"]; ?>" required
+               pattern="^[a-zA-Z].*" 
+               title="Tên cửa hàng phải bắt đầu bằng chữ cái">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="address" class="w-full py-2"><b>Địa chỉ</b></label>
                                     <input type="text" class="w-full form-control" name="address"
-                                        value="<?php echo $_SESSION["address"]; ?>" required>
+                                        value="<?php echo $_SESSION["address"]; ?>"required
+               pattern="^[a-zA-Z0-9].*" 
+               title="Địa chỉ phải bắt đầu bằng chữ cái hoặc chữ số">
                                 </td>
                             </tr>
                             <tr>
                                 <td>
                                     <label for="contact" class="w-full py-2"><b>Thông tin liên hệ</b></label>
                                     <input type="text" class="w-full form-control" name="contact"
-                                        value="<?php echo $_SESSION['contact']; ?>" required pattern="^0[0-9]{9}$"
-                                        title="Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số">
+                                        value="<?php echo $_SESSION['contact']; ?>" required
+               pattern="^(0[1-9]{1}[0-9]{8}|(\+84)[1-9]{1}[0-9]{8})$" 
+               title="Số điện thoại phải bắt đầu bằng 0 và gốm 10 chữ số hoặc +84 và có 11 chữ số, trừ 00 và +840">
                                 </td>
                             </tr>
 

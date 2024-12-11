@@ -1,4 +1,8 @@
 function validateAndFillModal() {
+  if (!document.querySelectorAll('.cart-item').length) {
+    alert('Giỏ hàng đang trống! Vui lòng thêm sản phẩm trước khi xác nhận.');
+    return;
+} 
   var isValid = true;
 
   var name = document.getElementById("name");
