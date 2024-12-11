@@ -44,23 +44,27 @@ if (isset($_POST["btnxoa"])) {
 if (isset($_POST["btnthemnv"])) {
     $userID = (int)$_POST["user"];
     $shifts = $_POST["shift"];
-    $date = $_POST["btnthemnv"];
-    
     $hasError = false;
-    // Kiểm tra trùng lịch trước khi thêm
-    foreach ($shifts as $shiftID) {
-        $sql = "SELECT * FROM employee_shift WHERE userID = $userID AND date = '$date' AND shiftID = $shiftID";
-        $result = $conn->query($sql);
-        
-        if ($result && $result->num_rows > 0) {
-            $hasError = true;
-            $ctrlMessage->errorMessage("Ca làm đã được đăng ký cho nhân viên này!");
-            break;
-        }
+    if (empty($shifts)) {
+        $ctrlMessage->errorMessage("Vui lòng chọn ca làm!");
+        $hasError = true;
     }
+    $date = $_POST["btnthemnv"];
     
     // Chỉ thêm nếu không có lỗi
     if (!$hasError) {
+        // Kiểm tra trùng lịch trước khi thêm
+        foreach ($shifts as $shiftID) {
+            $sql = "SELECT * FROM employee_shift WHERE userID = $userID AND date = '$date' AND shiftID = $shiftID";
+            $result = $conn->query($sql);
+            
+            if ($result && $result->num_rows > 0) {
+                $hasError = true;
+                $ctrlMessage->errorMessage("Ca làm đã được đăng ký cho nhân viên này!");
+                break;
+            }
+        }
+
         $success = true;
         foreach ($shifts as $shiftID) {
             if (!$ctrl->cInsertEmployeeShift($shiftID, $userID, $date)) {
@@ -287,4 +291,5 @@ if (isset($_POST["btnthemnv"])) {
         }
 
         updateCalendar();
+
     </script>
