@@ -127,8 +127,11 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                     <div id="email-error" class="text-red-500 text-sm"></div>
 
                     <label for="address" class="form-label mt-3">Địa chỉ nhận:</label>
-                    <input type="text" name="address" id="address" class="form-control" required>
+                    <input type="text" name="address" id="address" class="form-control" required
+                        pattern="^[a-zA-Z0-9À-ỹ\s].*"
+                        title="Địa chỉ phải bắt đầu bằng chữ cái hoặc chữ số">
                     <div id="address-error" class="text-red-500 text-sm"></div>
+
                 </div>
                 <div class="flex justify-between">
                     <h2 class='font-bold text-xl'>Tổng đơn:</h2>
@@ -211,7 +214,7 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                 $totalAmount = 0;
                                 foreach ($_SESSION["cart"] as $cart):
                                     $totalAmount += $cart['total'];
-                                    ?>
+                                ?>
                                     <div class="d-flex justify-between align-items-center border-bottom pb-3 mb-3 cart-item"
                                         data-dish-id="<?php echo $cart['id']; ?>"
                                         data-dish-price="<?php echo $cart['price']; ?>"
