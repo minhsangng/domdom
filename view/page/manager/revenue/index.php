@@ -53,7 +53,7 @@ session_start();
                     $ctrl = new cOrders;
                     $storeID = $_SESSION["user"][1];
                     
-                    if ($ctrl->cGetRevenueOrderByStore($storeID, start: $startM, end: $endM) != 0) {
+                    if ($ctrl->cGetRevenueOrderByStore($storeID, start: $startM, end: $endM)->num_rows > 0) {
                         $result = $ctrl->cGetRevenueOrderByStore($storeID, $startM, $endM);
                         $revenue = 0;
                         while ($row = $result->fetch_assoc()) {
@@ -116,7 +116,7 @@ session_start();
                 <tbody>
                     <?php
                     $ctrl = new cEmployees;
-                    if ($ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM) != 0) {
+                    if ($ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM)->num_rows > 0) {
                         $result = $ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM);
                         $totalCostEmployee = 0;
                         while ($row = $result->fetch_assoc()) {
@@ -176,7 +176,7 @@ session_start();
                 <tbody>
                     <?php
                     $ctrl = new cIngredients;
-                    if ($ctrl->cGetRevenueIngredientByStore($storeID, $startM, $endM) != 0) {
+                    if ($ctrl->cGetRevenueIngredientByStore($storeID, $startM, $endM)->num_rows > 0) {
                         $result = $ctrl->cGetRevenueIngredientByStore($storeID, $startM, $endM);
                         while ($row = $result->fetch_assoc()) {
                             $exportQuantity = $row['quantityImported'] - $row['quantityInStock']; // Tính sl xuất

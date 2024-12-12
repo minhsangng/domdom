@@ -1,9 +1,13 @@
 <?php
 $_SESSION["currentTotal"] = 0;
 
+$currentPath = $_SERVER['REQUEST_URI'];
+
 if (isset($_POST["store"])) {
     $storeID = $_POST["store"];
     setcookie("selectedStore", $_POST["store"], time() + 3600, "/");
+    
+    echo "<script>window.location.href = '".$currentPath."';</script>";
 }
 
 $selectedStore = isset($_COOKIE["selectedStore"]) ? $_COOKIE["selectedStore"] : "";
@@ -16,7 +20,6 @@ $selectedStore = isset($_COOKIE["selectedStore"]) ? $_COOKIE["selectedStore"] : 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="../../../images/logo-nobg.png" type="image/x-icon" />
 
     <!-- Font Awesome -->
     <link href="view/css/all.css" rel="stylesheet" />
@@ -185,8 +188,10 @@ $selectedStore = isset($_COOKIE["selectedStore"]) ? $_COOKIE["selectedStore"] : 
                             if ($ctrl->cGetAllCategory() != 0) {
                                 $result = $ctrl->cGetAllCategory();
                                 while ($row = $result->fetch_assoc()) {
-                                    echo "<a class='dropdown-item' href='index.php?p=dish&c=" . $row["dishCategory"] . "&#ci'>" . $row["dishCategory"] . "</a>";
+                                    echo "<a class='dropdown-item' href='index.php?p=dish&c=" . $row["dishCategory"] . "#ci'>" . $row["dishCategory"] . "</a>";
                                 }
+                                
+                                $db->close($conn);
                             } else
                                 echo "Không có dữ liệu!";
                             ?>

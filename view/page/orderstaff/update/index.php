@@ -1,23 +1,42 @@
 <?php
+$ctrl = new cOrders;
+$ctrlMessage = new cMessage;
+
 if (isset($_POST["btnchuyen"])) {
     $storeID = $_SESSION["user"][1];
     $arr = explode("/", $_POST["btnchuyen"]);
     $id = $arr[0];
     $status = $arr[1];
+    $newStatus = 0;
 
-    if ($status < 4)
-        $newStatus = $status + 1;
-    else
-        $newStatus = 0;
+    if ($status == 0) {
+        $newStatus = 1;
+        $result = $ctrl->cUpdateStatusOrder($id, $newStatus, $storeID);
+    }
 
-    $ctrl = new cOrders;
-    $result = $ctrl->cUpdateStatusOrder($id, $newStatus, $storeID);
-
-    $ctrlMessage = new cMessage;
     if ($result)
         $ctrlMessage->successMessage("Cập nhật trạng thái");
     else
         $ctrlMessage->errorMessage("Cập nhật trạng thái");
+
+    if ($status != 0)
+        $ctrlMessage->falseMessage("Bạn không có quyền cập nhật đơn hàng này");
+}
+
+if (isset($_POST["btnhuy"])) {
+    $storeID = $_SESSION["user"][1];
+    $arr = explode("/", $_POST["btnhuy"]);
+    $id = $arr[0];
+    $status = $arr[1];
+
+    if ($status < 3) {
+        $result = $ctrl->cUpdateStatusOrder($id, 3, $storeID);
+
+        if ($result)
+            $ctrlMessage->successMessage("Yêu cầu huỷ ");
+        else
+            $ctrlMessage->errorMessage("Yêu cầu huỷ ");
+    } else $ctrlMessage->falseMessage("Bạn không có quyền cập nhật đơn hàng này");
 }
 ?>
 
@@ -31,9 +50,8 @@ if (isset($_POST["btnchuyen"])) {
 
         <div class="h-fit bg-gray-100 rounded-lg p-6">
             <?php
-            $ctrl = new cOrders;
             $storeID = $_SESSION["user"][1];
-            
+
             if ($ctrl->cGetAllOrderFully($storeID) != 0) {
                 $result = $ctrl->cGetAllOrderFully($storeID);
 
@@ -50,14 +68,14 @@ if (isset($_POST["btnchuyen"])) {
                         <tbody>
                         ";
                 while ($row = $result->fetch_assoc()) {
-                    $amount = str_replace(".00", "", number_format($row["total"], "2", ".", ","));
+                    $amount = number_format($row["total"], 0, ",", ".");
                     $orderID = $row["orderID"];
-                    $cusName = $row["fulName"];
-                    $orderName = $row["dishName"];
+                    $cusName = $row["fullName"];
+                    $orderName = $row["dishes"];
                     $orderQuantity = $row["quantity"];
                     $orderDate = $row["orderDate"];
                     $status = $row["status"];
-                    $newStatus = 0;
+                    $newStatus = "";
 
                     switch ($status) {
                         case 0:
@@ -67,10 +85,10 @@ if (isset($_POST["btnchuyen"])) {
                             $newStatus = "Đang chế biến";
                             break;
                         case 2:
-                            $newStatus = "Chế biến xong";
+                            $newStatus = "Hoàn thành";
                             break;
                         case 3:
-                            $newStatus = "Hoàn thành";
+                            $newStatus = "Yêu cầu huỷ";
                             break;
                         case 4:
                             $newStatus = "Đã hủy";
@@ -78,7 +96,7 @@ if (isset($_POST["btnchuyen"])) {
                     }
 
                     echo "
-                <tr data-id='" . $orderID . "' data-cus='" . $cusName . "' data-name='" . $orderName . "' data-quan='" . $orderQuantity . "' data-date='" . $orderDate . "' data-amount='" . $amount . "' data-status='" . $status . "' class='cursor-pointer'>
+                <tr data-id='" . $orderID . "' data-cus='" . $cusName . "' data-name='" . $orderName . "' data-date='" . $orderDate . "' data-amount='" . $amount . "' data-status='" . $status . "' class='cursor-pointer'>
                     <td class='border-2 py-2'>#DH0" . ($row["orderID"] < 10 ? "0" . $row["orderID"] : $row["orderID"]) . "</td>
                     <td class='border-2 py-2'>" . $row["orderDate"] . "</td>
                     <td class='border-2 py-2'>" . str_replace(".00", "", $amount) . "</td>
@@ -114,66 +132,80 @@ if (isset($_POST["btnchuyen"])) {
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         const rows = document.querySelectorAll("tr.cursor-pointer");
 
-        rows.forEach(function(row) {
-            row.addEventListener("click", function() {
+        rows.forEach(function (row) {
+            row.addEventListener("click", function () {
                 const orderID = this.getAttribute("data-id");
                 const cusName = this.getAttribute("data-cus");
-                const orderName = this.getAttribute("data-name");
-                const orderQuantity = this.getAttribute("data-quan");
+                const orderName = JSON.parse(this.getAttribute("data-name") || "[]");
                 const orderDate = this.getAttribute("data-date");
                 const amount = this.getAttribute("data-amount");
-                const status = this.getAttribute("data-status");
+                const status = parseInt(this.getAttribute("data-status"));
                 let modalBody = document.querySelector("#orderModal .modal-body");
                 let modalFooter = document.querySelector("#orderModal .modal-footer");
-                const arrStatus = ["Chờ nhận đơn", "Đang chế biến", "Chế biến xong", "Hoàn thành", "Đã hủy"];
+                const arrStatus = ["Chờ nhận đơn", "Đang chế biến", "Hoàn thành", "Yêu cầu huỷ", "Đã hủy"];
                 let newStatus = arrStatus[status];
 
+                // Tạo chuỗi HTML để hiển thị danh sách món
+                let orderItemsHTML = ``;
+                if (Array.isArray(orderName) && orderName.length > 0) {
+                    orderName.forEach(function (order) {
+                        orderItemsHTML += `<p>${order.name} (x${order.quantity})</p> <br>`;
+                    });
+                }
+
+                console.log(orderItemsHTML);
+
                 document.getElementById("orderModalLabel").textContent = "Chi tiết đơn hàng #DH0" + (orderID < 10 ? "0" + orderID : orderID);
+
                 modalBody.innerHTML = `<form action="" class="form-container w-full">
-                        <table class='w-full'>
-                            <tr>
-                                <td class='flex'>
-                                    <label class='font-bold mr-2'>Họ tên:</label>
-                                    <p>${cusName}</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class='flex'>
-                                    <label class='font-bold mr-2'>Ngày &amp; giờ đặt:</label>
-                                    <p>${orderDate}</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class='flex'>
-                                    <label class='font-bold mr-2'>Món:</label>
-                                    <p>${orderName} - Số lượng: ${orderQuantity}</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class='flex'>
-                                    <label class='font-bold mr-2'>Tổng giá trị đơn:</label>
-                                    <p>${amount}</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class='flex'>
-                                    <label class='font-bold mr-2'>Trạng thái:</label>
-                                    <p>${newStatus}</p>
-                                </td>
-                            </tr>
-                        </table>
-                    </form>`;
+                    <table class='w-full'>
+                        <tr>
+                            <td class='flex'>
+                                <label class='font-bold mr-2 w-24'>Họ tên:</label>
+                                <p>${cusName}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class='flex'>
+                                <label class='font-bold mr-2 w-24'>Ngày &amp; giờ:</label>
+                                <p>${orderDate}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class='flex'>
+                                <label class='font-bold mr-2 w-24'>Món:</label>
+                                <div class='flex flex-col'>
+                                    ${orderItemsHTML}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class='flex'>
+                                <label class='font-bold mr-2 w-24'>Tổng đơn:</label>
+                                <p>${amount} VND</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class='flex'>
+                                <label class='font-bold mr-2 w-24'>Trạng thái:</label>
+                                <p>${newStatus}</p>
+                            </td>
+                        </tr>
+                    </table>
+                </form>`;
 
                 modalFooter.innerHTML = `
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-danger" name="btnchuyen" value="${orderID}/${status}">Chuyển</button>`;
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" class="btn btn-warning" name="btnhuy" value="${orderID}/${status}">Yêu cầu huỷ</button>
+            <button type="submit" class="btn btn-danger" name="btnchuyen" value="${orderID}/${status}">Chuyển</button>`;
 
                 const orderModal = new bootstrap.Modal(document.getElementById("orderModal"));
                 orderModal.show();
             });
         });
+
     });
 </script>

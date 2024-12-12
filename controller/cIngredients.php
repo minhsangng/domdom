@@ -205,6 +205,10 @@ class cIngredients extends mIngredients
         return 0;
     }
 
+    public function cDecreaseIngredient($dishID, $quantity)
+    {
+        return $this->mDecreaseIngredient($dishID, $quantity);
+    }
    
     public function cGetAllIngredientByStore($storeID)
     {

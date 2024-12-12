@@ -1,14 +1,9 @@
-<style>
-    .modal-backdrop .show {
-        /* opacity: 1 !important; */
-    }
-</style>
-
 <?php
 $ctrlOrder = new cOrders;
 $ctrlCustomer = new cCustomers;
 $ctrlPromotion = new cPromotions;
 $ctrlDish = new cDishes;
+$ctrlIngre = new cIngredients;
 $ctrlMessage = new cMessage;
 echo "<script>document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('create').classList.add('activeAd');
@@ -157,8 +152,6 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
                 <div class="card p-4 rounded">
                     <h2 class="text-lg font-bold pb-2 mb-3 border-b">Đơn hàng</h2>
                     <?php
-                    $ctrl = new cDishes;
-
                     if (isset($_POST["btnxoa"])) {
                         foreach ($_SESSION["product"] as $index => $product) {
                             if ($product["id"] == $_POST["btnxoa"]) {
@@ -178,16 +171,14 @@ $_SESSION["delivery"] = isset($_POST["delivery"]) ? $_POST["delivery"] : "";
                             $productID = (int) $product["id"];
                             $quantity = $product["quantity"];
 
-                            $ctrl = new cDishes;
-
-                            if ($ctrl->cGetDishById($productID) != 0) {
-                                $result = $ctrl->cGetDishById($productID);
+                            if ($ctrlDish->cGetDishById($productID) != 0) {
+                                $result = $ctrlDish->cGetDishById($productID);
                                 $row = $result->fetch_assoc();
 
                                 echo "<div class='flex justify-between items-center mb-2'>
                                         <span class='font-bold w-2/6'>" . $row["dishName"] . "</span>
-                                        <span class='w-2/6 italic text-gray-400'>" . number_format($row["price"], 0, ",", ".") . "</span>
-                                        <input type='number' name='quantity[" . $productID . "]' value='" . $quantity . "' class='w-1/6 text-center quantityInput mr-2' data-id='" . $productID . "' data-name='" . $row["dishName"] . "' data-price='" . $row["price"] . "'>
+                                        <span class='w-2/6 italic text-gray-400'>" . number_format($row["price"], 0, ".", ",") . "</span>
+                                        <input type='number' name='quantity[" . $productID . "]' min='1' value='" . $quantity . "' class='w-1/6 text-center quantityInput mr-2' data-id='" . $productID . "' data-name='" . $row["dishName"] . "' data-price='" . $row["price"] . "'>
                                         <button type='submit' name='btnxoa' value='" . $productID . "' class='btn btn-secondary w-1/6 ml-2'><i class='fa-solid fa-trash-can'></i></button>
                                     </div>";
 
@@ -392,33 +383,36 @@ $_SESSION["totalAfterDiscount"] = isset($_SESSION["discount"]) ? $_SESSION["tota
                             if (!isset($_SESSION["customer"]))
                                 $_SESSION["customer"] = ["", ""];
 
-                            if (isset($_POST["phone"]) && $_POST["phone"] != "" && !isset($_POST["customerName"])) {
-                                $phone = $_POST["phone"];
-                                $_SESSION["exist"] = false;
+                            if (isset($_POST["btncus"])) {
+                                $phoneNumber = $_POST["phone"];
+                                $customerName = $_POST["customerName"];
+                                /* $_SESSION["exist"] = false;
 
-                                if ($ctrlCustomer->cGetAllCustomer() != 0) {
-                                    $result = $ctrlCustomer->cGetAllCustomer();
-
+                                $result = $ctrlCustomer->cGetAllCustomer();
+                                if ($result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) {
-                                        if ($phone == $row["phoneNumber"]) {
+                                        if ($row["phoneNumber"] == $phone) {
                                             $_SESSION["customer"] = [$row["fullName"], $row["phoneNumber"]];
                                             $_SESSION["exist"] = true;
                                             break;
                                         }
                                     }
-                                }
-
-                                if (!$_SESSION["exist"])
-                                    $_SESSION["customer"] = ["", $phone];
-                            }
-
-                            if (isset($_POST["customerName"]) && $_SESSION["customer"][1] == "") {
-                                $customerName = $_POST["customerName"];
-                                $phoneNumber = $_POST["phone"];
+                                } */
 
                                 $_SESSION["customer"] = [$customerName, $phoneNumber];
-                                $ctrlCustomer->cInsertCustomer($phoneNumber, $customerName, NULL, NULL);
+
+                                /* if ($_SESSION["customer"][0] != "" && $_SESSION["customer"][1] != "" && !$_SESSION["exist "]) {
+                                    $ctrlCustomer->cInsertCustomer($_SESSION["customer"][1], $_SESSION["customer"][0], "", "");
+                                } */
                             }
+
+                            /* if ($_SESSION["exist"])
+                                echo "<script>
+                                    document.addEventListener('DOMContentLoaded', function() {
+                                        var checkoutModal = new bootstrap.Modal(document.getElementById('checkoutModal')); 
+                                        checkoutModal.show();
+                                    });
+                                </script>"; */
                             ?>
 
                             <tr>
@@ -430,34 +424,24 @@ $_SESSION["totalAfterDiscount"] = isset($_SESSION["discount"]) ? $_SESSION["tota
                             <tr>
                                 <td colspan="2">
                                     <form action="" method="POST">
-                                        <div class="flex justify-between">
+                                        <div class='flex flex-col justify-between'>
                                             <input type="text" class="form-control m-0" style="width: 80%;" name="phone"
                                                 id="" value="<?php echo $_SESSION["customer"][1]; ?>"
-                                                placeholder="Nhập số điện thoại" required>
-                                            <button type="submit"
-                                                class="btn btn-primary w-fit <?php echo (($_SESSION["customer"][1] == "" && $_SESSION["customer"][1] == "") ? "block" : "hidden"); ?>">Xác
+                                                title="Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số"
+                                                placeholder="Nhập số điện thoại" required
+                                                pattern="^(0(2[0-9]|3[0-9]|7[0-9]|8[0-9]|9[0-9])[0-9]{7})|(\+84(2[0-9]|3[0-9]|7[0-9]|8[0-9]|9[0-9])[0-9]{7})$">
+
+                                            <input type='text' class='form-control m-0 mt-2' style='width: 80%;'
+                                                name='customerName' id=''
+                                                value='<?php echo $_SESSION["customer"][0]; ?>'
+                                                placeholder='Nhập tên khách hàng'>
+
+                                            <button type='submit' class='btn btn-primary w-fit mt-3' name="btncus">Xác
                                                 nhận</button>
                                         </div>
                                     </form>
                                 </td>
                             </tr>
-
-                            <?php
-                            if ((isset($_POST["phone"]) && !$_SESSION["exist"]) || $_SESSION["customer"][0] != "") {
-                                echo "<tr>
-                                        <form action='' method='POST'>
-                                            <td colspan='2'>
-                                                <div class='flex justify-between'>
-                                                    <input type='text' class='form-control m-0' style='width: 80%;' name='customerName'
-                                                        id='' value='" . $_SESSION["customer"][0] . "' placeholder='Nhập tên khách hàng' required>
-                                                    <button type='submit' class='btn btn-primary w-fit " . (($_SESSION["customer"][0] == "" && $_SESSION["customer"][1] != "") ? "block" : "hidden") . "'>Xác nhận</button>
-                                                </div>
-                                            </form>
-                                        </td>
-                                    </tr>";
-                            } else
-                                echo "";
-                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -510,7 +494,7 @@ $_SESSION["totalAfterDiscount"] = isset($_SESSION["discount"]) ? $_SESSION["tota
             <form action="" method="POST">
                 <div class="pt-2 px-4 mt-2 mb-8 border-t-2 flex justify-end">
                     <button type="button" class="btn btn-secondary mr-1 mt-2" id="cancel">Hủy</button>
-                    <button type="submit" class="btn btn-danger ml-1 mt-2" name="btnxn" <?php echo ((!isset($_SESSION["cusPay"]) || $_SESSION["customer"][0] == 0) ? "disabled" : ""); ?>>Xác
+                    <button type="submit" class="btn btn-danger ml-1 mt-2" name="btnxn" <?php echo ((!isset($_SESSION["cusPay"]) || $_SESSION["customer"][0] == "") ? "disabled" : ""); ?>>Xác
                         nhận</button>
                 </div>
             </form>
@@ -535,7 +519,7 @@ $_SESSION["totalAfterDiscount"] = isset($_SESSION["discount"]) ? $_SESSION["tota
                             modalPayment.show();
                         });
                     </script>";
-                    
+
                     if ($_SESSION["method"] == "momo")
                         $type = "Momo";
                     else if ($_SESSION["method"] == "banking")
@@ -548,16 +532,33 @@ $_SESSION["totalAfterDiscount"] = isset($_SESSION["discount"]) ? $_SESSION["tota
                         $sumQuantity += $product["quantity"];
                     }
 
-                    $customerPhoneNew = $_SESSION["customer"][1];
+                    $result = $ctrlCustomer->cGetAllCustomer();
+                    $_SESSION["exist"] = false;
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            if ($row["phoneNumber"] == $_SESSION["customer"][1]) {
+                                $_SESSION["exist"] = true;
+                                break;
+                            }
+                        }
+                    }
                     
+                    if (!$_SESSION["exist"]) {
+                        $ctrlCustomer->cInsertCustomer($_SESSION["customer"][1], $_SESSION["customer"][0], "", "");
+                    }
+
+                    $customerPhoneNew = $_SESSION["customer"][1];
+
                     $ctrlOrder->cInsertOrder($customerPhoneNew, $_SESSION["totalAfterDiscount"], $sumQuantity, $_SESSION["promotionID"], $type, $storeID);
                     $row = $ctrlOrder->cGetOrderIDNew()->fetch_assoc();
                     $orderIDnew = $row["orderID"];
+                    $ctrlOrder->cUpdateStatusOrder($orderIDnew, 1, $storeID);
 
                     foreach ($_SESSION["product"] as $product) {
                         $ctrlOrder->cInsertOrderDish($orderIDnew, $product["id"], $product["quantity"]);
+                        $ctrlIngre->cDecreaseIngredient($product["id"], $product["quantity"]);
                     }
-                    
+
                     if ($_SESSION["method"] == "momo") {
                         $type = "momo";
                         echo "<div class='relative'>
@@ -579,7 +580,7 @@ $_SESSION["totalAfterDiscount"] = isset($_SESSION["discount"]) ? $_SESSION["tota
                             <div class='w-full mt-8'>
                                 <p>OrderID: #" . $orderIDnew . ". <br> Ngày: " . date("Y-m-d") . ". <br> " . ($_SESSION["delivery"]
                             == 1 ? "Dùng tại quán" : "Mang đi") . " <br> Tổng tiền: " . number_format(
-                                $_SESSION["totalAfterDiscount"],
+                            $_SESSION["totalAfterDiscount"],
                             0,
                             ",",
                             "."
@@ -669,6 +670,9 @@ $_SESSION["totalAfterDiscount"] = isset($_SESSION["discount"]) ? $_SESSION["tota
         quantities.forEach(input => {
             let dishPrice = parseFloat(input.getAttribute("data-price"));
             let quantity = parseInt(input.value);
+
+            if (input.value < 1)
+                input.value = 1;
 
             total += dishPrice * quantity;
 

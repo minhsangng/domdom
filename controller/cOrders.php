@@ -1,7 +1,9 @@
 <?php
 $currentPath = $_SERVER["REQUEST_URI"];
 $path = "";
-if (strpos($currentPath, "admin") || strpos($currentPath, "manager") || strpos($currentPath, "orderstaff") || strpos($currentPath, "kitchenstaff"))
+if (strpos($currentPath, "admin") || strpos($currentPath, "manager") 
+    || strpos($currentPath, "orderstaff") || strpos($currentPath, "kitchenstaff")
+    || strpos($currentPath, "/dish") == true)
     $path = "../../../model/mOrders.php";
 else $path = "./model/mOrders.php";
 

@@ -170,6 +170,17 @@ class mIngredients
         }
     }
 
+    public function mDecreaseIngredient($dishID, $quantity)
+    {
+        $db = new Database;
+        $conn = $db->connect();
+        $sql = "UPDATE `dish_ingredient` SET quantity = quantity - $quantity WHERE dishID = $dishID";
+
+        if ($conn != null)
+            return $conn->query($sql);
+        return 0;
+    }
+
     public function mInsertIngredient($ingreName, $unit, $price, $type)
     {
         $db = new Database;
@@ -276,7 +287,7 @@ class mIngredients
         return 0;
     }
 
-    public function mGetAllIngredientByStore($storeID) 
+    public function mGetAllIngredientByStore($storeID)
     {
         $db = new Database;
         $conn = $db->connect();
@@ -295,10 +306,10 @@ class mIngredients
     {
         $db = new Database;
         $conn = $db->connect();
-        
+
         $sql1 = "UPDATE needingredient SET quantity = $quantity 
                  WHERE ingredientID = $ingredientID";
-                 
+
         $sql2 = "UPDATE store_ingredient 
                  SET quantityInStock = quantityInStock + $quantity 
                  WHERE ingredientID = $ingredientID AND storeID = $storeID";

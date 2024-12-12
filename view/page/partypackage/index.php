@@ -1,4 +1,4 @@
-<title>Dịch vụ | DOMDOM - Chuỗi cửa hàng thức ăn nhanh</title>
+<title>Dịch vụ | DomDom - Chuỗi cửa hàng thức ăn nhanh</title>
 
 <style>
     .arrow {
@@ -115,6 +115,7 @@
 <?php
 $ctrlParty = new cPartyPackages;
 $ctrlPromotion = new cPromotions;
+$ctrlIngre = new cIngredients;
 $ctrlCustomer = new cCustomers;
 $ctrlOrder = new cOrders;
 $ctrlMessage = new cMessage;
@@ -152,6 +153,8 @@ if (isset($_POST["btndattiec"])) {
             modalParty.show();
         });
     </script>";
+    
+    $db->close($conn);
 }
 
 if (isset($_POST["btnxn"])) {
@@ -169,18 +172,18 @@ if (isset($_POST["btnxn"])) {
 
         if ($ctrlCustomer->cGetAllCustomer() != 0) {
             $result = $ctrlCustomer->cGetAllCustomer();
-            
+
             $exist = false;
             while ($row = $result->fetch_assoc()) {
-                if ($phone != $row["phoneNumber"]) {
+                if ($phone == $row["phoneNumber"]) {
                     $exist = true;
-                    break;    
+                    break;
                 }
             }
-            
+
             if (!$exist)
                 $ctrlCustomer->cInsertCustomer($phone, $name, $address, $email);
-            
+
             $ctrlOrder->cInsertOrderPartyPackage($phone, $_SESSION["ppPrice"], $_SESSION["quantity"], $_SESSION["promotionID"], $paymentMethod, $_COOKIE["selectedStore"], $_SESSION["ppID"]);
 
             $row2 = $ctrlOrder->cGetOrderIDNew()->fetch_assoc();
@@ -194,6 +197,7 @@ if (isset($_POST["btnxn"])) {
                     $quantity = $row3["quantity"];
 
                     $resultOrderDish = $ctrlOrder->cInsertOrderDish($orderID, $dishID, $quantity);
+                    $ctrlIngre->cDecreaseIngredient($dishID, $quantity);
 
                     if ($resultOrderDish)
                         $ctrlMessage->successMessage("Đặt tiệc");
@@ -204,6 +208,8 @@ if (isset($_POST["btnxn"])) {
                 $ctrlMessage->falseMessage("Không có dữ liệu!");
         }
     }
+    
+    $db->close($conn);
 }
 ?>
 
@@ -220,10 +226,8 @@ if (isset($_POST["btnxn"])) {
     <div
         class="grid grid-cols-4 md:grid-cols-2 lg:grid-cols-3 gap-8 mx-14 flex justify-center gap-5 p-8 rounded-md shadow">
         <?php
-        $ctrl = new cPartyPackages;
-
-        if ($ctrl->cGetAllPartyPackage() != 0) {
-            $result = $ctrl->cGetAllPartyPackage();
+        if ($ctrlParty->cGetAllPartyPackage() != 0) {
+            $result = $ctrlParty->cGetAllPartyPackage();
 
             while ($row = $result->fetch_assoc()) {
                 echo "<div class='h-72 w-full rounded-lg flex justify-center items-center bg-red-400 transition delay-200 ease-linear shadow-xl shadow-red-300'>
@@ -264,11 +268,14 @@ if (isset($_POST["btnxn"])) {
                                 <td>
                                     <h2 class="text-[#EF5350] font-bold mb-2">Thông tin cá nhân</h2>
                                     <input type="text" id="" name="name" class="form-control w-full mb-3"
-                                        placeholder="Họ và tên..." required>
+                                        placeholder="Họ và tên..." required pattern="^[\p{L}\s]+$"
+                                        title="Họ tên chỉ được bao gồm chữ cái tiếng Việt">
                                     <input type="text" id="" name="phone" class="form-control w-full mb-3"
-                                        placeholder="Số điện thoại..." required>
+                                        title="Số điện thoại phải bắt đầu bằng 0 và có 10 chữ số"
+                                        placeholder="Số điện thoại..." required
+                                        pattern="^(0(2[0-9]|3[0-9]|7[0-9]|8[0-9]|9[0-9])[0-9]{7})|(\+84(2[0-9]|3[0-9]|7[0-9]|8[0-9]|9[0-9])[0-9]{7})$">
                                     <input type="email" id="" name="email" class="form-control w-full mb-3"
-                                        placeholder="Email..." required>
+                                        placeholder="Email..." required pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" title="Email phải theo định dạng: example@gmail.com">
                                     <input type="text" id="" name="address" class="form-control w-full mb-3"
                                         placeholder="Địa chỉ..." required>
                                 </td>
@@ -276,10 +283,12 @@ if (isset($_POST["btnxn"])) {
                             <tr>
                                 <td>
                                     <h2 class="text-[#EF5350] font-bold mb-2">Thông tin tiệc</h2>
-                                    <input type="date" id="" class="form-control w-full mb-3"
-                                        placeholder="Ngày diễn ra..." required>
+                                    <input type="date" id="party-date" class="form-control w-full mb-3"
+                                        placeholder="Ngày diễn ra..." min="" required
+                                        title="Ngày diễn ra phải sau ngày hiện tại">
                                     <input type="time" id="" class="form-control w-full mb-3"
-                                        placeholder="Giờ diễn ra..." required>
+                                        placeholder="Giờ diễn ra..." min="07:00" max="20:00" required
+                                        title="Giờ phải trong khoảng từ 7h sáng đến 8h tối">
                                     <input type="text" id="" class="form-control w-full mb-3"
                                         placeholder="Yêu cầu khác...">
                                 </td>
@@ -310,3 +319,19 @@ if (isset($_POST["btnxn"])) {
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dateInput = document.getElementById("party-date");
+        const today = new Date();
+        const formattedDate = today.toISOString().split("T")[0];
+
+        dateInput.setAttribute("min", formattedDate);
+        
+        dateInput.addEventListener("blur", function () {
+        if (dateInput,value < formattedDate) {
+            dateInput.value = formattedDate;
+        } 
+    });
+    });
+</script>

@@ -1,4 +1,4 @@
-<title>Khuyến mãi | DOMDOM - Chuỗi cửa hàng thức ăn nhanh</title>
+<title>Khuyến mãi | DomDom - Chuỗi cửa hàng thức ăn nhanh</title>
 <?php
 require_once "PHPMailer/src/Exception.php";
 require_once "PHPMailer/src/PHPMailer.php";
@@ -39,6 +39,8 @@ if (isset($_POST["promotionName"])) {
     } catch (Exception $e) {
         $ctrl->freeMessageLarge("Đã có lỗi khi gửi mail (" . $mail->ErrorInfo . "). Vui lòng nhập lại!");
     }
+    
+    $db->close($conn);
 }
 ?>
 <style>
@@ -654,6 +656,8 @@ if (isset($_POST["promotionName"])) {
             }
         } else
             echo "Không có dữ liệu!";
+            
+        $db->close($conn);
         ?>
     </div>
 

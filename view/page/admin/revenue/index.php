@@ -77,7 +77,7 @@ if (isset($_POST["btnxem"])) {
                         <tbody>";
         $ctrl = new cOrders;
         $revenue = 0;
-        if ($ctrl->cGetRevenueOrderByStore(storeID: $storeID, start: $startM, end: $endM) != 0) {
+        if ($ctrl->cGetRevenueOrderByStore(storeID: $storeID, start: $startM, end: $endM)->num_rows > 0) {
             $result = $ctrl->cGetRevenueOrderByStore($storeID, $startM, $endM);
 
             while ($row = $result->fetch_assoc()) {
@@ -104,7 +104,7 @@ if (isset($_POST["btnxem"])) {
                     <p>Tổng doanh thu:</p>
                 </td>
                 <td class='text-center border-2'>
-                    " . number_format($_SESSION["revenue"], 0, ".", ",") . " đồng
+                    " . number_format($_SESSION["revenue"], 0, ".", ",") . "
                 </td>
             </tr>
         </tfoot>
@@ -138,7 +138,7 @@ if (isset($_POST["btnxem"])) {
                 <tbody>
                     <?php
                     $ctrl = new cEmployees;
-                    if ($ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM) != 0) {
+                    if ($ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM)->num_rows > 0) {
                         $result = $ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM);
                         $totalCostEmployee = 0;
                         while ($row = $result->fetch_assoc()) {
@@ -155,7 +155,7 @@ if (isset($_POST["btnxem"])) {
                             <td colspan='7' class='border-2 py-2'>Không có dữ liệu trong thời gian này!</td>
                         </tr>";
                     }
-                    
+
                     $_SESSION["totalCostEmployee"] = $totalCostEmployee;
                     echo '</tbody>
                 <tfoot>
@@ -198,7 +198,7 @@ if (isset($_POST["btnxem"])) {
                 <tbody>
                     <?php
                     $ctrl = new cIngredients;
-                    if ($ctrl->cGetRevenueIngredientByStore($storeID, $startM, $endM) != 0) {
+                    if ($ctrl->cGetRevenueIngredientByStore($storeID, $startM, $endM)->num_rows > 0) {
                         $result = $ctrl->cGetRevenueIngredientByStore($storeID, $startM, $endM);
                         while ($row = $result->fetch_assoc()) {
                             $exportQuantity = $row['quantityImported'] - $row['quantityInStock']; // Tính sl xuất
@@ -218,7 +218,7 @@ if (isset($_POST["btnxem"])) {
                                 <td colspan='7' class='border-2 py-2'>Không có dữ liệu trong thời gian này!</td>
                             </tr>";
                     }
-                    
+
                     $_SESSION["totalCost"] = $totalCost;
                     echo '</tbody>
                 <tfoot>

@@ -22,7 +22,7 @@ if (isset($_POST["btndn"])) {
             });
         </script>";
     else {
-        $sql = "SELECT * FROM user WHERE email = '$email' AND password = '$psw'";
+        $sql = "SELECT * FROM user WHERE email = '$email' AND password = '$psw' AND status = 1";
         $result = $conn->query($sql);
 
         $row = $result->fetch_assoc();

@@ -15,17 +15,15 @@
 </head>
 
 <?php
-session_start();
 error_reporting(1);
+session_start();
 
 include("../../../model/connect.php");
-include("../../../model/mPromotions.php");
 include("../../../controller/cPromotions.php");
+include("../../../controller/cOders.php");
 
 if (isset($_POST["action"])) {
-    $value = explode("/", $_POST["action"]);
-    $action = $value[0];
-    $dishID = $value[1];
+    list($action, $dishID) = explode("/", $_POST["action"]);
     foreach ($_SESSION["cart"] as &$item) {
         if ($item["id"] == $dishID) {
             if ($action == "increase") {
@@ -55,13 +53,27 @@ if (isset($_POST["btndel"])) {
 if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
     unset($_SESSION["cart"]);
 }
+
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
+    $_SESSION["formData"] = [
+        "name" => $_POST["name"],
+        "phone" => $_POST["phone"],
+        "email" => $_POST["email"],
+        "address" => $_POST["address"],
+    ];
+}
+
+if (isset($_GET["out"])) {
+    unset($_SESSION["formData"]);
+    header("Location: ../../../index.php?p=dish");
+}
 ?>
 
 <body>
     <div class="box-1">
         <div
             class="fixed top-5 left-5 px-3 py-1 bg-gray-200 rounded-lg w-12 h-8 btn-one hover:w-fit overflow-hidden linear transition-all delay-200">
-            <a href="../../../index.php?p=dish">
+            <a href="cart.php?out">
                 <i class="fa-solid fa-arrow-left mr-2"></i>Tiếp tục đặt món
             </a>
         </div>
@@ -79,24 +91,24 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                         echo "<div class='flex justify-between items-center border-b pb-4 mb-4'>";
                         echo "<img alt='" . $cart["name"] . "' class='w-20 h-20 object-cover rounded' height='100' width='100' src='../../../images/dish/" . $cart["image"] . "' />";
                         echo "<div class='ml-4 flex-1'>
-                    <h3 class='text-lg font-semibold'>" . $cart["name"] . "</h3>
-                    <div class='flex items-center mt-2 w-full'>
-                        <h4 class='text-gray-500 w-1/2'>" . number_format($cart["price"], 0, ".", ",") . " đ</h4>
-                        <div class='flex w-fit items-center border rounded ml-2'>
-                            <button type='submit' class='px-2 py-1 decrease' name='action' value='decrease/" . $cart["id"] . "'>-</button>
-                            <span class='px-2'>" . $cart["quantity"] . "</span>
-                            <button type='submit' class='px-2 py-1 increase' name='action' value='increase/" . $cart["id"] . "'>+</button>
-                        </div>
-                    </div>
-                </div>";
+                            <h3 class='text-lg font-semibold'>" . $cart["name"] . "</h3>
+                            <div class='flex items-center mt-2 w-full'>
+                                <h4 class='text-gray-500 w-1/2'>" . number_format($cart["price"], 0, ".", ",") . " đ</h4>
+                                <div class='flex w-fit items-center border rounded ml-2'>
+                                    <button type='submit' class='px-2 py-1 decrease' name='action' value='decrease/" . $cart["id"] . "'>-</button>
+                                    <span class='px-2'>" . $cart["quantity"] . "</span>
+                                    <button type='submit' class='px-2 py-1 increase' name='action' value='increase/" . $cart["id"] . "'>+</button>
+                                </div>
+                            </div>
+                        </div>";
                         echo "<div class='text-right'>
-                    <p class='text-lg font-semibold' name='totalAmount'>" . number_format($cart["total"], 0, ".", ",") . " đ</p>
-                    <div class='mt-2'>
-                        <button type='submit' class='btn btn-secondary w-full' name='btndel' value='" . $cart["id"] . "'>
-                            <i class='far fa-trash-alt mr-2'></i>Xóa
-                        </button>
-                    </div>
-                </div>";
+                            <p class='text-lg font-semibold' name='totalAmount'>" . number_format($cart["total"], 0, ".", ",") . " đ</p>
+                            <div class='mt-2'>
+                                <button type='submit' class='btn btn-secondary w-full' name='btndel' value='" . $cart["id"] . "'>
+                                    <i class='far fa-trash-alt mr-2'></i>Xóa
+                                </button>
+                            </div>
+                        </div>";
                         echo "</div>";
 
                         $total += $cart["total"];
@@ -112,23 +124,29 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                     toán</h3>
                 <div>
                     <label for="name" class="form-label mt-3">Họ tên:</label>
-                    <input type="text" name="name" id="name" class="form-control" required pattern="^[a-zA-ZÀ-ỹ\s]+$">
+                    <input type="text" name="name" id="name" class="form-control" required pattern="^[a-zA-ZÀ-ỹ\s]+$"
+                        value="<?php echo $_SESSION["formData"]["name"]; ?>">
                     <div id="name-error" class="text-red-500 text-sm"></div>
 
                     <label for="phone" class="form-label mt-3">Số điện thoại:</label>
                     <input type="text" name="phone" id="phone" class="form-control" required
-                        pattern="^((0[1-9]{1}[0-9]{8})|(\+84[1-9]{1}[0-9]{8}))$">
+                        pattern="^((0[1-9]{1}[0-9]{8})|(\+84[1-9]{1}[0-9]{8}))$"
+                        value="<?php echo $_SESSION["formData"]["phone"]; ?>">
                     <div id="phone-error" class="text-red-500 text-sm"></div>
 
 
                     <label for="email" class="form-label mt-3">Email:</label>
                     <input type="text" name="email" id="email" class="form-control" required
-                        pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
+                        pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                        value="<?php echo $_SESSION["formData"]["email"]; ?>">
                     <div id="email-error" class="text-red-500 text-sm"></div>
 
                     <label for="address" class="form-label mt-3">Địa chỉ nhận:</label>
-                    <input type="text" name="address" id="address" class="form-control" required>
+                    <input type="text" name="address" id="address" class="form-control" required
+                        pattern="^[a-zA-Z0-9À-ỹ\s].*" title="Địa chỉ phải bắt đầu bằng chữ cái hoặc chữ số"
+                        value="<?php echo $_SESSION["formData"]["address"]; ?>">
                     <div id="address-error" class="text-red-500 text-sm"></div>
+
                 </div>
                 <div class="flex justify-between">
                     <h2 class='font-bold text-xl'>Tổng đơn:</h2>
@@ -246,8 +264,6 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                     đ</p>
                             </div>
 
-
-
                             <div class="store mb-4">
                                 <h3 style="color: #E67E22;">Cửa hàng</h3>
                                 <?php
@@ -278,8 +294,6 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                 <div id="store-error" class="text-red-500 text-sm"></div>
                             </div>
 
-
-
                             <div class="KM">
                                 <h3 style="color: #E67E22;">Khuyến mãi</h3>
                                 <?php
@@ -304,7 +318,8 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-                                <button type="button" class="btn btn-danger" onclick="validateStore()">Tiếp tục</button>
+                                <button type="button" class="btn btn-danger" id="submitButton"
+                                    onclick="validateStore()">Xác nhận</button>
                             </div>
                         </div>
                     </div>
@@ -357,27 +372,44 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                                 Chuyển khoản</h2>
                         </div>
                         <div class="modal-body">
-                            <div class="flex flex-wrap">
-                                <div class="w-full md:w-1/2 mb-4 pr-4">
-                                    <div>
-                                        <h5 class="font-bold text-lg" style="color: #E67E22;">Ngân hàng</h5>
+                            <div class="flex justify-between items-center">
+                                <div class='w-full md:w-1/2 mb-4 pr-4'>
+                                    <div class="h-40">
+                                        <h5 class='font-bold text-lg' style='color: #E67E22;'>Ngân hàng</h5>
                                         <p>VietinBank</p>
-                                        <h5 class="font-bold text-lg" style="color: #E67E22;">Số tài khoản</h5>
+                                        <h5 class='font-bold text-lg mt-2' style='color: #E67E22;'>Tên tài khoản</h5>
+                                        <p>DomDom</p>
+                                        <h5 class='font-bold text-lg mt-2' style='color: #E67E22;'>Số tài khoản</h5>
                                         <p>8386</p>
                                     </div>
-                                    <div class="mt-4">
-                                        <h5 class="font-bold text-lg" style="color: #E67E22;">Mã QR</h5>
-                                        <img src="path_to_qr_image" alt="QR Code" class="w-40 h-40" />
+                                    <div class='relative'>
+                                        <div class='absolute mt-4 -top-2 left-5 w-44 h-44 border-2 border-[#1a417d]'>
+                                            <h3
+                                                class='font-bold absolute -top-6 left-[50%] translate-x-[-50%] bg-white text-[#1a417d] text-xl'>
+                                                <span class='text-red-500'>VIET</span>QR
+                                            </h3>
+                                        </div>
+                                        <img class='block mx-auto mt-4'
+                                            src='http://localhost/domdom/view/page/orderstaff/create/qrcode.php?type=banking&orderID=<?= $orderID ?>&amount=1000'
+                                            alt='Mã QR'>
                                     </div>
                                 </div>
-                                <div class="w-full md:w-1/2 mb-4 pl-4">
-                                    <div>
-                                        <h5 class="font-bold text-lg" style="color: #E67E22;">Ví Momo</h5>
-                                        <p>Số điện thoại: <strong>0123456789</strong></p>
+                                <div class='w-full md:w-1/2 mb-4 pl-4'>
+                                    <div class="h-40">
+                                        <h5 class='font-bold text-lg' style='color: #E67E22;'>Ví Momo</h5>
+                                        <p>DomDom</p>
+                                        <h5 class='font-bold text-lg mt-2' style='color: #E67E22;'>Số tài khoản</h5>
+                                        <p>0923262123</p>
                                     </div>
-                                    <div class="mt-4">
-                                        <h5 class="font-bold text-lg" style="color: #E67E22;">Mã QR</h5>
-                                        <img src="path_to_momo_qr_image" alt="Momo QR Code" class="w-40 h-40" />
+                                    <div class='relative'>
+                                        <div class='absolute mt-4 -top-2 left-5 w-44 h-44 border-2 border-[#a50064]'>
+                                            <h3
+                                                class='font-bold absolute -top-6 left-[50%] translate-x-[-50%] bg-white text-[#a50064] text-xl'>
+                                                MOMO</h3>
+                                        </div>
+                                        <img class='block mx-auto mt-4'
+                                            src='http://localhost/domdom/view/page/orderstaff/create/qrcode.php?type=momo&orderID=<?= $orderID ?>&amount=1000'
+                                            alt='Mã QR'>
                                     </div>
                                 </div>
                             </div>
@@ -419,7 +451,7 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                 }
             }
 
-            $sql_check_orders = "SELECT COUNT(*) AS order_count FROM `order` WHERE customerID = '$phone' AND status = 4";
+            $sql_check_orders = "SELECT COUNT(*) AS order_count FROM `order` WHERE phoneNumber = '$phone' AND status = 4";
             $order_result = $conn->query($sql_check_orders);
             $sumofQuantity = 0;
             foreach ($_SESSION["cart"] as $cart) {
@@ -434,7 +466,7 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
                     echo "<script>alert('Không thể đặt hàng: Khách hàng đã hủy đơn quá 3 lần.');</script>";
                 } else {
                     //echo "$total, $sumOfQuantity, $payment_method, $note, '1', $phone, $discountAmount, $finalAmount, $partyPackageID, $storeID";
-                    $sql_insert_order = "INSERT INTO `order` (orderDate, total, sumOfQuantity, paymentMethod, note, customerID, promotionID, storeID) 
+                    $sql_insert_order = "INSERT INTO `order` (orderDate, total, sumOfQuantity, paymentMethod, note, phoneNumber, promotionID, storeID) 
                     VALUES (NOW(), $total, $sumofQuantity, '$payment_method', '$note', '$phone', '$promotionID', $storeID)";
                     if ($conn->query($sql_insert_order) === TRUE) {
                         $orderID = $conn->insert_id;
@@ -447,13 +479,17 @@ if (isset($_POST["clear"]) || !isset($_SESSION["cart"])) {
 
                             $sql_insert_order_detail = "INSERT INTO order_dish (orderID, dishID, quantity) 
                                                         VALUES ('$orderID', '$dishID', '$quantity')";
-
-                            if ($conn->query($sql_insert_order_detail) === TRUE) {
-                                unset($_SESSION["cart"]);
-                                echo "<script>alert('Đã đặt hàng thành công!');</script>";
-                            } else {
+                            
+                            $result = $conn->query($sql_insert_order_detail);
+                            
+                            if (!$result)
                                 echo "<p>Lỗi khi thêm chi tiết món $dishID: " . $conn->error . "</p>";
-                            }
+                        }
+
+                        if ($result) {
+                            unset($_SESSION["cart"]);
+                            unset($_SESSION["formData"]);
+                            echo "<script>if (alert('Đã đặt hàng thành công!') != false) window.location.href = 'cart.php';</script>";
                         }
                     } else {
                         echo "<p>Lỗi khi thêm đơn hàng: " . $conn->error . "</p>";

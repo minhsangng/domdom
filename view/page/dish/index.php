@@ -1,19 +1,20 @@
-<title>Danh sách sản phẩm | DOMDOM - Chuỗi cửa hàng thức ăn nhanh</title>
+<title>Danh sách sản phẩm | DomDom - Chuỗi cửa hàng thức ăn nhanh</title>
 
 <?php
+echo $_SESSION["notification"];
+
 if (!isset($_SESSION["cart"]))
     $_SESSION["cart"] = [];
 
-/* session_destroy(); */
-
 $ctrl = new cDishes;
+$ctrlMessage = new cMessage;
 
 if (isset($_POST["addcart"])) {
     $dishID = $_POST["addcart"];
 
-    if ($ctrl->cGetDishById($dishID) != 0) {
-        $result = $ctrl->cGetDishById($dishID);
-
+    $result = $ctrl->cGetDishById($dishID);
+    
+    if ($result) {
         $row = $result->fetch_assoc();
 
         if (!in_array($dishID, array_column($_SESSION["cart"], "id"))) {
@@ -25,8 +26,35 @@ if (isset($_POST["addcart"])) {
                 "quantity" => 1,
                 "total" => $row["price"]
             ];
-        }
+            $_SESSION["notification"] = true;
+            
+            echo "<script>window.location.href = 'index.php?p=dish#ci';</script>";
+        } else $_SESSION["notification"] = false;
     }
+}
+
+if ($_SESSION["notification"]) {
+    echo "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                timer: 1000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                didOpen: (toast) => {
+                    toast.onmouseenter = Swal.stopTimer;
+                    toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: 'success',
+                title: 'Thêm giỏ hàng thành công'
+            });
+        });
+    </script>";
+    
+    unset($_SESSION["notification"]);
 }
 ?>
 

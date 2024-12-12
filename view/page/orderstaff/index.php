@@ -20,7 +20,7 @@ include("../../../controller/cMessage.php");
 if (!isset($_SESSION["login"]) || $_SESSION["user"][2] != 3)
     echo "<script>
         if (alert('Bạn không có quyền truy cập!') != false)
-            window.location.href = '../login/';
+            window.location.href = '../logout/';
     </script>";
 
 /* Kết nối database */

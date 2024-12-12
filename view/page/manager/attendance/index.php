@@ -1,10 +1,17 @@
 <?php
 
-if (isset($_POST["btndd"])) {
-    $esID = $_POST["btndd"];
+$ctrlMessage = new cMessage;
 
-    $sql = "UPDATE employee_shift SET status = 1 WHERE employeeshiftID = $esID";
+if (isset($_POST["btndd"])) {
+    list($shiftID, $date) = explode("/", $_POST["btndd"]);
+
+    $sql = "UPDATE `employee_shift` SET status = 1 WHERE shiftID = $shiftID AND date = '$date'";
     $result = $conn->query($sql);
+
+    if ($result)
+        $ctrlMessage->successMessage("Đã chấm công ");
+    else
+        $ctrlMessage->errorMessage("Đã chấm công ");
 }
 
 ?>
@@ -16,8 +23,12 @@ if (isset($_POST["btndd"])) {
                 Danh sách nhân viên
             </h2>
             <div class="flex items-center">
-                <button class="btn bg-green-100 text-green-500 py-2 px-4 rounded-lg mr-1 hover:bg-green-500 hover:text-white" id="export">Xuất <i class="fa-solid fa-table"></i></button>
-                <button class="btn bg-blue-100 text-blue-500 py-2 px-4 rounded-lg ml-1 hover:bg-blue-500 hover:text-white" id="print">In <i class="fa-solid fa-print"></i></button>
+                <button
+                    class="btn bg-green-100 text-green-500 py-2 px-4 rounded-lg mr-1 hover:bg-green-500 hover:text-white"
+                    id="export">Xuất <i class="fa-solid fa-table"></i></button>
+                <button
+                    class="btn bg-blue-100 text-blue-500 py-2 px-4 rounded-lg ml-1 hover:bg-blue-500 hover:text-white"
+                    id="print">In <i class="fa-solid fa-print"></i></button>
             </div>
         </div>
         <div class="h-fit bg-gray-100 rounded-lg p-6">
@@ -38,7 +49,7 @@ if (isset($_POST["btndd"])) {
                         $storeID = $_SESSION["user"][1];
                         $attendanceData = [];
 
-                        if ($ctrl->cGetEmployeeAttendance($storeID) != 0) {
+                        if ($ctrl->cGetEmployeeAttendance($storeID)->num_rows > 0) {
                             $result = $ctrl->cGetEmployeeAttendance($storeID);
 
                             while ($row = $result->fetch_assoc()) {
@@ -47,8 +58,8 @@ if (isset($_POST["btndd"])) {
                                         <td class='py-2 border-2'>#NV0" . ($row["userID"] < 10 ? "0" . $row["userID"] : $row["userID"]) . "</td>
                                         <td class='py-2 border-2'>" . $row["userName"] . "</td>
                                         <td class='py-2 border-2'>" . $row["shiftName"] . "</td>
-                                        <td class='py-2 border-2'><span class='bg-" . ($row["status"] == 1 ? "green" : "red") . "-100 text-" . ($row["status"] == 1 ? "green" : "red") . "-500 px-3 py-1 rounded-lg'>" . ($row["status"] == 1 ? "Đã chấm công" : "Chưa chấm công") . "</span></td>
-                                        <td class='py-2 border-2'><button type='submit' value='" . $row["employeeshiftID"] . "' name='btndd' class='btn btn-danger'>Chấm công</button></td>
+                                        <td class='py-2 border-2'><span class='bg-" . ($row["status"] == 0 ? "red" : "green") . "-100 text-" . ($row["status"] == 0 ? "red" : "green") . "-500 px-3 py-1 rounded-lg'>" . ($row["status"] == 0 ? "Chưa chấm công" : "Đã chấm công") . "</span></td>
+                                        <td class='py-2 border-2'><button type='submit' value='" . $row["shiftID"] . "/" . $row["date"] . "' name='btndd' ".($row["status"] == 0 ? "":"disabled")." class='btn btn-danger'>Chấm công</button></td>
                                     </tr>
                                     ";
                                 $attendanceData[] = [
@@ -56,12 +67,13 @@ if (isset($_POST["btndd"])) {
                                     "Tên nhân viên" => $row["userName"],
                                     "Ca làm" => $row["shiftName"],
                                     "Cửa hàng làm việc" => $row["storeName"]
-                                ];    
-                                
+                                ];
+
                             }
-                            
+
                             $data = json_encode($attendanceData);
-                        } else echo "Không có dữ liệu!";
+                        } else
+                            echo "<tr><td colspan='5'>Chưa có dữ liệu cho hôm nay!</td></tr>";
                         ?>
                     </tbody>
                 </table>
@@ -70,7 +82,7 @@ if (isset($_POST["btndd"])) {
     </div>
     <script>
         /* Xuất */
-        document.getElementById("export").addEventListener("click", function() {
+        document.getElementById("export").addEventListener("click", function () {
             let data = <?php echo $data; ?>;
 
             let worksheet = XLSX.utils.json_to_sheet(data);
@@ -85,7 +97,7 @@ if (isset($_POST["btndd"])) {
         document.getElementById("print").addEventListener("click", () => {
             var actionColumn = document.querySelectorAll("#table tr td:last-child, #table tr th:last-child");
 
-            actionColumn.forEach(function(cell) {
+            actionColumn.forEach(function (cell) {
                 cell.style.display = "none";
             });
 
@@ -105,7 +117,7 @@ if (isset($_POST["btndd"])) {
             printWindow.print();
             printWindow.close();
 
-            actionColumn.forEach(function(cell) {
+            actionColumn.forEach(function (cell) {
                 cell.style.display = "block";
             });
         });

@@ -52,6 +52,8 @@ if (isset($_POST["btncapnhat"])) {
         $roleID = $row["roleID"];
     } else
         echo "Không có dữ liệu!";
+        
+    $db->close($conn);
 }
 
 if (isset($_POST["btnsuanv"])) {
@@ -68,6 +70,8 @@ if (isset($_POST["btnsuanv"])) {
         $ctrlMessage->successMessage("Cập nhật thông tin nhân viên ");
     } else
         $ctrlMessage->errorMessage("Cập nhật thông tin nhân viên ");
+        
+    $db->close($conn);
 }
 
 // Trạng thái nhân viên
@@ -82,6 +86,8 @@ if (isset($_POST["btnkhoa"])) {
         $ctrlMessage->successMessage('Cập nhật trạng thái tài khoản ');
     } else
         $ctrlMessage->errorMessage('Cập nhật trạng thái tài khoản ');
+        
+    $db->close($conn);
 }
 
 // Thêm nhân viên
@@ -119,6 +125,8 @@ if (isset($_POST["btnthemnv"])) {
             $ctrlMessage->errorMessage("Thêm nhân viên ");
         }
     }
+    
+    $db->close($conn);
 }
 
 ?>
@@ -197,6 +205,8 @@ if (isset($_POST["btnthemnv"])) {
                             echo "Không có dữ liệu!";
 
                         $data = json_encode($employeeData);
+                        
+                        $db->close($conn);
                         ?>
                     </tbody>
                 </table>

@@ -39,6 +39,8 @@ if (isset($_POST["btnthemmon"])) {
     $imgName = removeVietnameseAccents($dishName) . ".png";
     if (move_uploaded_file($image["tmp_name"], "../../../images/dish/" . $imgName))
         $ctrl->cInsertDish($dishName, $category, $price, $prepare, $imgName, $description, $ingredient, $quantity);
+    
+    $db->close($conn);
 }
 
 
@@ -70,6 +72,8 @@ if (isset($_POST["btncapnhat"])) {
             $count++;
         }
     }
+    
+    $db->close($conn);
 }
 
 
@@ -117,9 +121,7 @@ if (isset($_POST["btnsuamonan"])) {
     } else
         echo "<script>alert('Không phải ảnh. Vui lòng chọn lại ảnh khác!')</script>";
 
-
-
-
+    $db->close($conn);
 }
 
 if (isset($_POST["btnkhoa"])) {
@@ -133,6 +135,8 @@ if (isset($_POST["btnkhoa"])) {
     $newStatus = ($status == 1) ? 0 : 1;
 
     $ctrl->cLockDish($newStatus, $dishID);
+    
+    $db->close($conn);
 }
 ?>
 <script>
@@ -222,6 +226,8 @@ if (isset($_POST["btnkhoa"])) {
                             /* $_SESSION["dishData"] = $dishData; */
                         }
                         $data = json_encode($dishData);
+                        
+                        $db->close($conn);
                         ?>
                     </tbody>
                 </table>
@@ -238,6 +244,8 @@ if (isset($_POST["btnkhoa"])) {
                 echo ">$i</a>";
             }
             echo '</div>';
+            
+            $db->close($conn);
             ?>
         </div>
     </div>
@@ -275,6 +283,8 @@ if (isset($_POST["btnkhoa"])) {
                                                 echo "<option value='" . $row["dishCategory"] . "'>" . $row["dishCategory"] . "</option>";
                                             }
                                         }
+                                        
+                                        $db->close($conn);
                                         ?>
                                     </select>
                                 </td>
@@ -320,10 +330,10 @@ if (isset($_POST["btnkhoa"])) {
                                                     while ($row = $result->fetch_assoc()) {
 
                                                         echo "<option value='" . $row["unitOfcalculation"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
-
-
                                                     }
                                                 }
+                                                
+                                                $db->close($conn);
                                                 ?>
                                             </select>
                                         </td>
@@ -337,10 +347,10 @@ if (isset($_POST["btnkhoa"])) {
                                                 while ($row = $result->fetch_assoc()) {
 
                                                     echo "<option value='" . $row["unitOfcalculation"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
-
-
                                                 }
                                             }
+                                            
+                                            $db->close($conn);
                                             ?>
                                         </div>
                                         <td>
@@ -436,6 +446,8 @@ if (isset($_POST["btnkhoa"])) {
                                             echo "<option value='" . $row["dishCategory"] . "'$selected>" . $row["dishCategory"] . "</option>";
                                         }
                                     }
+                                    
+                                    $db->close($conn);
                                     ?>
                                     </select>
                                 </td>
@@ -486,8 +498,6 @@ if (isset($_POST["btnkhoa"])) {
                                             while ($row = $result->fetch_assoc()) {
                                                 $selected = ($row["ingredientName"] == $u_ingredientName[$i]) ? "selected" : "";
                                                 echo "<option $selected value='" . $row["unitOfcalculation"] . "' data-id='" . $row["ingredientID"] . "'>" . $row["ingredientName"] . "</option>";
-
-
                                             }
                                         }
                                         echo '
@@ -522,6 +532,8 @@ if (isset($_POST["btnkhoa"])) {
                                         </td>
                                     </tr>';
                                     }
+                                    
+                                    $db->close($conn);
                                     ?>
 
 

@@ -33,10 +33,7 @@ class cMessage
                 icon: 'success',
                 title: '<h3 class=\"text-lg\">".$text."</h3>',
                 showConfirmButton: false,
-                timer: 1500,
-                customClass: {
-                  title: ''
-                }
+                timer: 1500
               });
             });
         </script>";

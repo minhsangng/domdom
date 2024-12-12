@@ -1,4 +1,8 @@
 function validateAndFillModal() {
+  if (!document.querySelectorAll(".cart-item").length) {
+    alert("Giỏ hàng đang trống! Vui lòng thêm sản phẩm trước khi xác nhận.");
+    return;
+  }
   var isValid = true;
 
   var name = document.getElementById("name");
@@ -29,7 +33,7 @@ function validateAndFillModal() {
     isValid = false;
   } else if (!phone.value.match(phone.pattern)) {
     phoneError.innerText =
-      "Số điện thoại gồm 10 chữ số và bắt đầu bằng số 0 hoặc +84. Vui lòng nhập lại.";
+      "Số điện thoại bắt đầu bằng 0 và gồm 10 chữ số hoặc +84 và gồm 11 chữ số. Trừ 00 vầ +840 Vui lòng nhập lại.";
     isValid = false;
   }
 
@@ -44,6 +48,10 @@ function validateAndFillModal() {
 
   if (!address.value.trim()) {
     addressError.innerText = "Địa chỉ không được bỏ trống.";
+    isValid = false;
+  } else if (!address.value.match(address.pattern)) {
+    addressError.innerText =
+      "Địa chỉ phải bắt đầu bằng chữ số hoặc chữ cái. Vui lòng nhập lại.";
     isValid = false;
   }
 
@@ -71,7 +79,6 @@ function validateStore() {
 }
 
 function checkPaymentMethod() {
-  console.log("Checking payment method...");
   var paymentMethods = document.getElementsByName("payment_method");
   var selectedMethod = null;
 

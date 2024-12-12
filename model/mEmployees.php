@@ -67,7 +67,7 @@ class mEmployees
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT * FROM `user` AS U JOIN `role` AS R ON U.roleID = R.roleID JOIN `employee_shift` AS ES ON ES.userID = U.userID JOIN `shift` AS S ON S.shiftID = ES.shiftID JOIN `store` AS ST ON U.storeID = ST.storeID WHERE U.roleID IN (3, 4) AND U.storeID = $storeID AND ES.date = CURRENT_DATE";
+        $sql = "SELECT *, ES.status FROM `user` AS U JOIN `role` AS R ON U.roleID = R.roleID JOIN `employee_shift` AS ES ON ES.userID = U.userID JOIN `shift` AS SH ON SH.shiftID = ES.shiftID JOIN `store` AS S ON U.storeID = S.storeID WHERE U.roleID IN (3, 4) AND U.storeID = $storeID AND DATE(ES.date) = CURDATE()";
         if ($conn != null)
             return $conn->query($sql);
         return 0;

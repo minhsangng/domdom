@@ -146,7 +146,7 @@ class mOrders
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "SELECT * FROM `order` AS O JOIN `customer` AS C ON O.customerID = C.customerID JOIN `order_dish` AS OD ON OD.orderID = O.orderID JOIN `dish` AS D ON D.dishID = OD.dishID WHERE O.storeID = $storeID GROUP BY O.orderID";
+            $sql = "SELECT O.*, C.fullName, CONCAT('[', GROUP_CONCAT(CONCAT('{\"name\": \"', REPLACE(D.dishName, '\"', '\\\"'), '\"', ', \"quantity\": ', OD.quantity, '}') SEPARATOR ',' ), ']') AS dishes FROM `order` AS O JOIN `customer` AS C ON O.phoneNumber = C.phoneNumber JOIN `order_dish` AS OD ON OD.orderID = O.orderID JOIN `dish` AS D ON D.dishID = OD.dishID WHERE O.storeID = $storeID GROUP BY OD.orderID";
         if ($conn != null)
             return $conn->query($sql);
         return 0;

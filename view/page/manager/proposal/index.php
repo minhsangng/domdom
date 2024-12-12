@@ -48,10 +48,10 @@ if (isset($_POST['btnthemmon'])) {
                                 $statusClass = "bg-green-100 text-green-500";
                             } elseif ($row["status"] == 2) {
                                 $statusLabel = "Từ chối";
-                                $statusClass = "bg-yellow-100 text-yellow-500";
+                                $statusClass = "bg-red-100 text-red-500";
                             } else {
                                 $statusLabel = "Chờ duyệt";
-                                $statusClass = "bg-red-100 text-red-500";
+                                $statusClass = "bg-yellow-100 text-yellow-500";
                             }
 
                             echo "
