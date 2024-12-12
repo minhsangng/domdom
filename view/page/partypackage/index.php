@@ -153,8 +153,6 @@ if (isset($_POST["btndattiec"])) {
             modalParty.show();
         });
     </script>";
-    
-    $db->close($conn);
 }
 
 if (isset($_POST["btnxn"])) {
@@ -208,8 +206,6 @@ if (isset($_POST["btnxn"])) {
                 $ctrlMessage->falseMessage("Không có dữ liệu!");
         }
     }
-    
-    $db->close($conn);
 }
 ?>
 
