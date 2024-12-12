@@ -68,7 +68,7 @@ class cPromotions extends mPromotions
 
     public function cUpdatePromotion($proID, $proName, $des, $percent, $start, $end, $image, $status)
     {
-        if ($this->mInsertPromotion($proID, $proName, $des, $percent, $start, $end, $image, $status) != 0) {
+        if ($this->mUpdatePromotion($proID, $proName, $des, $percent, $start, $end, $image, $status) != 0) {
             echo "<script>alert('Cập nhật khuyến mãi thành công');</script>";
         }
     }
