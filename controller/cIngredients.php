@@ -210,10 +210,10 @@ class cIngredients extends mIngredients
         return $this->mDecreaseIngredient($dishID, $quantity);
     }
    
-    public function cGetAllIngredientByStore($storeID)
+    public function cGetAllNeedIngredientByStore($storeID)
     {
-        if ($this->mGetAllIngredientByStore($storeID) != 0) {
-            $result = $this->mGetAllIngredientByStore($storeID);
+        if ($this->mGetAllNeedIngredientByStore($storeID) != 0) {
+            $result = $this->mGetAllNeedIngredientByStore($storeID);
             return $result;
         }
         return 0;

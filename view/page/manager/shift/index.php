@@ -5,6 +5,22 @@ $ctrlMessage = new cMessage;
 
 $staff = "";
 
+// Thêm biến để theo dõi offset tuần
+if (isset($_SESSION['week_offset'])) {
+    $week_offset = $_SESSION['week_offset'];
+} else {
+    $week_offset = 0;
+}
+
+// Cập nhật offset nếu có POST request
+if (isset($_POST['week_change'])) {
+    $week_offset += (int)$_POST['week_change'];
+    $_SESSION['week_offset'] = $week_offset;
+}
+
+// Tính toán $startW dựa trên offset
+$startW = date('Y-m-d', strtotime("monday this week $week_offset weeks"));
+$endW = date('Y-m-d', strtotime("sunday this week $week_offset weeks"));
 
 if (isset($_POST["staff"])) {
     $_SESSION["selected_staff"] = $_POST["staff"];
@@ -28,30 +44,39 @@ if (isset($_POST["btnxoa"])) {
 if (isset($_POST["btnthemnv"])) {
     $userID = (int)$_POST["user"];
     $shifts = $_POST["shift"];
-    $date = $_POST["btnthemnv"];
-    
     $hasError = false;
-    // Kiểm tra trùng lịch trước khi thêm
-    foreach ($shifts as $shiftID) {
-        $sql = "SELECT * FROM employee_shift WHERE userID = $userID AND date = '$date' AND shiftID = $shiftID";
-        $result = $conn->query($sql);
-        
-        if ($result && $result->num_rows > 0) {
-            $hasError = true;
-            $ctrlMessage->errorMessage("Ca làm đã được đăng ký cho nhân viên này!");
-            break;
-        }
+    $date = $_POST["btnthemnv"];
+
+    if (empty($shifts)) {
+        $ctrlMessage->errorMessage("Vui lòng chọn ca làm!");
+        $hasError = true;
     }
-    
+
     // Chỉ thêm nếu không có lỗi
     if (!$hasError) {
         $success = true;
         foreach ($shifts as $shiftID) {
+            // Kiểm tra xem ca làm đã tồn tại chưa
+            $checkSql = "SELECT COUNT(*) as count FROM employee_shift 
+                        WHERE shiftID = $shiftID 
+                        AND userID = $userID 
+                        AND date = '$date'";
+            $checkResult = $conn->query($checkSql);
+            $row = $checkResult->fetch_assoc();
+            
+            if ($row['count'] > 0) {
+                $ctrlMessage->errorMessage("Ca làm này đã được phân công cho nhân viên!");
+                $success = false;
+                break;
+            }
+
+            // Nếu chưa tồn tại thì thêm mới
             if (!$ctrl->cInsertEmployeeShift($shiftID, $userID, $date)) {
                 $success = false;
                 break;
             }
         }
+        
         if ($success) {
             $ctrlMessage->successMessage("Thêm ca làm thành công!");
         } else {
@@ -185,8 +210,19 @@ if (isset($_POST["btnthemnv"])) {
         let currentWeekOffset = 0;
 
         function changeWeek(offset) {
-            currentWeekOffset += offset;
-            updateCalendar();
+            // Tạo form ẩn và submit
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.style.display = 'none';
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'week_change';
+            input.value = offset;
+
+            form.appendChild(input);
+            document.body.appendChild(form);
+            form.submit();
         }
 
         function updateCalendar() {
@@ -259,6 +295,6 @@ if (isset($_POST["btnthemnv"])) {
             document.getElementById("btnthem").value = button.value;
         }
 
-        // Thay thế createCalendar() bằng updateCalendar()
         updateCalendar();
+
     </script>

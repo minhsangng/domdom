@@ -15,8 +15,8 @@ if (isset($_POST['btnnhap'])) {
     $quantity = $_POST['quantity'][$ingredientID];
     
     // Kiểm tra số lượng phải là số dương
-    if ($quantity <= 0) {
-        echo "<script>alert('Vui lòng nhập số lượng lớn hơn 0!');</script>";
+    if ($quantity <= 0 || $quantity > 10000000) {
+        echo "<script>alert('Vui lòng nhập số lượng lớn hơn 0 và nhỏ hơn 10000000!');</script>";
     } else {
         if ($ctrl->cUpdateNeedIngredientQuantity($ingredientID, $quantity, $storeID)) {
             $_SESSION['imported_ingredients'][$ingredientID] = $quantity;
@@ -52,8 +52,8 @@ if (isset($_POST['btnnhap'])) {
                     <tbody>
                         <?php 
                         
-                        if ($ctrl->cGetAllIngredientByStore($storeID) != 0) {
-                        $result = $ctrl->cGetAllIngredientByStore($storeID);
+                        if ($ctrl->cGetAllNeedIngredientByStore($storeID) != 0) {
+                        $result = $ctrl->cGetAllNeedIngredientByStore($storeID);
 
                         if ($result->num_rows > 0)
                             while ($row = $result->fetch_assoc()) {

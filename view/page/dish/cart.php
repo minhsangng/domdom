@@ -229,7 +229,7 @@ if (isset($_GET["out"])) {
                                 $totalAmount = 0;
                                 foreach ($_SESSION["cart"] as $cart):
                                     $totalAmount += $cart['total'];
-                                    ?>
+                                ?>
                                     <div class="d-flex justify-between align-items-center border-bottom pb-3 mb-3 cart-item"
                                         data-dish-id="<?php echo $cart['id']; ?>"
                                         data-dish-price="<?php echo $cart['price']; ?>"

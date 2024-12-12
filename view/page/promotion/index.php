@@ -656,8 +656,6 @@ if (isset($_POST["promotionName"])) {
             }
         } else
             echo "Không có dữ liệu!";
-            
-        $db->close($conn);
         ?>
     </div>
 
