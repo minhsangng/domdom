@@ -287,7 +287,7 @@ class mIngredients
         return 0;
     }
 
-    public function mGetAllIngredientByStore($storeID)
+    public function mGetAllNeedIngredientByStore($storeID)
     {
         $db = new Database;
         $conn = $db->connect();
