@@ -39,10 +39,10 @@ if (isset($_POST["btnthemmon"])) {
     $imgName = removeVietnameseAccents($dishName) . ".png";
     if (move_uploaded_file($image["tmp_name"], "../../../images/dish/" . $imgName))
         if($ctrl->cInsertDish($dishName, $category, $price, $prepare, $imgName, $description, $ingredient, $quantity)){
-            echo "<script>alert('Them mon an thanh cong')</script>";
+            echo "<script>alert('Thêm món ăn thành công')</script>";
         
         }else {
-            echo "<script>alert('Them mon an that bai')</script>";
+            echo "<script>alert('Thêm món ăn thất bại')</script>";
         
         }
 }
@@ -235,7 +235,7 @@ if (isset($_POST["btnkhoa"])) {
             }
             echo '</div>';
             
-            $db->close($conn);
+            // $db->close($conn);
             ?>
         </div>
     </div>
