@@ -44,7 +44,7 @@ if (isset($_POST["btnxem"])) {
                     <input type="date" name="endM" id="endM"
                         class="bg-gray-100 border-solid border-2 rounded-lg py-1 px-3 mr-1"
                         value="<?php echo $endM; ?>">
-                    <button type="submit" name="btnxem" class="btn btn-primary ml-1 py-2 px-4 rounded-lg">Xem</button>
+                    <button type="submit" name="btnxem" id="btnxem" class="btn btn-primary ml-1 py-2 px-4 rounded-lg">Xem</button>
                 </div>
             </div>
         </form>
@@ -142,12 +142,12 @@ if (isset($_POST["btnxem"])) {
                         $result = $ctrl->cGetRevenueEmployeeShiftByStore($storeID, $startM, $endM);
                         $totalCostEmployee = 0;
                         while ($row = $result->fetch_assoc()) {
-                            $totalCostEmployee += $cost['totalSalary'];
+                            $totalCostEmployee += $row['totalSalary'];
                             echo "<tr>
-                            <td class='border-2 py-2'>{$cost['roleName']}</td>
-                            <td class='border-2 py-2'>{$cost['totalEmployees']}</td>
-                            <td class='border-2 py-2'>{$cost['totalHours']}</td>
-                            <td class='border-2 py-2'>" . number_format($cost['totalSalary'], 2, ',', '.') . " đồng</td>
+                            <td class='border-2 py-2'>{$row['roleName']}</td>
+                            <td class='border-2 py-2'>{$row['totalEmployees']}</td>
+                            <td class='border-2 py-2'>{$row['totalHours']}</td>
+                            <td class='border-2 py-2'>" . number_format($row['totalSalary'], 0, ',', '.') . "</td>
                         </tr>";
                         }
                     } else {
@@ -201,16 +201,16 @@ if (isset($_POST["btnxem"])) {
                     if ($ctrl->cGetRevenueIngredientByStore($storeID, $startM, $endM)->num_rows > 0) {
                         $result = $ctrl->cGetRevenueIngredientByStore($storeID, $startM, $endM);
                         while ($row = $result->fetch_assoc()) {
-                            $exportQuantity = $row['quantityImported'] - $row['quantityInStock']; // Tính sl xuất
+                            $exportQuantity = ($row['quantityImported'] - $row['quantityInStock'] < 0 ? 0 : $row['quantityImported'] - $row['quantityInStock']); // Tính sl xuất
                             $totalCost = $row['price'] * $row['quantityImported']; // Tính tổng chi phí
                             echo "<tr>
-                                    <td class='border-2 py-2'>{$row['ingredientName']}</td>
-                                    <td class='border-2 py-2'>{$row['unit']}</td>
-                                    <td class='border-2 py-2'>{$row['stockQuantity']}</td>
-                                    <td class='border-2 py-2'>{$row['importQuantity']}</td>
-                                    <td class='border-2 py-2'>{$exportQuantity}</td>
-                                    <td class='border-2 py-2'>" . number_format($row['price'], 0, '.', ',') . " đồng</td>
-                                    <td class='border-2 py-2'>" . number_format($totalCost, 0, '.', ',') . " đồng</td>
+                                    <td class='border-2 py-2'>" . $row['ingredientName'] . "</td>
+                                    <td class='border-2 py-2'>" . $row['unitOfcalculation'] . "</td>
+                                    <td class='border-2 py-2'>" . $row['quantityInStock'] . "</td>
+                                    <td class='border-2 py-2'>" . $row['quantityImported'] . "</td>
+                                    <td class='border-2 py-2'>" . $exportQuantity . "</td>
+                                    <td class='border-2 py-2'>" . number_format($row['price'], 0, ',', '.') . "</td>
+                                    <td class='border-0 py-2'>" . number_format($totalCost, 2, ',', '.') . "</td>
                                 </tr>";
                         }
                     } else {
@@ -226,7 +226,7 @@ if (isset($_POST["btnxem"])) {
                         <td colspan="6" class="font-bold text-lg text-left p-2 border-2">
                             <p>Tổng chi phí:</p>
                         </td>
-                        <td class="text-center border-2">' . number_format($_SESSION["totalCost"], 0, '.', ',') . ' đồng</td>
+                        <td class="text-center border-2">' . number_format($_SESSION["totalCost"], 0, ',', '.') . ' đồng</td>
                     </tr>
                 </tfoot>';
                     ?>
@@ -259,10 +259,10 @@ if (isset($_POST["btnxem"])) {
                     $_SESSION["profit"] = $_SESSION["revenue"] - $_SESSION["totalCostEmplyee"] - $_SESSION["totalCost"];
 
                     echo '<tr>
-                    <td class="border-2 py-2">' . number_format($_SESSION["revenue"], 0, '.', ',') . '</td>
-                    <td class="border-2 py-2">' . number_format($_SESSION["totalCostEmplyee"], 0, '.', ',') . '</td>
-                    <td class="border-2 py-2">' . number_format($_SESSION["totalCost"], 0, '.', ',') . '</td>
-                    <td class="border-2 py-2">' . number_format($_SESSION["profit"], 0, '.', ',') . '</td>
+                    <td class="border-2 py-2">' . number_format($_SESSION["revenue"], 0, ',', '.') . '</td>
+                    <td class="border-2 py-2">' . number_format($_SESSION["totalCostEmployee"], 0, ',', '.') . '</td>
+                    <td class="border-2 py-2">' . number_format($_SESSION["totalCost"], 0, ',', '.') . '</td>
+                    <td class="border-2 py-2">' . number_format($_SESSION["profit"], 0, ',', '.') . '</td>
                     </tr>'
                         ?>
                 </tbody>
@@ -279,4 +279,30 @@ if (isset($_POST["btnxem"])) {
                 document.getElementById("formStore").submit();
             });
         });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const startDate = document.getElementById("startM");
+            const endDate = document.getElementById("endM");
+            const btnXem = document.getElementById("btnxem");
+
+            // Sự kiện thay đổi giá trị
+            startDate.addEventListener("change", () => {
+                // Giới hạn giá trị tối thiểu của ngày kết thúc
+                endDate.min = startDate.value;
+            });
+
+            endDate.addEventListener("change", () => {
+                // Giới hạn giá trị tối đa của ngày bắt đầu
+                startDate.max = endDate.value;
+            });
+
+            // Kiểm tra trước khi submit
+            btnXem.addEventListener("click", (e) => {
+                if (new Date(startDate.value) > new Date(endDate.value)) {
+                    e.preventDefault(); // Ngăn submit form
+                    alert("Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc!");
+                }
+            });
+        });
+
     </script>

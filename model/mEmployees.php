@@ -86,7 +86,7 @@ class mEmployees
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "INSERT INTO `employee_shift` (shiftID, userID, date) VALUES ($shiftID, $userID, '$date')";
+        $sql = "INSERT INTO `employee_shift` (shiftID, userID, date) VALUES ($shiftID, $userID, '$date') ";
 
         return $conn->query($sql);
     }
@@ -123,10 +123,9 @@ class mEmployees
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "
-                SELECT 
-                    u.roleID,
-                    r.roleName,
+        $sql = "SELECT 
+                    u.*,
+                    r.*,
                     COUNT(DISTINCT u.userID) AS totalEmployees,
                     SUM(TIMESTAMPDIFF(HOUR, s.startTime, s.endTime)) AS totalHours,
                     CASE 
@@ -134,13 +133,13 @@ class mEmployees
                         WHEN u.roleID = 4 THEN SUM(TIMESTAMPDIFF(HOUR, s.startTime, s.endTime)) * 35000
                         ELSE 0
                     END AS totalSalary
-                FROM employee_shift es
+                FROM `employee_shift` es
                 JOIN User u ON es.userID = u.userID
                 JOIN Shift s ON es.shiftID = s.shiftID
                 JOIN Role r ON u.roleID = r.roleID
                 WHERE u.roleID IN (3, 4) 
                 AND u.storeID = $storeID
-                AND es.date BETWEEN $startM AND $endM
+                AND es.date BETWEEN '$startM' AND '$endM'
                 GROUP BY u.roleID, r.roleName";
         if ($conn != null)
             return $conn->query($sql);

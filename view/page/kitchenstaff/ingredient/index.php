@@ -10,9 +10,9 @@ $storeID = $_SESSION['user'][1];
 $ctrl = new cIngredients;
 
 // Xử lý nhập nguyên liệu
-if (isset($_POST['btnnhap'])) {
-    $ingredientID = $_POST['btnnhap'];
-    $quantity = $_POST['quantity'][$ingredientID];
+if (isset($_POST["btnnhap"])) {
+    $ingredientID = $_POST["btnnhap"];
+    $quantity = $_POST["quantity"][$ingredientID];
     
     // Kiểm tra số lượng phải là số dương
     if ($quantity <= 0 || $quantity > 10000000) {
@@ -42,7 +42,7 @@ if (isset($_POST['btnnhap'])) {
                             <th class="text-gray-600 border-2 py-2">Mã NL</th>
                             <th class="text-gray-600 border-2 py-2">Tên NL</th>
                             <th class="text-gray-600 border-2 py-2">Đơn vị tính</th>
-                            <th class="text-gray-600 border-2 py-2">Giá mua (đồng)</th>
+                            <th class="text-gray-600 border-2 py-2">Giá mua</th>
                             <th class="text-gray-600 border-2 py-2">Loại NL</th>
                             <th class="text-gray-600 border-2 py-2">Số lượng cần nhập</th>
                             <th class="text-gray-600 border-2 py-2">Số lượng thực tế</th>
@@ -58,13 +58,13 @@ if (isset($_POST['btnnhap'])) {
                         if ($result->num_rows > 0)
                             while ($row = $result->fetch_assoc()) {
                                 // Chỉ hiển thị những nguyên liệu chưa được nhập
-                                if (!array_key_exists($row["ingredientID"], $_SESSION['imported_ingredients'])) {
+                                if (!array_key_exists($row["ingredientID"], $_SESSION["imported_ingredients"])) {
                                     echo "
                                         <tr>
                                             <td class='py-2 border-2'>#NL0" . $row["ingredientID"] . "</td>
                                             <td class='py-2 border-2'>" . $row["ingredientName"] . "</td>
                                             <td class='py-2 border-2'>" . $row["unitOfcalculation"] . "</td>
-                                            <td class='py-2 border-2'>" . str_replace(".00", "", number_format($row["price"], "2", ".", ",")) . "</td>
+                                            <td class='py-2 border-2'>" . number_format($row["price"], 0, ".", ",") . "</td>
                                             <td class='py-2 border-2'>" . $row["typeIngredient"] . "</td>
                                             <td class='py-2 border-2'>" . $row["quantity"] . "</td>
                                             <td class='py-2 border-2'>

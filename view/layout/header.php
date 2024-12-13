@@ -320,8 +320,12 @@ $selectedStore = isset($_COOKIE["selectedStore"]) ? $_COOKIE["selectedStore"] : 
             }
         }
 
-        if (isset($_POST["statusOrder1"]) && !isset($_POST["HuyDonHang"]))
-            $ctrlMessage->falseMessage("Đơn hàng này không được phép chỉnh sửa");
+        if (isset($_POST["statusOrder1"]) && !isset($_POST["HuyDonHang"])) {
+        
+            $ctrlMessage = new cMessage;
+            
+                $ctrlMessage->falseMessage("Đơn hàng này không được phép chỉnh sửa");
+        }
     }
 
     if (isset($_POST["statusOrder0"]) && isset($_POST["HuyDonHang"])) {

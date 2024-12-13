@@ -52,8 +52,7 @@ if (isset($_POST["btncapnhat"])) {
         $roleID = $row["roleID"];
     } else
         echo "Không có dữ liệu!";
-        
-    $db->close($conn);
+
 }
 
 if (isset($_POST["btnsuanv"])) {
@@ -70,8 +69,7 @@ if (isset($_POST["btnsuanv"])) {
         $ctrlMessage->successMessage("Cập nhật thông tin nhân viên ");
     } else
         $ctrlMessage->errorMessage("Cập nhật thông tin nhân viên ");
-        
-    $db->close($conn);
+
 }
 
 // Trạng thái nhân viên
@@ -86,8 +84,7 @@ if (isset($_POST["btnkhoa"])) {
         $ctrlMessage->successMessage('Cập nhật trạng thái tài khoản ');
     } else
         $ctrlMessage->errorMessage('Cập nhật trạng thái tài khoản ');
-        
-    $db->close($conn);
+
 }
 
 // Thêm nhân viên
@@ -103,30 +100,35 @@ if (isset($_POST["btnthemnv"])) {
     $storeID = $_SESSION["user"][1];
 
     if (!empty($sex) || !empty($roleID)) {
-        if ($image) {
-            $targetDir = "../../../images/user/";
-            $targetFile = $targetDir . removeVietnameseAccents($userName) . ".png";
-            move_uploaded_file($_FILES["image"]["tmp_name"], $targetFile);
+        $result = $ctrl->cGetAllUser();
+
+        $exist = false;
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                if ($row["email"] == $email || $row["phoneNumber"] == $phoneNumber) {
+                    $exist = true;
+                    $ctrlMessage->falseMessage("Không được nhập email hoặc số điện thoại trùng");
+                    break;
+                }
+            }
         }
 
-        $result = $ctrl->cInsertUser($userName, $dateBirth, $phoneNumber, $email, $sex, $roleID, $pass, removeVietnameseAccents($userName) . ".png", $storeID);
-        //     $ctrlMessage->successMessage("Thêm nhân viên ");
-        // } else {
-        //     $ctrlMessage->emptyMessage();
-        //     echo "<script>
-        //         document.addEventListener('DOMContentLoaded', function() {
-        //             var modalInsert = new bootstrap.Modal(document.getElementById('insertModal')); 
-        //             modalInsert.show();
-        //         });
-        //     </script>";
-        if ($result) {
-            $ctrlMessage->successMessage("Thêm nhân viên ");
-        } else {
-            $ctrlMessage->errorMessage("Thêm nhân viên ");
+        if (!$exist) {
+            if ($image) {
+                $targetDir = "../../../images/user/";
+                $targetFile = $targetDir . removeVietnameseAccents($userName) . ".png";
+                move_uploaded_file($_FILES["image"]["tmp_name"], $targetFile);
+            }
+
+            $result = $ctrl->cInsertUser($userName, $dateBirth, $phoneNumber, $email, $sex, $roleID, $pass, removeVietnameseAccents($userName) . ".png", $storeID);
+            if ($result)
+                $ctrlMessage->successMessage("Thêm nhân viên ");
+            else
+                $ctrlMessage->errorMessage("Thêm nhân viên ");
         }
-    }
-    
-    $db->close($conn);
+    } else
+        $ctrlMessage->falseMessage("Vui lòng nhập đầy đủ thông tin nhân viên!");
+
 }
 
 ?>
@@ -205,8 +207,7 @@ if (isset($_POST["btnthemnv"])) {
                             echo "Không có dữ liệu!";
 
                         $data = json_encode($employeeData);
-                        
-                        $db->close($conn);
+
                         ?>
                     </tbody>
                 </table>

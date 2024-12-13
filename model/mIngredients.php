@@ -262,23 +262,22 @@ class mIngredients
     {
         $db = new Database;
         $conn = $db->connect();
-        $sql = "
-                SELECT 
-                    i.ingredientName AS 'ingredientName', 
-                    i.unitOfcalculation AS 'unit', 
-                    si.quantityInStock AS 'quantityInStock', 
-                    SUM(ni.quantity) AS 'quantityImported', 
+        $sql = "SELECT 
+                    i.ingredientName, 
+                    i.unitOfcalculation, 
+                    si.quantityInStock, 
+                    SUM(ni.quantity) AS quantityImported, 
                     i.price
                 FROM 
-                    NeedIngredient ni
+                    needIngredient ni
                 JOIN 
-                    ImportOrder io ON ni.importOrderID = io.importOrderID
+                    importOrder io ON ni.importOrderID = io.importOrderID
                 JOIN 
-                    Ingredient i ON ni.ingredientID  = i.ingredientID 
+                    ingredient i ON ni.ingredientID  = i.ingredientID 
                 JOIN 
-                    Store_Ingredient si ON si.ingredientID  = i.ingredientID  AND si.storeID = $storeID
+                    store_Ingredient si ON si.ingredientID  = i.ingredientID  AND si.storeID = $storeID
                 WHERE 
-                    io.importOrderDate BETWEEN $startDate AND $endDate
+                    io.importOrderDate BETWEEN '$startDate' AND '$endDate'
                 GROUP BY 
                     i.ingredientID
             ";
@@ -287,7 +286,7 @@ class mIngredients
         return 0;
     }
 
-    public function mGetAllIngredientByStore($storeID)
+    public function mGetAllNeedIngredientByStore($storeID)
     {
         $db = new Database;
         $conn = $db->connect();
@@ -295,7 +294,7 @@ class mIngredients
                 JOIN ingredient i ON i.ingredientID = ni.ingredientID 
                 JOIN importorder io ON io.importOrderID = ni.importOrderID 
                 JOIN user u ON u.userID = io.userID 
-                WHERE u.storeID = $storeID";
+                WHERE u.storeID = $storeID GROUP BY ni.ingredientID";
 
         if ($conn != null)
             return $conn->query($sql);
